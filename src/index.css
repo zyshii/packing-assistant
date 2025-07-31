@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 248 50% 97%;
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
@@ -17,13 +17,13 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 256 70% 60%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
+    --secondary: 220 14% 96%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 210 40% 96.1%;
+    --muted: 220 14% 96%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
     --accent: 210 40% 96.1%;
@@ -32,9 +32,21 @@ All colors MUST be HSL.
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 256 70% 60%;
+
+    /* Custom travel app colors */
+    --travel-blue: 215 88% 75%;
+    --travel-green: 142 52% 70%; 
+    --travel-purple: 256 70% 80%;
+    --travel-orange: 31 81% 75%;
+    --travel-pink: 330 60% 80%;
+    --travel-yellow: 45 86% 78%;
+    
+    /* Shadows */
+    --shadow-soft: 0 2px 20px -2px hsla(220, 30%, 20%, 0.08);
+    --shadow-card: 0 4px 32px -4px hsla(220, 30%, 20%, 0.12);
 
     --radius: 0.5rem;
 
