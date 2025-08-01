@@ -183,7 +183,7 @@ function TripDetails() {
 
           {/* Onboarding Hint */}
           <OnboardingHint
-            title="First time using PackPal?"
+            title="First time using Trip Prep Assistant?"
             description="We'll guide you through creating your first AI-powered packing list. Just fill out your trip details and let our smart recommendations do the rest!"
             storageKey="trip-details-hint-seen"
             className="animate-scale-in"
