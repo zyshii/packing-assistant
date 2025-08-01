@@ -19,6 +19,10 @@ import { cn } from "@/lib/utils";
 import OnboardingHint from "@/components/OnboardingHint";
 import DailyActivityInput from "@/components/DailyActivityInput";
 
+// Weather API date constraints
+const MAX_WEATHER_DATE = new Date('2025-08-16'); // Open-Meteo API limit
+const MAX_TRIP_DAYS = 14; // Maximum trip length for weather forecasts
+
 const formSchema = z.object({
   destination: z.string().min(2, {
     message: "Destination must be at least 2 characters.",
@@ -37,6 +41,15 @@ const formSchema = z.object({
   }),
 }).refine((data) => data.endDate >= data.startDate, {
   message: "End date must be after start date.",
+  path: ["endDate"],
+}).refine((data) => data.endDate <= MAX_WEATHER_DATE, {
+  message: `Weather forecasts are only available until ${MAX_WEATHER_DATE.toISOString().split('T')[0]}`,
+  path: ["endDate"],
+}).refine((data) => {
+  const daysDiff = Math.ceil((data.endDate.getTime() - data.startDate.getTime()) / (1000 * 60 * 60 * 24));
+  return daysDiff <= MAX_TRIP_DAYS;
+}, {
+  message: `Trip length cannot exceed ${MAX_TRIP_DAYS} days`,
   path: ["endDate"],
 });
 
@@ -471,15 +484,19 @@ function TripDetails() {
                                 mode="single"
                                 selected={field.value}
                                 onSelect={field.onChange}
-                                disabled={(date) =>
-                                  date < new Date(new Date().setHours(0, 0, 0, 0))
-                                }
+                                disabled={(date) => {
+                                  const today = new Date(new Date().setHours(0, 0, 0, 0));
+                                  return date < today || date > MAX_WEATHER_DATE;
+                                }}
                                 initialFocus
                                 className={cn("p-3 pointer-events-auto")}
                               />
                             </PopoverContent>
                           </Popover>
                           <FormMessage />
+                          <p className="text-xs text-muted-foreground">
+                            💡 Weather forecasts available until {format(MAX_WEATHER_DATE, "MMM d, yyyy")} (max {MAX_TRIP_DAYS} days)
+                          </p>
                         </FormItem>
                       )}
                     />
@@ -520,7 +537,18 @@ function TripDetails() {
                                 disabled={(date) => {
                                   const today = new Date(new Date().setHours(0, 0, 0, 0));
                                   const startDate = form.getValues("startDate");
-                                  return date < today || (startDate && date < startDate);
+                                  
+                                  // Basic date validation
+                                  if (date < today || date > MAX_WEATHER_DATE) return true;
+                                  if (startDate && date < startDate) return true;
+                                  
+                                  // Check if trip would exceed maximum length
+                                  if (startDate) {
+                                    const daysDiff = Math.ceil((date.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+                                    if (daysDiff > MAX_TRIP_DAYS) return true;
+                                  }
+                                  
+                                  return false;
                                 }}
                                 initialFocus
                                 className={cn("p-3 pointer-events-auto")}
@@ -528,19 +556,51 @@ function TripDetails() {
                             </PopoverContent>
                           </Popover>
                           <FormMessage />
+                          {/* Date validation helper text */}
+                          {watchedEndDate && watchedEndDate > MAX_WEATHER_DATE && (
+                            <p className="text-sm text-destructive animate-fade-in">
+                              ⚠️ Weather forecasts are only available until {format(MAX_WEATHER_DATE, "PPP")}. Please select an earlier date.
+                            </p>
+                          )}
+                          {watchedStartDate && watchedEndDate && 
+                           Math.ceil((watchedEndDate.getTime() - watchedStartDate.getTime()) / (1000 * 60 * 60 * 24)) > MAX_TRIP_DAYS && (
+                            <p className="text-sm text-warning animate-fade-in">
+                              ⚠️ Trip length cannot exceed {MAX_TRIP_DAYS} days for weather forecasts.
+                            </p>
+                          )}
                         </FormItem>
                       )}
                     />
                   </div>
 
-                  {/* Trip Duration Indicator */}
+                  {/* Trip Duration Indicator with Weather API Status */}
                   {watchedStartDate && watchedEndDate && (
-                    <div className="bg-muted/50 rounded-lg p-4 animate-fade-in">
-                      <p className="text-sm text-muted-foreground">
-                        Trip Duration: <span className="font-medium text-foreground">
-                          {Math.ceil((watchedEndDate.getTime() - watchedStartDate.getTime()) / (1000 * 60 * 60 * 24))} days
-                        </span>
-                      </p>
+                    <div className={cn(
+                      "rounded-lg p-4 animate-fade-in",
+                      watchedEndDate > MAX_WEATHER_DATE || 
+                      Math.ceil((watchedEndDate.getTime() - watchedStartDate.getTime()) / (1000 * 60 * 60 * 24)) > MAX_TRIP_DAYS
+                        ? "bg-destructive/10 border border-destructive/20"
+                        : "bg-muted/50"
+                    )}>
+                      <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground">
+                          Trip Duration: <span className="font-medium text-foreground">
+                            {Math.ceil((watchedEndDate.getTime() - watchedStartDate.getTime()) / (1000 * 60 * 60 * 24))} days
+                          </span>
+                        </p>
+                        {watchedEndDate <= MAX_WEATHER_DATE && 
+                         Math.ceil((watchedEndDate.getTime() - watchedStartDate.getTime()) / (1000 * 60 * 60 * 24)) <= MAX_TRIP_DAYS && (
+                          <p className="text-sm text-success">
+                            ✅ Real-time weather forecasts available for your entire trip
+                          </p>
+                        )}
+                        {(watchedEndDate > MAX_WEATHER_DATE || 
+                          Math.ceil((watchedEndDate.getTime() - watchedStartDate.getTime()) / (1000 * 60 * 60 * 24)) > MAX_TRIP_DAYS) && (
+                          <p className="text-sm text-destructive">
+                            ❌ Weather forecasts not available - please adjust your dates
+                          </p>
+                        )}
+                      </div>
                     </div>
                   )}
 
