@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { CalendarIcon, MapPin, Clock, Users, Activity, Sparkles, ArrowRight, Globe, Luggage } from "lucide-react";
@@ -18,6 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import HelpTooltip from "@/components/HelpTooltip";
 import OnboardingHint from "@/components/OnboardingHint";
+import DailyActivityInput from "@/components/DailyActivityInput";
 
 const formSchema = z.object({
   destination: z.string().min(2, {
@@ -29,13 +29,8 @@ const formSchema = z.object({
   endDate: z.date({
     required_error: "End date is required.",
   }),
-  tripType: z.enum(["business", "leisure", "adventure"], {
-    required_error: "Please select a trip type.",
-  }),
-  luggageSize: z.enum(["carry-on", "backpack", "medium-suitcase", "large-suitcase"], {
-    required_error: "Please select your luggage size.",
-  }),
-  activities: z.string().optional(),
+  tripType: z.enum(["business", "leisure", "adventure"]).optional(),
+  luggageSize: z.enum(["carry-on", "backpack", "medium-suitcase", "large-suitcase"]).optional(),
 }).refine((data) => data.endDate >= data.startDate, {
   message: "End date must be after start date.",
   path: ["endDate"],
@@ -93,16 +88,16 @@ const popularDestinations = [
   "Montreal, Canada"
 ];
 
-export default function TripDetails() {
+function TripDetails() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
+  const [dailyActivities, setDailyActivities] = useState<Array<{ date: string; activities: string[] }>>([]);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       destination: "",
-      activities: "",
     },
   });
 
@@ -110,12 +105,23 @@ export default function TripDetails() {
   const watchedStartDate = form.watch("startDate");
   const watchedEndDate = form.watch("endDate");
 
-  const filteredDestinations = useMemo(() => {
-    if (!watchedDestination) return [];
-    return popularDestinations.filter(destination =>
-      destination.toLowerCase().includes(watchedDestination.toLowerCase())
-    );
-  }, [watchedDestination]);
+  // Generate dates array when start and end dates are available
+  const dates = useMemo(() => {
+    if (!watchedStartDate || !watchedEndDate) return [];
+    const dateArray = [];
+    const currentDate = new Date(watchedStartDate);
+    const endDate = new Date(watchedEndDate);
+    
+    while (currentDate <= endDate) {
+      dateArray.push(format(currentDate, "MMM d"));
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return dateArray;
+  }, [watchedStartDate, watchedEndDate]);
+
+  const handleActivitiesChange = (activities: Array<{ date: string; activities: string[] }>) => {
+    setDailyActivities(activities);
+  };
 
   async function onSubmit(values: FormData) {
     setIsSubmitting(true);
@@ -123,11 +129,18 @@ export default function TripDetails() {
     // Simulate AI processing
     await new Promise(resolve => setTimeout(resolve, 2000));
     
-    console.log(values);
+    // Pass the data including daily activities to the packing list page
+    console.log({ ...values, dailyActivities });
     setIsSubmitting(false);
-    navigate("/packing-list");
+    navigate("/packing-list", { state: { tripData: values, dailyActivities } });
   }
 
+  const filteredDestinations = useMemo(() => {
+    if (!watchedDestination) return [];
+    return popularDestinations.filter(destination =>
+      destination.toLowerCase().includes(watchedDestination.toLowerCase())
+    );
+  }, [watchedDestination]);
   return (
     <div className="min-h-screen bg-gradient-background p-4">
       <div className="container mx-auto py-6 lg:py-8">
@@ -341,10 +354,10 @@ export default function TripDetails() {
                     name="tripType"
                     render={({ field }) => (
                       <FormItem className="space-y-4">
-                        <FormLabel className="flex items-center gap-2 text-base font-semibold">
-                          <Activity className="h-5 w-5 text-primary" />
-                           Trip Type
-                        </FormLabel>
+                         <FormLabel className="flex items-center gap-2 text-base font-semibold">
+                           <Activity className="h-5 w-5 text-primary" />
+                            Trip Type (Optional)
+                         </FormLabel>
                         <FormControl>
                           <RadioGroup
                             onValueChange={field.onChange}
@@ -400,10 +413,10 @@ export default function TripDetails() {
                     name="luggageSize"
                     render={({ field }) => (
                       <FormItem className="space-y-3">
-                        <FormLabel className="flex items-center gap-2 text-base font-semibold">
-                          <Luggage className="h-5 w-5 text-primary" />
-                           Luggage Size
-                        </FormLabel>
+                         <FormLabel className="flex items-center gap-2 text-base font-semibold">
+                           <Luggage className="h-5 w-5 text-primary" />
+                            Luggage Size (Optional)
+                         </FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <SelectTrigger className="h-12 text-base">
@@ -459,30 +472,15 @@ export default function TripDetails() {
                     )}
                   />
 
-                  {/* Activities */}
-                  <FormField
-                    control={form.control}
-                    name="activities"
-                    render={({ field }) => (
-                      <FormItem className="space-y-3">
-                        <FormLabel className="flex items-center gap-2 text-base font-semibold">
-                          <Activity className="h-5 w-5 text-primary" />
-                           Planned Activities (Optional)
-                        </FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="e.g., Hiking in national parks, business meetings, beach activities, city sightseeing, restaurant dining..."
-                            className="resize-none min-h-[100px] text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                        <p className="text-sm text-muted-foreground">
-                          💡 The more details you provide, the better our AI recommendations will be!
-                        </p>
-                      </FormItem>
-                    )}
-                  />
+                  {/* Daily Activities Section */}
+                  {dates.length > 0 && (
+                    <div className="space-y-4">
+                      <DailyActivityInput 
+                        dates={dates}
+                        onActivitiesChange={handleActivitiesChange}
+                      />
+                    </div>
+                  )}
 
                   {/* Submit Button */}
                   <div className="pt-4">
@@ -517,4 +515,6 @@ export default function TripDetails() {
       </div>
     </div>
   );
-}
+};
+
+export default TripDetails;

@@ -1,23 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, Sparkles, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TripHeader from "@/components/TripHeader";
 import OnboardingHint from "@/components/OnboardingHint";
 import DailyClothingSuggestions from "@/components/DailyClothingSuggestions";
-import DailyActivityInput from "@/components/DailyActivityInput";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Index = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   
-  // Sample trip data
-  const tripData = {
+  // Get data from navigation state or use sample data
+  const { tripData, dailyActivities } = location.state || {};
+  
+  // Sample trip data (fallback)
+  const defaultTripData = {
     destination: "Paris, France",
     dates: "May 30 - Jun 1",
     tripType: "leisure",
     travelers: 1,
     activities: ["Sightseeing", "Museums", "Dining", "Photography"]
   };
+
+  const finalTripData = tripData ? {
+    ...defaultTripData,
+    destination: tripData.destination,
+    dates: tripData.startDate && tripData.endDate 
+      ? `${tripData.startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${tripData.endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
+      : defaultTripData.dates,
+    tripType: tripData.tripType || defaultTripData.tripType,
+  } : defaultTripData;
 
   // Daily clothing data for the new component
   const [dailyClothingData, setDailyClothingData] = useState([
@@ -26,18 +38,19 @@ const Index = () => {
     { date: "Jun 1", condition: 'rainy' as const, temp: { high: 68, low: 55 }, timeOfDay: [], activities: [] },
   ]);
 
-  const dates = ["May 30", "May 31", "Jun 1"];
-
-  const handleActivitiesChange = (activities: Array<{ date: string; activities: string[] }>) => {
-    const updatedData = dailyClothingData.map(day => {
-      const dayActivities = activities.find(a => a.date === day.date);
-      return {
-        ...day,
-        activities: dayActivities ? dayActivities.activities : []
-      };
-    });
-    setDailyClothingData(updatedData);
-  };
+  // Update clothing data with activities from navigation state
+  useEffect(() => {
+    if (dailyActivities && Array.isArray(dailyActivities)) {
+      const updatedData = dailyClothingData.map(day => {
+        const dayActivities = dailyActivities.find(a => a.date === day.date);
+        return {
+          ...day,
+          activities: dayActivities ? dayActivities.activities : []
+        };
+      });
+      setDailyClothingData(updatedData);
+    }
+  }, [dailyActivities]);
 
   return (
     <div className="min-h-screen bg-gradient-background">
@@ -65,18 +78,10 @@ const Index = () => {
         {/* Trip Header */}
         <div className="animate-fade-in">
           <TripHeader
-            destination={tripData.destination}
-            dates={tripData.dates}
-            tripType={tripData.tripType}
-            activities={tripData.activities}
-          />
-        </div>
-
-        {/* Daily Activity Input */}
-        <div className="animate-scale-in">
-          <DailyActivityInput 
-            dates={dates}
-            onActivitiesChange={handleActivitiesChange}
+            destination={finalTripData.destination}
+            dates={finalTripData.dates}
+            tripType={finalTripData.tripType}
+            activities={finalTripData.activities}
           />
         </div>
 
