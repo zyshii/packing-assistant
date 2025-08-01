@@ -72,12 +72,13 @@ const Index = () => {
     
     // Create some pattern but with variation
     const baseIndex = dayIndex % conditions.length;
-    const random = Math.random();
+    // Use deterministic "randomness" based on day index
+    const pseudoRandom = Math.abs(Math.sin(dayIndex * 2.5)) % 1;
     
     // Add some randomness but favor certain patterns
-    if (random < 0.4) return conditions[baseIndex];
-    if (random < 0.7) return 'sunny';
-    if (random < 0.9) return 'mixed';
+    if (pseudoRandom < 0.4) return conditions[baseIndex];
+    if (pseudoRandom < 0.7) return 'sunny';
+    if (pseudoRandom < 0.9) return 'mixed';
     return 'cloudy';
   };
 
@@ -103,9 +104,11 @@ const Index = () => {
       const currentDate = addDays(startDate, index);
       const dateString = format(currentDate, 'MMM d');
       
-      // Generate varied but realistic weather
+      // Use a deterministic seed for consistent weather generation
+      const seed = startDate.getTime() + index;
+      const pseudoRandom = Math.abs(Math.sin(seed)) % 1;
       const condition = getWeatherCondition(index, tripData.destination);
-      const tempVariation = (Math.random() - 0.5) * 10; // ±5 degrees variation
+      const tempVariation = (pseudoRandom - 0.5) * 10; // ±5 degrees variation
       
       return {
         date: dateString,
@@ -118,17 +121,12 @@ const Index = () => {
         activities: []
       };
     });
-  }, [tripData]);
+  }, [tripData?.destination, tripData?.startDate?.getTime(), tripData?.endDate?.getTime()]);
 
-  // Daily clothing data state
-  const [dailyClothingData, setDailyClothingData] = useState(() => generateDailyClothingData);
+  // Daily clothing data state - initialize once and only update when needed
+  const [dailyClothingData, setDailyClothingData] = useState(generateDailyClothingData);
 
-  // Update clothing data when trip data changes
-  useEffect(() => {
-    setDailyClothingData(generateDailyClothingData);
-  }, [generateDailyClothingData]);
-
-  // Update clothing data with activities from navigation state
+  // Update clothing data with activities from navigation state only once
   useEffect(() => {
     if (dailyActivities && Array.isArray(dailyActivities)) {
       setDailyClothingData(prevData => {
@@ -141,7 +139,12 @@ const Index = () => {
         });
       });
     }
-  }, [dailyActivities]);
+  }, []);
+
+  // Update the data when trip data changes
+  useEffect(() => {
+    setDailyClothingData(generateDailyClothingData);
+  }, [generateDailyClothingData]);
 
   // Extract all unique activities from daily activities for the header
   const allUserActivities = useMemo(() => {
