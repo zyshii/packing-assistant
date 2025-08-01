@@ -129,6 +129,61 @@ const getHighLevelClothingInfo = (condition: string, temp: { high: number; low: 
   }
 };
 
+const getPackingTips = (condition: string, temp: { high: number; low: number }) => {
+  const tips: string[] = [];
+  
+  // Temperature-based tips
+  if (temp.high >= 80) {
+    tips.push("Stick to lightweight, breathable fabrics like cotton or linen");
+    tips.push("Sun protection is essential even if skies are only partly cloudy");
+    tips.push("Consider moisture-wicking materials for comfort");
+  } else if (temp.high >= 70) {
+    if (temp.low < 60) {
+      tips.push("Small scarf or shawl if you're sensitive to temperature shifts");
+      tips.push("Layer-friendly pieces that can be easily added or removed");
+    }
+    tips.push("Comfortable walking shoes are crucial for extended sightseeing");
+  } else if (temp.high >= 60) {
+    tips.push("Light layers work better than one heavy piece");
+    tips.push("A versatile cardigan or light jacket is your best friend");
+  } else {
+    tips.push("Thermal layers underneath regular clothes for warmth without bulk");
+    tips.push("Don't forget warm accessories like gloves and a hat");
+  }
+  
+  // Weather condition-based tips
+  switch (condition) {
+    case 'sunny':
+      tips.push("UV protection is crucial - sunglasses, hat, and SPF 30+ sunscreen");
+      tips.push("Light colors reflect heat better than dark ones");
+      break;
+    case 'rainy':
+      tips.push("Waterproof footwear and a compact umbrella are essential");
+      tips.push("Quick-dry fabrics will be your lifesaver");
+      tips.push("Keep electronics in waterproof pouches");
+      break;
+    case 'mixed':
+      tips.push("Check weather updates frequently as conditions can change quickly");
+      tips.push("Pack both sun protection and rain gear to be prepared");
+      tips.push("Layers are especially important for variable conditions");
+      break;
+    case 'cloudy':
+      tips.push("Don't skip the sunscreen - UV rays penetrate clouds");
+      tips.push("Light jacket recommended as clouds can make it feel cooler");
+      break;
+    case 'snowy':
+      tips.push("Waterproof boots with good traction are essential");
+      tips.push("Multiple thin layers trap heat better than one thick layer");
+      tips.push("Keep extremities warm - hands, feet, and head lose heat quickly");
+      break;
+  }
+  
+  // General travel tips
+  tips.push("Roll clothes instead of folding to save space and prevent wrinkles");
+  
+  return tips;
+};
+
 export default function DailyClothingSuggestions({ dailyData }: DailyClothingSuggestionsProps) {
   return (
     <Card className="p-6 shadow-card border-0 bg-card">
@@ -220,6 +275,21 @@ export default function DailyClothingSuggestions({ dailyData }: DailyClothingSug
                           <p key={index} className="text-xs text-foreground">• {suggestion}</p>
                         ))}
                       </div>
+                    </div>
+                  </Card>
+                </div>
+                
+                {/* Packing Tips Section */}
+                <div className="mt-6">
+                  <Card className="p-4 bg-gradient-to-r from-travel-purple/10 to-travel-blue/10 border border-travel-purple/20">
+                    <h6 className="font-medium text-foreground mb-3 flex items-center gap-2">
+                      <Shirt className="h-4 w-4 text-travel-purple" />
+                      Packing Tips for {day.date}
+                    </h6>
+                    <div className="space-y-2">
+                      {getPackingTips(day.condition, day.temp).map((tip, index) => (
+                        <p key={index} className="text-sm text-foreground">• {tip}</p>
+                      ))}
                     </div>
                   </Card>
                 </div>
