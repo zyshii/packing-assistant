@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { X, Calendar, Activity } from "lucide-react";
 
 interface DailyActivity {
@@ -167,115 +168,123 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
           }
         </p>
 
-        <div className="space-y-6">
+        <Accordion type="multiple" className="w-full">
           {dates.map((date, dateIndex) => (
-            <div key={date} className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-travel-blue" />
-                <h4 className="font-medium text-foreground">{date}</h4>
-              </div>
+            <AccordionItem key={date} value={`day-${dateIndex}`}>
+              <AccordionTrigger className="hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-travel-blue" />
+                  <span className="font-medium text-foreground">{date}</span>
+                  {dailyActivities[dateIndex]?.activities.length > 0 && (
+                    <Badge variant="outline" className="ml-2">
+                      {dailyActivities[dateIndex].activities.length} activit{dailyActivities[dateIndex].activities.length === 1 ? 'y' : 'ies'}
+                    </Badge>
+                  )}
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="space-y-4">
+                {/* Selected Activities */}
+                <div className="flex flex-wrap gap-2 min-h-[2rem]">
+                  {dailyActivities[dateIndex]?.activities.map((activity, activityIndex) => (
+                    <Badge key={activityIndex} variant="secondary" className="flex items-center gap-1">
+                      {activity}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-auto p-0 w-4 h-4 hover:bg-destructive hover:text-destructive-foreground"
+                        onClick={() => removeActivity(dateIndex, activityIndex)}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </Badge>
+                  )) || []}
+                </div>
 
-              {/* Selected Activities */}
-              <div className="flex flex-wrap gap-2 min-h-[2rem]">
-                {dailyActivities[dateIndex]?.activities.map((activity, activityIndex) => (
-                  <Badge key={activityIndex} variant="secondary" className="flex items-center gap-1">
-                    {activity}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-auto p-0 w-4 h-4 hover:bg-destructive hover:text-destructive-foreground"
-                      onClick={() => removeActivity(dateIndex, activityIndex)}
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
-                  </Badge>
-                )) || []}
-              </div>
-
-              {/* Add Activities */}
-              <div className="flex flex-col gap-2">
-                <Popover 
-                  open={openPopovers[dateIndex] && getFilteredActivities(dateIndex).length > 0} 
-                  onOpenChange={(newOpen) => {
-                    // Prevent closing dropdown when clicking in input or while typing
-                    if (!newOpen && inputFocused[dateIndex]) {
-                      return;
-                    }
-                    setOpenPopovers(prev => ({ ...prev, [dateIndex]: newOpen }));
-                  }}
-                >
-                  <PopoverTrigger asChild>
-                    <div className="relative">
-                      <Input
-                        placeholder={
-                          tripTypes && tripTypes.length > 0
-                            ? `Type to search ${tripTypes.join('/')} activities...`
-                            : "Type to search activities..."
-                        }
-                        value={activityInputs[dateIndex] || ''}
-                        onChange={(e) => handleInputChange(dateIndex, e.target.value)}
-                        onFocus={() => handleInputFocus(dateIndex)}
-                        onBlur={() => handleInputBlur(dateIndex)}
-                        className={`w-full transition-all duration-200 ${
-                          inputFocused[dateIndex] || openPopovers[dateIndex]
-                            ? 'ring-2 ring-primary ring-offset-2 border-primary' 
-                            : ''
-                        }`}
-                      />
-                      <Activity className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    </div>
-                  </PopoverTrigger>
-                  <PopoverContent 
-                    className="w-full p-0 z-50 bg-background border border-border shadow-lg" 
-                    align="start"
-                    onOpenAutoFocus={(e) => {
-                      // Prevent popover from stealing focus from input
-                      e.preventDefault();
+                {/* Add Activities */}
+                <div className="flex flex-col gap-2">
+                  <Popover 
+                    open={openPopovers[dateIndex] && getFilteredActivities(dateIndex).length > 0} 
+                    onOpenChange={(newOpen) => {
+                      // Prevent closing dropdown when clicking in input or while typing
+                      if (!newOpen && inputFocused[dateIndex]) {
+                        return;
+                      }
+                      setOpenPopovers(prev => ({ ...prev, [dateIndex]: newOpen }));
                     }}
                   >
-                    <Command shouldFilter={false}>
-                      <CommandList className="max-h-[200px]">
-                        <CommandEmpty>
-                          {(activityInputs[dateIndex]?.length || 0) < 2 
-                            ? "Type at least 2 characters to search..." 
-                            : "No matching activities found."
+                    <PopoverTrigger asChild>
+                      <div className="relative">
+                        <Input
+                          placeholder={
+                            tripTypes && tripTypes.length > 0
+                              ? `Type to search ${tripTypes.join('/')} activities...`
+                              : "Type to search activities..."
                           }
-                        </CommandEmpty>
-                        <CommandGroup>
-                          {getFilteredActivities(dateIndex).map((activity) => (
-                            <CommandItem
-                              key={activity}
-                              value={activity}
-                              onSelect={() => addActivity(dateIndex, activity)}
-                              className="cursor-pointer hover:bg-muted"
-                            >
-                              <Activity className="mr-2 h-4 w-4" />
-                              {activity}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                
-                {activityInputs[dateIndex] && activityInputs[dateIndex].length >= 2 && (
-                  <div className="mt-2">
-                    {getFilteredActivities(dateIndex).length === 0 ? (
-                      <p className="text-sm text-muted-foreground">
-                        💡 No matching activities found. Try a different search term.
-                      </p>
-                    ) : (
-                      <p className="text-sm text-success">
-                        ✨ {getFilteredActivities(dateIndex).length} activit{getFilteredActivities(dateIndex).length === 1 ? 'y' : 'ies'} found - select one from the list above
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
+                          value={activityInputs[dateIndex] || ''}
+                          onChange={(e) => handleInputChange(dateIndex, e.target.value)}
+                          onFocus={() => handleInputFocus(dateIndex)}
+                          onBlur={() => handleInputBlur(dateIndex)}
+                          className={`w-full transition-all duration-200 ${
+                            inputFocused[dateIndex] || openPopovers[dateIndex]
+                              ? 'ring-2 ring-primary ring-offset-2 border-primary' 
+                              : ''
+                          }`}
+                        />
+                        <Activity className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      </div>
+                    </PopoverTrigger>
+                    <PopoverContent 
+                      className="w-full p-0 z-50 bg-background border border-border shadow-lg" 
+                      align="start"
+                      onOpenAutoFocus={(e) => {
+                        // Prevent popover from stealing focus from input
+                        e.preventDefault();
+                      }}
+                    >
+                      <Command shouldFilter={false}>
+                        <CommandList className="max-h-[200px]">
+                          <CommandEmpty>
+                            {(activityInputs[dateIndex]?.length || 0) < 2 
+                              ? "Type at least 2 characters to search..." 
+                              : "No matching activities found."
+                            }
+                          </CommandEmpty>
+                          <CommandGroup>
+                            {getFilteredActivities(dateIndex).map((activity) => (
+                              <CommandItem
+                                key={activity}
+                                value={activity}
+                                onSelect={() => addActivity(dateIndex, activity)}
+                                className="cursor-pointer hover:bg-muted"
+                              >
+                                <Activity className="mr-2 h-4 w-4" />
+                                {activity}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  
+                  {activityInputs[dateIndex] && activityInputs[dateIndex].length >= 2 && (
+                    <div className="mt-2">
+                      {getFilteredActivities(dateIndex).length === 0 ? (
+                        <p className="text-sm text-muted-foreground">
+                          💡 No matching activities found. Try a different search term.
+                        </p>
+                      ) : (
+                        <p className="text-sm text-success">
+                          ✨ {getFilteredActivities(dateIndex).length} activit{getFilteredActivities(dateIndex).length === 1 ? 'y' : 'ies'} found - select one from the list above
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
           ))}
-        </div>
+        </Accordion>
 
         <div className="mt-4 p-3 bg-info-light rounded-lg border border-info/20">
           <p className="text-sm text-info">
