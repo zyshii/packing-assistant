@@ -8,7 +8,7 @@ const weatherRequestSchema = z.object({
   location: z.string().min(1, "Location is required"),
   startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Start date must be in YYYY-MM-DD format"),
   endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "End date must be in YYYY-MM-DD format"),
-  useCache: z.boolean().optional().default(true)
+  useCache: z.string().optional().default("true").transform((val) => val === 'true')
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
