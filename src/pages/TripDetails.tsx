@@ -2,14 +2,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { CalendarIcon, MapPin, Clock, Users, Activity, Sparkles, ArrowRight, Globe } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
@@ -92,6 +92,7 @@ const popularDestinations = [
 export default function TripDetails() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -104,6 +105,13 @@ export default function TripDetails() {
   const watchedDestination = form.watch("destination");
   const watchedStartDate = form.watch("startDate");
   const watchedEndDate = form.watch("endDate");
+
+  const filteredDestinations = useMemo(() => {
+    if (!watchedDestination) return [];
+    return popularDestinations.filter(destination =>
+      destination.toLowerCase().includes(watchedDestination.toLowerCase())
+    );
+  }, [watchedDestination]);
 
   async function onSubmit(values: FormData) {
     setIsSubmitting(true);
@@ -168,21 +176,43 @@ export default function TripDetails() {
                           <HelpTooltip content="Enter the city, country, or specific location you're traveling to. This helps us provide weather-specific recommendations." />
                         </FormLabel>
                         <FormControl>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <SelectTrigger className="h-12 text-base">
-                              <div className="flex items-center gap-2">
-                                <Globe className="h-4 w-4 text-muted-foreground" />
-                                <SelectValue placeholder="Select your destination" />
+                          <Popover open={open && filteredDestinations.length > 0} onOpenChange={setOpen}>
+                            <PopoverTrigger asChild>
+                              <div className="relative">
+                                <Input 
+                                  placeholder="Type to search destinations..."
+                                  {...field}
+                                  className="pl-10 h-12 text-base"
+                                  onFocus={() => setOpen(true)}
+                                  onBlur={() => setTimeout(() => setOpen(false), 200)}
+                                />
+                                <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                               </div>
-                            </SelectTrigger>
-                            <SelectContent className="max-h-[300px]">
-                              {popularDestinations.map((destination) => (
-                                <SelectItem key={destination} value={destination}>
-                                  {destination}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-full p-0" align="start">
+                              <Command>
+                                <CommandList className="max-h-[200px]">
+                                  <CommandEmpty>No destinations found.</CommandEmpty>
+                                  <CommandGroup>
+                                    {filteredDestinations.map((destination) => (
+                                      <CommandItem
+                                        key={destination}
+                                        value={destination}
+                                        onSelect={(value) => {
+                                          field.onChange(value);
+                                          setOpen(false);
+                                        }}
+                                        className="cursor-pointer"
+                                      >
+                                        <MapPin className="mr-2 h-4 w-4" />
+                                        {destination}
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
                         </FormControl>
                         <FormMessage />
                         {watchedDestination && (
