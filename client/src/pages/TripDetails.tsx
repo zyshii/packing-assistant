@@ -467,7 +467,7 @@ function TripDetails() {
                                   <div className="text-2xl">🎒</div>
                                   <div>
                                     <div className="font-medium">Carry-on - 22 inch</div>
-                                    <div className="text-sm text-muted-foreground">Small roller bag (22" x 14" x 9")</div>
+                                    <div className="text-sm text-muted-foreground">Compact roller bag, fits overhead compartments</div>
                                   </div>
                                 </div>
                               </SelectItem>
@@ -476,7 +476,7 @@ function TripDetails() {
                                   <div className="text-2xl">🎒</div>
                                   <div>
                                     <div className="font-medium">Backpack - 50 L</div>
-                                    <div className="text-sm text-muted-foreground">Travel backpack (40-60L)</div>
+                                    <div className="text-sm text-muted-foreground">Travel backpack, ideal for adventure trips</div>
                                   </div>
                                 </div>
                               </SelectItem>
@@ -485,7 +485,7 @@ function TripDetails() {
                                   <div className="text-2xl">🧳</div>
                                   <div>
                                     <div className="font-medium">Medium Suitcase - 24 inch</div>
-                                    <div className="text-sm text-muted-foreground">Check-in bag (24-26 inches)</div>
+                                    <div className="text-sm text-muted-foreground">Standard check-in size, perfect for week-long trips</div>
                                   </div>
                                 </div>
                               </SelectItem>
@@ -494,7 +494,7 @@ function TripDetails() {
                                   <div className="text-2xl">🧳</div>
                                   <div>
                                     <div className="font-medium">Large Suitcase - 28 inch</div>
-                                    <div className="text-sm text-muted-foreground">Large check-in bag (28+ inches)</div>
+                                    <div className="text-sm text-muted-foreground">Spacious check-in bag, great for extended travel</div>
                                   </div>
                                 </div>
                               </SelectItem>
