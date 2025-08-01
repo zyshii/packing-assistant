@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo } from "react";
 import { ArrowLeft, Sparkles, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TripHeader from "@/components/TripHeader";
-import OnboardingHint from "@/components/OnboardingHint";
 import DailyClothingSuggestions from "@/components/DailyClothingSuggestions";
 import { useNavigate, useLocation } from "react-router-dom";
 import { format, addDays, differenceInDays } from "date-fns";
@@ -163,14 +162,6 @@ const Index = () => {
             Back to Trip Details
           </Button>
         </div>
-
-        {/* Onboarding Hint */}
-        <OnboardingHint
-          title="Your personalized packing list is ready!"
-          description="Use the 'Your Packing List' section to pack efficiently, then review daily clothing suggestions for each time period. Check off items as you pack them."
-          storageKey="packing-list-hint-seen"
-          className="animate-scale-in"
-        />
 
         {/* Trip Header */}
         <div className="animate-fade-in">
