@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Sun, Moon, Shirt, Cloud, CloudRain, CloudSnow, Wind } from "lucide-react";
+import { Sun, Moon, Shirt, Cloud, CloudRain, CloudSnow, Wind, Activity } from "lucide-react";
 
 interface DailyClothingData {
   date: string;
@@ -441,6 +441,25 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-4 pb-4">
+                {/* Planned Activities Section */}
+                {day.activities && day.activities.length > 0 && (
+                  <div className="mb-4">
+                    <Card className="p-4 bg-travel-green/10 border border-travel-green/20">
+                      <h6 className="font-medium text-foreground mb-3 flex items-center gap-2">
+                        <Activity className="h-4 w-4 text-travel-green" />
+                        Planned Activities for {day.date}
+                      </h6>
+                      <div className="flex flex-wrap gap-2">
+                        {day.activities.map((activity, index) => (
+                          <Badge key={index} variant="secondary" className="bg-travel-green/20 text-travel-green">
+                            {activity}
+                          </Badge>
+                        ))}
+                      </div>
+                    </Card>
+                  </div>
+                )}
+                
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {/* Morning */}
                   <Card className="p-4 bg-yellow-50/50 border border-yellow-200/50">
