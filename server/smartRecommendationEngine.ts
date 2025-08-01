@@ -153,7 +153,33 @@ function calculateItemScore(
 ): number {
   let score = item.baseWeight;
   
-  // Weather scoring
+  // Weather-based filtering - reject inappropriate items
+  const avgTemp = (weather.temp.high + weather.temp.low) / 2;
+  
+  // Filter out inappropriate items for hot weather
+  if (avgTemp > 80) {
+    if (item.item.includes("gloves") || item.item.includes("thermal") || 
+        item.item.includes("winter coat") || item.item.includes("scarf")) {
+      return 0; // Don't recommend winter items in hot weather
+    }
+  }
+  
+  // Filter out inappropriate items for warm weather (summer)
+  if (avgTemp > 70) {
+    if (item.item.includes("thermal") || item.item.includes("winter")) {
+      return 0;
+    }
+  }
+  
+  // Filter out cold weather items if it never gets cold
+  if (weather.temp.low > 65) {
+    if (item.item.includes("thermal") || item.item.includes("gloves") || 
+        item.item.includes("winter coat") || item.item.includes("scarf")) {
+      return 0;
+    }
+  }
+  
+  // Weather scoring for appropriate items
   const weatherCategory = getWeatherCategory(weather.condition, weather.temp);
   if (item.weather[weatherCategory]) {
     score += item.weather[weatherCategory] * 2;
@@ -207,28 +233,54 @@ function getOptimizedQuantity(
   tripContext: TripContext,
   category: string
 ): number {
-  const luggageMultipliers = {
-    "carry-on": { base: 0.7, max: 3 },
-    "standard": { base: 1.0, max: 5 },
-    "checked": { base: 1.3, max: 7 }
+  // Smart luggage constraints
+  const luggageConstraints = {
+    "carry-on": { maxItems: 3, maxTotalItems: 25 },
+    "checked": { maxItems: 5, maxTotalItems: 45 }
   };
   
-  const multiplier = luggageMultipliers[tripContext.luggageSize as keyof typeof luggageMultipliers] || luggageMultipliers.standard;
+  const constraints = luggageConstraints[tripContext.luggageSize as keyof typeof luggageConstraints] || luggageConstraints.checked;
   
-  // Base quantity rules
-  let baseQty = 1;
-  if (category === "essentials" && (item.item.includes("undergarments") || item.item.includes("socks"))) {
-    baseQty = Math.ceil(tripContext.duration * 1.2);
-  } else if (category === "tops" && item.priority === "essential") {
-    baseQty = Math.max(2, Math.ceil(tripContext.duration * 0.6));
-  } else if (score > 15) {
-    baseQty = Math.ceil(tripContext.duration * 0.4);
-  } else if (score > 10) {
-    baseQty = Math.ceil(tripContext.duration * 0.3);
+  // Essential items always get trip duration + 1
+  if (category === "essentials") {
+    if (item.item.includes("undergarments") || item.item.includes("socks")) {
+      return Math.min(tripContext.duration + 1, 7); // Max 7 for any trip
+    }
+    return 1; // Other essentials just need 1
   }
   
-  const optimizedQty = Math.ceil(baseQty * multiplier.base);
-  return Math.min(optimizedQty, multiplier.max);
+  // Footwear is limited based on luggage and trip type
+  if (category === "footwear") {
+    if (tripContext.luggageSize === "carry-on") {
+      return Math.min(2, score > 15 ? 2 : 1); // Max 2 pairs for carry-on
+    }
+    return Math.min(3, score > 15 ? 2 : 1); // Max 3 pairs for checked
+  }
+  
+  // Weather-appropriate clothing quantities
+  if (category === "tops") {
+    if (item.priority === "essential") {
+      return Math.min(tripContext.duration, constraints.maxItems);
+    }
+    return score > 15 ? Math.min(2, tripContext.duration) : 1;
+  }
+  
+  if (category === "bottoms") {
+    // Fewer pants/shorts needed since they can be worn multiple times
+    return Math.min(Math.ceil(tripContext.duration / 2) + 1, constraints.maxItems);
+  }
+  
+  if (category === "outerwear") {
+    // One piece of outerwear per type is usually sufficient
+    return score > 20 ? 2 : 1;
+  }
+  
+  if (category === "accessories") {
+    // Accessories are typically one-offs unless essential for weather
+    return score > 20 ? 2 : 1;
+  }
+  
+  return 1;
 }
 
 // Generate detailed daily recommendations

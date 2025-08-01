@@ -188,25 +188,7 @@ export default function SmartDailyClothingSuggestions({
           </div>
         )}
 
-        {/* Space-saving Alternatives */}
-        {optimization.luggageOptimization.alternatives.length > 0 && (
-          <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg">
-                <span className="text-lg">💼</span>
-              </div>
-              <h5 className="font-semibold text-blue-900">Space-Saving Options</h5>
-            </div>
-            <ul className="space-y-2">
-              {optimization.luggageOptimization.alternatives.map((alt, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-blue-800">
-                  <span className="text-blue-600 mt-0.5 flex-shrink-0">•</span>
-                  <span className="leading-relaxed">{alt}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+
       </div>
     );
   };
