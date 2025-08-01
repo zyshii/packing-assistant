@@ -1,9 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
-import { ArrowLeft, Sparkles, CheckCircle } from "lucide-react";
+import { ArrowLeft, Sparkles, CheckCircle, Activity, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TripHeader from "@/components/TripHeader";
 import OnboardingHint from "@/components/OnboardingHint";
 import DailyClothingSuggestions from "@/components/DailyClothingSuggestions";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { useNavigate, useLocation } from "react-router-dom";
 import { format, addDays, differenceInDays } from "date-fns";
 
@@ -175,6 +177,52 @@ const Index = () => {
             activities={finalTripData.activities}
           />
         </div>
+
+        {/* Planned Activities Overview */}
+        {dailyActivities && dailyActivities.length > 0 && (
+          <div className="animate-scale-in">
+            <Card className="shadow-card border-0 bg-card">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Activity className="h-5 w-5 text-primary" />
+                  Your Planned Activities
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {dailyActivities.map((day, index) => (
+                    <div key={index} className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-travel-blue" />
+                        <h4 className="font-medium text-foreground">{day.date}</h4>
+                      </div>
+                      <div className="space-y-2">
+                        {day.activities && day.activities.length > 0 ? (
+                          day.activities.map((activity, actIndex) => (
+                            <Badge 
+                              key={actIndex} 
+                              variant="secondary" 
+                              className="bg-travel-green/20 text-travel-green mr-2 mb-2 block w-fit"
+                            >
+                              {activity}
+                            </Badge>
+                          ))
+                        ) : (
+                          <p className="text-sm text-muted-foreground italic">No activities planned</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 p-3 bg-travel-purple/10 rounded-lg border border-travel-purple/20">
+                  <p className="text-sm text-travel-purple">
+                    🎯 These activities have been used to personalize your packing recommendations and daily clothing suggestions below.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Daily Clothing Suggestions */}
         <div className="animate-scale-in">
