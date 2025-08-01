@@ -290,6 +290,65 @@ function getOptimizedQuantity(
   return 1;
 }
 
+// Helper function to deduplicate similar items
+function deduplicateRecommendations(recommendations: string[]): string[] {
+  const deduplicated: string[] = [];
+  const seen = new Set<string>();
+  
+  for (const item of recommendations) {
+    // Normalize the item for comparison (remove prefixes and convert to lowercase)
+    const normalized = item.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().trim();
+    
+    // Check for similar items
+    let isDuplicate = false;
+    for (const seenItem of seen) {
+      // Check for exact matches
+      if (normalized === seenItem) {
+        isDuplicate = true;
+        break;
+      }
+      
+      // Check for similar quick-dry items
+      if (normalized.includes('quick-dry') && seenItem.includes('quick-dry')) {
+        // Keep the more specific one
+        if (normalized.length > seenItem.length) {
+          // Remove the previous less specific item
+          const index = deduplicated.findIndex(rec => 
+            rec.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().trim() === seenItem);
+          if (index !== -1) deduplicated.splice(index, 1);
+          seen.delete(seenItem);
+        } else {
+          isDuplicate = true;
+          break;
+        }
+      }
+      
+      // Check for similar clothing items
+      const clothingPairs = [
+        ['shirt', 'top'], ['pants', 'trousers'], ['sweater', 'cardigan'],
+        ['jacket', 'coat'], ['shoes', 'footwear']
+      ];
+      
+      for (const [item1, item2] of clothingPairs) {
+        if ((normalized.includes(item1) && seenItem.includes(item2)) ||
+            (normalized.includes(item2) && seenItem.includes(item1))) {
+          isDuplicate = true;
+          break;
+        }
+      }
+      
+      if (isDuplicate) break;
+    }
+    
+    if (!isDuplicate) {
+      deduplicated.push(item);
+      seen.add(normalized);
+    }
+  }
+  
+  return deduplicated;
+}
+
 // Generate detailed daily recommendations
 export function generateDetailedDailyRecommendations(
   dailyData: Array<{
@@ -311,9 +370,9 @@ export function generateDetailedDailyRecommendations(
     };
     
     const timeSpecificRecommendations = {
-      base: generateTimeSpecificRecommendations("base", weather, day.activities),
-      daytime: generateTimeSpecificRecommendations("daytime", weather, day.activities),
-      evening: generateTimeSpecificRecommendations("evening", weather, day.activities)
+      base: deduplicateRecommendations(generateTimeSpecificRecommendations("base", weather, day.activities)),
+      daytime: deduplicateRecommendations(generateTimeSpecificRecommendations("daytime", weather, day.activities)),
+      evening: deduplicateRecommendations(generateTimeSpecificRecommendations("evening", weather, day.activities))
     };
     
     const activitySpecific = generateActivitySpecificRecommendations(day.activities, weather);

@@ -413,7 +413,14 @@ export default function SmartDailyClothingSuggestions({
                                         {item.startsWith('- Remove') || item.startsWith('-') ? '−' : 
                                          item.startsWith('+ Add') || item.startsWith('+') ? '+' : '•'}
                                       </span>
-                                      <span>{item.replace(/^[+-]\s*(Remove|Add)\s*/, '')}</span>
+                                      <span>
+                                        {item.startsWith('- Remove') || item.startsWith('-') ? 
+                                          `Remove ${item.replace(/^[+-]\s*(Remove|Add)\s*/, '')}` :
+                                         item.startsWith('+ Add') || item.startsWith('+') ?
+                                          `Add ${item.replace(/^[+-]\s*(Remove|Add)\s*/, '')}` :
+                                          item
+                                        }
+                                      </span>
                                     </li>
                                   ))
                                 ) : (
@@ -439,7 +446,14 @@ export default function SmartDailyClothingSuggestions({
                                         {item.startsWith('- Remove') || item.startsWith('-') ? '−' : 
                                          item.startsWith('+ Add') || item.startsWith('+') ? '+' : '•'}
                                       </span>
-                                      <span>{item.replace(/^[+-]\s*(Remove|Add)\s*/, '')}</span>
+                                      <span>
+                                        {item.startsWith('- Remove') || item.startsWith('-') ? 
+                                          `Remove ${item.replace(/^[+-]\s*(Remove|Add)\s*/, '')}` :
+                                         item.startsWith('+ Add') || item.startsWith('+') ?
+                                          `Add ${item.replace(/^[+-]\s*(Remove|Add)\s*/, '')}` :
+                                          item
+                                        }
+                                      </span>
                                     </li>
                                   ))
                                 ) : (
