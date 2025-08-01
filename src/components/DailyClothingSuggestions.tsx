@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Sun, Sunset, Moon, Shirt, Glasses, Umbrella, Wind } from "lucide-react";
+import { Sun, Sunset, Moon, Shirt, Glasses, Umbrella, Wind, Cloud, CloudRain, CloudSnow, Thermometer, Snowflake } from "lucide-react";
 
 interface ClothingSuggestion {
   item: string;
@@ -86,25 +86,96 @@ const getPriorityColor = (priority: string) => {
   }
 };
 
+const getWeatherIcon = (condition: string) => {
+  switch (condition) {
+    case 'sunny':
+      return <Sun className="h-5 w-5 text-yellow-500" />;
+    case 'cloudy':
+      return <Cloud className="h-5 w-5 text-gray-500" />;
+    case 'rainy':
+      return <CloudRain className="h-5 w-5 text-blue-500" />;
+    case 'snowy':
+      return <CloudSnow className="h-5 w-5 text-blue-200" />;
+    case 'mixed':
+      return <Wind className="h-5 w-5 text-gray-600" />;
+    default:
+      return <Cloud className="h-5 w-5 text-gray-500" />;
+  }
+};
+
+const getGeneralClothingRecommendations = (condition: string, temp: { high: number; low: number }) => {
+  const recommendations = [];
+  
+  // Temperature-based recommendations
+  if (temp.high >= 75) {
+    recommendations.push({ item: "Light clothing", icon: <Shirt className="h-4 w-4" />, color: "bg-yellow-100 text-yellow-800" });
+    recommendations.push({ item: "Sunscreen", icon: <Sun className="h-4 w-4" />, color: "bg-orange-100 text-orange-800" });
+  } else if (temp.high >= 60) {
+    recommendations.push({ item: "Layers", icon: <Shirt className="h-4 w-4" />, color: "bg-blue-100 text-blue-800" });
+  } else {
+    recommendations.push({ item: "Warm clothing", icon: <Shirt className="h-4 w-4" />, color: "bg-purple-100 text-purple-800" });
+  }
+  
+  // Condition-based recommendations
+  if (condition === 'rainy' || (condition === 'mixed')) {
+    recommendations.push({ item: "Rain jacket", icon: <Umbrella className="h-4 w-4" />, color: "bg-blue-100 text-blue-800" });
+    recommendations.push({ item: "Waterproof shoes", icon: <Umbrella className="h-4 w-4" />, color: "bg-blue-100 text-blue-800" });
+  }
+  
+  if (condition === 'snowy') {
+    recommendations.push({ item: "Winter coat", icon: <Snowflake className="h-4 w-4" />, color: "bg-blue-100 text-blue-800" });
+    recommendations.push({ item: "Warm boots", icon: <Snowflake className="h-4 w-4" />, color: "bg-blue-100 text-blue-800" });
+  }
+  
+  return recommendations;
+};
+
 export default function DailyClothingSuggestions({ dailyData }: DailyClothingSuggestionsProps) {
   return (
     <Card className="p-6 shadow-card border-0 bg-card">
       <div className="space-y-6">
         <div className="flex items-center gap-2 mb-4">
-          <Shirt className="h-5 w-5 text-primary" />
-          <h3 className="text-lg font-semibold text-foreground">Daily Clothing Suggestions</h3>
+          <Thermometer className="h-5 w-5 text-primary" />
+          <h3 className="text-lg font-semibold text-foreground">Daily Weather & Clothing Guide</h3>
         </div>
         
         {dailyData.map((day, dayIndex) => (
           <div key={dayIndex} className="space-y-4">
-            <div className="flex items-center gap-3 pb-3 border-b border-border">
-              <h4 className="text-lg font-medium text-foreground">{day.date}</h4>
-              <Badge variant="secondary" className="text-xs">
-                {day.temp.high}°F / {day.temp.low}°F
-              </Badge>
-              <Badge variant="outline" className="text-xs capitalize">
-                {day.condition}
-              </Badge>
+            <div className="p-4 border border-border rounded-lg bg-muted/20 hover:bg-muted/40 transition-colors">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  {getWeatherIcon(day.condition)}
+                  <div>
+                    <p className="font-medium text-foreground">{day.date}</p>
+                    <p className="text-sm text-muted-foreground capitalize">{day.condition}</p>
+                  </div>
+                </div>
+                
+                <div className="text-right">
+                  <p className="text-lg font-semibold text-foreground">
+                    {day.temp.high}°F
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Low: {day.temp.low}°F
+                  </p>
+                </div>
+              </div>
+              
+              <div className="space-y-2 mb-4">
+                <p className="text-sm font-medium text-foreground">General recommendations:</p>
+                <div className="flex flex-wrap gap-2">
+                  {getGeneralClothingRecommendations(day.condition, day.temp).map((rec, recIndex) => (
+                    <Badge 
+                      key={recIndex} 
+                      variant="secondary" 
+                      className={`${rec.color} text-xs flex items-center gap-1`}
+                    >
+                      {rec.icon}
+                      {rec.item}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

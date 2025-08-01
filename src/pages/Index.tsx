@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import TripHeader from "@/components/TripHeader";
 import WeatherInfo from "@/components/WeatherInfo";
 import OnboardingHint from "@/components/OnboardingHint";
-import DailyWeatherForecast from "@/components/DailyWeatherForecast";
+
 import DailyClothingSuggestions from "@/components/DailyClothingSuggestions";
 import { useNavigate } from "react-router-dom";
 
@@ -90,12 +90,6 @@ const Index = () => {
           />
         </div>
 
-        <div className="animate-fade-in">
-          <DailyWeatherForecast 
-            destination={tripData.destination}
-            forecasts={dailyForecasts}
-          />
-        </div>
 
         {/* Daily Clothing Suggestions */}
         <div className="animate-scale-in">
