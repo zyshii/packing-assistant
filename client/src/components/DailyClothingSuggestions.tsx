@@ -7,6 +7,8 @@ interface DailyClothingData {
   date: string;
   condition: 'sunny' | 'cloudy' | 'rainy' | 'snowy' | 'mixed';
   temp: { high: number; low: number };
+  uvIndex?: number;
+  precipitation?: number;
   timeOfDay: any[];
   activities?: string[];
 }
@@ -19,6 +21,7 @@ interface DailyClothingSuggestionsProps {
     tripTypes?: string[];
     duration?: number;
   };
+  isWeatherDataReal?: boolean;
 }
 
 const getTimeTemperature = (period: string, temp: { high: number; low: number }) => {
@@ -327,7 +330,7 @@ const getConsolidatedPackingList = (
   return packingList;
 };
 
-export default function DailyClothingSuggestions({ dailyData, tripDetails }: DailyClothingSuggestionsProps) {
+export default function DailyClothingSuggestions({ dailyData, tripDetails, isWeatherDataReal }: DailyClothingSuggestionsProps) {
   const packingList = getConsolidatedPackingList(dailyData, tripDetails);
   
   return (
@@ -419,9 +422,23 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
       {/* Daily Clothing Suggestions */}
       <Card className="p-6 shadow-card border-0 bg-card">
         <div className="space-y-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Shirt className="h-5 w-5 text-primary" />
-            <h3 className="text-lg font-semibold text-foreground">Daily Clothing Suggestions</h3>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Shirt className="h-5 w-5 text-primary" />
+              <h3 className="text-lg font-semibold text-foreground">Daily Clothing Suggestions</h3>
+            </div>
+            {isWeatherDataReal !== undefined && (
+              <Badge 
+                variant={isWeatherDataReal ? "default" : "secondary"} 
+                className={`text-xs ${
+                  isWeatherDataReal 
+                    ? "bg-success text-success-foreground" 
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {isWeatherDataReal ? "🌡️ Real-time weather" : "📊 Estimated weather"}
+              </Badge>
+            )}
           </div>
         
         <Accordion type="multiple" className="w-full">
@@ -495,6 +512,16 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                            <p className="text-lg font-bold text-foreground">
                              {getTimeTemperature('morning', day.temp).fahrenheit}
                            </p>
+                           {day.uvIndex !== undefined && (
+                             <p className="text-xs text-muted-foreground">
+                               UV Index: {day.uvIndex.toFixed(1)}
+                             </p>
+                           )}
+                           {day.precipitation !== undefined && day.precipitation > 0 && (
+                             <p className="text-xs text-muted-foreground">
+                               Rain: {day.precipitation.toFixed(1)}mm
+                             </p>
+                           )}
                          </div>
                        </div>
                        
@@ -541,6 +568,16 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                            <p className="text-lg font-bold text-foreground">
                              {getTimeTemperature('daytime', day.temp).fahrenheit}
                            </p>
+                           {day.uvIndex !== undefined && (
+                             <p className="text-xs text-muted-foreground">
+                               UV Index: {day.uvIndex.toFixed(1)}
+                             </p>
+                           )}
+                           {day.precipitation !== undefined && day.precipitation > 0 && (
+                             <p className="text-xs text-muted-foreground">
+                               Rain: {day.precipitation.toFixed(1)}mm
+                             </p>
+                           )}
                          </div>
                        </div>
                        
@@ -587,6 +624,16 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                            <p className="text-lg font-bold text-foreground">
                              {getTimeTemperature('evening', day.temp).fahrenheit}
                            </p>
+                           {day.uvIndex !== undefined && (
+                             <p className="text-xs text-muted-foreground">
+                               UV Index: {day.uvIndex.toFixed(1)}
+                             </p>
+                           )}
+                           {day.precipitation !== undefined && day.precipitation > 0 && (
+                             <p className="text-xs text-muted-foreground">
+                               Rain: {day.precipitation.toFixed(1)}mm
+                             </p>
+                           )}
                          </div>
                        </div>
                        

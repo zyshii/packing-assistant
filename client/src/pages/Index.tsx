@@ -1,10 +1,14 @@
 import { useState, useEffect, useMemo } from "react";
-import { ArrowLeft, Sparkles, CheckCircle } from "lucide-react";
+import { ArrowLeft, Sparkles, CheckCircle, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import TripHeader from "@/components/TripHeader";
 import DailyClothingSuggestions from "@/components/DailyClothingSuggestions";
 import { useLocation } from "wouter";
 import { format, addDays, differenceInDays } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
+import { fetchWeatherForecast, formatDateForApi, WeatherApiError } from "@/lib/weatherApi";
+import { type WeatherForecast } from "@shared/schema";
 
 const Index = () => {
   const [, setLocation] = useLocation();
@@ -43,85 +47,64 @@ const Index = () => {
     return defaultTripData;
   }, [tripData]);
 
-  // Helper function to get seasonal temperature based on date and destination
-  const getSeasonalTemperature = (date: Date, destination?: string) => {
-    const month = date.getMonth(); // 0-11
-    const isNorthernHemisphere = !destination?.toLowerCase().includes('australia') && 
-                                  !destination?.toLowerCase().includes('south africa') &&
-                                  !destination?.toLowerCase().includes('argentina') &&
-                                  !destination?.toLowerCase().includes('chile');
-    
-    // Adjust for hemisphere
-    const adjustedMonth = isNorthernHemisphere ? month : (month + 6) % 12;
-    
-    // Temperature ranges by season (Fahrenheit)
-    if (adjustedMonth >= 11 || adjustedMonth <= 1) { // Winter
-      return { high: 45, low: 32 };
-    } else if (adjustedMonth >= 2 && adjustedMonth <= 4) { // Spring
-      return { high: 65, low: 50 };
-    } else if (adjustedMonth >= 5 && adjustedMonth <= 7) { // Summer
-      return { high: 80, low: 65 };
-    } else { // Fall
-      return { high: 70, low: 55 };
+  // Weather data query
+  const {
+    data: weatherData,
+    isLoading: isLoadingWeather,
+    error: weatherError,
+    refetch: refetchWeather
+  } = useQuery({
+    queryKey: ['/api/weather', finalTripData.destination, tripData?.startDate, tripData?.endDate],
+    queryFn: () => {
+      if (!tripData?.startDate || !tripData?.endDate) {
+        return null;
+      }
+      
+      const startDate = formatDateForApi(tripData.startDate);
+      const endDate = formatDateForApi(tripData.endDate);
+      
+      return fetchWeatherForecast(finalTripData.destination, startDate, endDate);
+    },
+    enabled: !!tripData?.startDate && !!tripData?.endDate && !!finalTripData.destination,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: (failureCount, error) => {
+      // Don't retry on client errors (400-499)
+      if (error instanceof WeatherApiError && error.statusCode && error.statusCode >= 400 && error.statusCode < 500) {
+        return false;
+      }
+      return failureCount < 2;
     }
-  };
+  });
 
-  // Helper function to generate varied weather conditions
-  const getWeatherCondition = (dayIndex: number, destination?: string) => {
-    const conditions = ['sunny', 'cloudy', 'mixed', 'rainy'] as const;
-    
-    // Create some pattern but with variation
-    const baseIndex = dayIndex % conditions.length;
-    // Use deterministic "randomness" based on day index
-    const pseudoRandom = Math.abs(Math.sin(dayIndex * 2.5)) % 1;
-    
-    // Add some randomness but favor certain patterns
-    if (pseudoRandom < 0.4) return conditions[baseIndex];
-    if (pseudoRandom < 0.7) return 'sunny';
-    if (pseudoRandom < 0.9) return 'mixed';
-    return 'cloudy';
-  };
-
-  // Generate daily clothing data based on actual travel dates
+  // Transform weather data for the components
   const generateDailyClothingData = useMemo(() => {
+    if (weatherData) {
+      return weatherData.daily.map(day => ({
+        date: format(new Date(day.date), 'MMM d'),
+        condition: day.condition as 'sunny' | 'cloudy' | 'mixed' | 'rainy' | 'snowy',
+        temp: {
+          high: day.temperatureHigh,
+          low: day.temperatureLow
+        },
+        uvIndex: day.uvIndex,
+        precipitation: day.precipitationSum,
+        timeOfDay: [],
+        activities: []
+      }));
+    }
+
+    // Fallback data when no real trip data exists
     if (!tripData?.startDate || !tripData?.endDate) {
-      // Fallback data for demo purposes
       return [
-        { date: "May 30", condition: 'sunny' as const, temp: { high: 74, low: 60 }, timeOfDay: [], activities: [] },
-        { date: "May 31", condition: 'mixed' as const, temp: { high: 70, low: 58 }, timeOfDay: [], activities: [] },
-        { date: "Jun 1", condition: 'rainy' as const, temp: { high: 68, low: 55 }, timeOfDay: [], activities: [] },
+        { date: "May 30", condition: 'sunny' as const, temp: { high: 74, low: 60 }, uvIndex: 7, precipitation: 0, timeOfDay: [], activities: [] },
+        { date: "May 31", condition: 'mixed' as const, temp: { high: 70, low: 58 }, uvIndex: 5, precipitation: 0.2, timeOfDay: [], activities: [] },
+        { date: "Jun 1", condition: 'rainy' as const, temp: { high: 68, low: 55 }, uvIndex: 3, precipitation: 5.5, timeOfDay: [], activities: [] },
       ];
     }
 
-    const startDate = new Date(tripData.startDate);
-    const endDate = new Date(tripData.endDate);
-    const numberOfDays = differenceInDays(endDate, startDate) + 1;
-    
-    // Generate realistic weather conditions and temperatures
-    const baseTemp = getSeasonalTemperature(startDate, tripData.destination);
-    
-    return Array.from({ length: numberOfDays }, (_, index) => {
-      const currentDate = addDays(startDate, index);
-      const dateString = format(currentDate, 'MMM d');
-      
-      // Use a deterministic seed for consistent weather generation
-      const seed = startDate.getTime() + index;
-      const pseudoRandom = Math.abs(Math.sin(seed)) % 1;
-      const condition = getWeatherCondition(index, tripData.destination);
-      const tempVariation = (pseudoRandom - 0.5) * 10; // ±5 degrees variation
-      
-      return {
-        date: dateString,
-        condition,
-        temp: {
-          high: Math.round(baseTemp.high + tempVariation),
-          low: Math.round(baseTemp.low + tempVariation)
-        },
-        timeOfDay: [],
-        activities: []
-      };
-    });
-  }, [tripData?.destination, tripData?.startDate?.getTime(), tripData?.endDate?.getTime()]);
+    // Show loading state while waiting for weather data
+    return [];
+  }, [weatherData, tripData?.startDate, tripData?.endDate]);
 
   // Daily clothing data state - initialize once and only update when needed
   const [dailyClothingData, setDailyClothingData] = useState(generateDailyClothingData);
@@ -134,6 +117,8 @@ const Index = () => {
           const dayActivities = dailyActivities.find(a => a.date === day.date);
           return {
             ...day,
+            uvIndex: day.uvIndex || 0,
+            precipitation: day.precipitation || 0,
             activities: dayActivities ? dayActivities.activities : []
           };
         });
@@ -181,17 +166,53 @@ const Index = () => {
           />
         </div>
 
+        {/* Weather Error Alert */}
+        {weatherError && (
+          <div className="animate-fade-in">
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription className="flex items-center justify-between">
+                <span>
+                  Unable to fetch current weather data: {
+                    weatherError instanceof WeatherApiError 
+                      ? weatherError.message 
+                      : 'Network error'
+                  }. Using fallback weather estimates.
+                </span>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => refetchWeather()}
+                  className="ml-4"
+                >
+                  Retry
+                </Button>
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
+
         {/* Daily Clothing Suggestions */}
         <div className="animate-scale-in">
-          <DailyClothingSuggestions 
-            dailyData={dailyClothingData}
-            tripDetails={{
-              destination: finalTripData.destination,
-              luggageSize: 'luggageSize' in finalTripData ? finalTripData.luggageSize : undefined,
-              tripTypes: 'tripTypes' in finalTripData ? finalTripData.tripTypes : [finalTripData.tripType],
-              duration: dailyClothingData.length
-            }}
-          />
+          {isLoadingWeather && tripData?.startDate && tripData?.endDate ? (
+            <div className="bg-white/70 dark:bg-gray-900/70 rounded-lg p-8 text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">
+                Fetching real-time weather data for {finalTripData.destination}...
+              </p>
+            </div>
+          ) : (
+            <DailyClothingSuggestions 
+              dailyData={dailyClothingData}
+              tripDetails={{
+                destination: finalTripData.destination,
+                luggageSize: 'luggageSize' in finalTripData ? finalTripData.luggageSize : undefined,
+                tripTypes: 'tripTypes' in finalTripData ? finalTripData.tripTypes : [finalTripData.tripType],
+                duration: dailyClothingData.length
+              }}
+              isWeatherDataReal={!!weatherData && !weatherError}
+            />
+          )}
         </div>
 
       </div>

@@ -1,0 +1,192 @@
+import { type WeatherForecast, type InsertWeather } from "@shared/schema";
+import { storage } from "./storage";
+
+// Weather code mapping for Open-Meteo API
+const getWeatherCondition = (weatherCode: number): string => {
+  if (weatherCode === 0) return 'sunny';
+  if (weatherCode >= 1 && weatherCode <= 3) return 'cloudy';
+  if (weatherCode >= 45 && weatherCode <= 48) return 'cloudy';
+  if (weatherCode >= 51 && weatherCode <= 67) return 'rainy';
+  if (weatherCode >= 71 && weatherCode <= 77) return 'snowy';
+  if (weatherCode >= 80 && weatherCode <= 82) return 'rainy';
+  if (weatherCode >= 95 && weatherCode <= 99) return 'rainy';
+  return 'mixed';
+};
+
+// Geocoding service to get coordinates from location name
+const getCoordinates = async (location: string): Promise<{ latitude: number; longitude: number }> => {
+  try {
+    const response = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(location)}&count=1&language=en&format=json`
+    );
+    
+    if (!response.ok) {
+      throw new Error(`Geocoding API error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    if (!data.results || data.results.length === 0) {
+      throw new Error(`Location not found: ${location}`);
+    }
+    
+    return {
+      latitude: data.results[0].latitude,
+      longitude: data.results[0].longitude
+    };
+  } catch (error) {
+    console.error('Geocoding error:', error);
+    throw new Error(`Failed to get coordinates for ${location}`);
+  }
+};
+
+// Fetch weather data from Open-Meteo API
+const fetchWeatherFromAPI = async (
+  latitude: number, 
+  longitude: number, 
+  startDate: string, 
+  endDate: string
+): Promise<any> => {
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,uv_index_max,weather_code&start_date=${startDate}&end_date=${endDate}&timezone=auto`;
+    
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error(`Weather API error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Weather API error:', error);
+    throw new Error('Failed to fetch weather data from API');
+  }
+};
+
+// Convert Celsius to Fahrenheit
+const celsiusToFahrenheit = (celsius: number): number => {
+  return (celsius * 9/5) + 32;
+};
+
+export const getWeatherForecast = async (
+  location: string,
+  startDate: string,
+  endDate: string,
+  useCache = true
+): Promise<WeatherForecast> => {
+  try {
+    // Check cache first if enabled
+    if (useCache) {
+      const cachedWeather = await storage.getCachedWeatherData(location, startDate, endDate);
+      
+      // Check if we have complete cached data for the date range
+      const requestedDates = generateDateRange(startDate, endDate);
+      const cachedDates = cachedWeather.map(w => w.date);
+      const hasAllDates = requestedDates.every(date => cachedDates.includes(date));
+      
+      if (hasAllDates && cachedWeather.length > 0) {
+        // Check if cache is still fresh (less than 6 hours old)
+        const latestCache = cachedWeather.reduce((latest, current) => {
+          return new Date(current.cached_at!) > new Date(latest.cached_at!) ? current : latest;
+        });
+        
+        const cacheAge = Date.now() - new Date(latestCache.cached_at!).getTime();
+        const sixHours = 6 * 60 * 60 * 1000;
+        
+        if (cacheAge < sixHours) {
+          return {
+            location,
+            latitude: cachedWeather[0].latitude,
+            longitude: cachedWeather[0].longitude,
+            daily: cachedWeather.map(w => ({
+              date: w.date,
+              temperatureHigh: w.temperatureHigh,
+              temperatureLow: w.temperatureLow,
+              uvIndex: w.uvIndex || 0,
+              precipitationSum: w.precipitationSum,
+              weatherCode: w.weatherCode,
+              condition: w.condition
+            }))
+          };
+        }
+      }
+    }
+
+    // Get coordinates for the location
+    const { latitude, longitude } = await getCoordinates(location);
+    
+    // Fetch fresh weather data from API
+    const weatherData = await fetchWeatherFromAPI(latitude, longitude, startDate, endDate);
+    
+    if (!weatherData.daily) {
+      throw new Error('Invalid weather data received from API');
+    }
+    
+    // Process and convert the data
+    const dailyWeather = weatherData.daily.time.map((date: string, index: number) => {
+      const tempHigh = celsiusToFahrenheit(weatherData.daily.temperature_2m_max[index]);
+      const tempLow = celsiusToFahrenheit(weatherData.daily.temperature_2m_min[index]);
+      const precipitation = weatherData.daily.precipitation_sum[index] || 0;
+      const uvIndex = weatherData.daily.uv_index_max[index] || 0;
+      const weatherCode = weatherData.daily.weather_code[index];
+      const condition = getWeatherCondition(weatherCode);
+      
+      return {
+        date,
+        temperatureHigh: Math.round(tempHigh),
+        temperatureLow: Math.round(tempLow),
+        uvIndex,
+        precipitationSum: precipitation,
+        weatherCode,
+        condition
+      };
+    });
+    
+    // Save to cache
+    const weatherToCache: InsertWeather[] = dailyWeather.map((day: any) => ({
+      location,
+      latitude,
+      longitude,
+      date: day.date,
+      temperatureHigh: day.temperatureHigh,
+      temperatureLow: day.temperatureLow,
+      uvIndex: day.uvIndex,
+      precipitationSum: day.precipitationSum,
+      weatherCode: day.weatherCode,
+      condition: day.condition
+    }));
+    
+    try {
+      await storage.saveMultipleWeatherData(weatherToCache);
+    } catch (cacheError) {
+      console.warn('Failed to cache weather data:', cacheError);
+      // Continue without caching - don't fail the whole request
+    }
+    
+    return {
+      location,
+      latitude,
+      longitude,
+      daily: dailyWeather
+    };
+    
+  } catch (error) {
+    console.error('Weather service error:', error);
+    throw new Error(`Failed to get weather forecast: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+};
+
+// Helper function to generate date range
+const generateDateRange = (startDate: string, endDate: string): string[] => {
+  const dates: string[] = [];
+  const current = new Date(startDate);
+  const end = new Date(endDate);
+  
+  while (current <= end) {
+    dates.push(current.toISOString().split('T')[0]);
+    current.setDate(current.getDate() + 1);
+  }
+  
+  return dates;
+};
