@@ -1,9 +1,14 @@
 import { useState } from "react";
-import { Shirt, Briefcase, Zap, FileText, Heart, Gamepad2 } from "lucide-react";
+import { Shirt, Briefcase, Zap, FileText, Heart, Gamepad2, Plus, ArrowLeft, Sparkles, CheckCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import TripHeader from "@/components/TripHeader";
 import PackingProgress from "@/components/PackingProgress";
 import PackingCategory from "@/components/PackingCategory";
 import WeatherInfo from "@/components/WeatherInfo";
+import StepIndicator from "@/components/StepIndicator";
+import OnboardingHint from "@/components/OnboardingHint";
+import ItemModal from "@/components/ItemModal";
+import { useNavigate } from "react-router-dom";
 
 interface PackingItem {
   id: string;
@@ -12,9 +17,24 @@ interface PackingItem {
   essential: boolean;
   packed: boolean;
   weatherDependent?: boolean;
+  notes?: string;
 }
 
+const steps = [
+  { id: 1, title: "Trip Details", description: "Where & when" },
+  { id: 2, title: "AI Suggestions", description: "Smart packing" },
+  { id: 3, title: "Customize", description: "Your perfect list" },
+  { id: 4, title: "Pack & Go", description: "Track progress" },
+];
+
 const Index = () => {
+  const navigate = useNavigate();
+  
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
+  const [editingItem, setEditingItem] = useState<PackingItem | null>(null);
+  
   // Sample trip data
   const tripData = {
     destination: "Paris, France",
@@ -94,6 +114,50 @@ const Index = () => {
     });
   };
 
+  const handleAddItem = () => {
+    setModalMode('add');
+    setEditingItem(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEditItem = (item: PackingItem) => {
+    setModalMode('edit');
+    setEditingItem(item);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveItem = (itemData: Partial<PackingItem>) => {
+    if (modalMode === 'add') {
+      // Add new item to appropriate category (default to personal for custom items)
+      const newItem: PackingItem = {
+        id: itemData.id || `item_${Date.now()}`,
+        name: itemData.name || "",
+        quantity: itemData.quantity || 1,
+        essential: itemData.essential || false,
+        packed: false,
+        weatherDependent: itemData.weatherDependent,
+        notes: itemData.notes
+      };
+      setPackingItems(prev => ({
+        ...prev,
+        personal: [...prev.personal, newItem]
+      }));
+    } else {
+      // Edit existing item
+      setPackingItems(prev => {
+        const newItems = { ...prev };
+        Object.keys(newItems).forEach(category => {
+          const categoryItems = newItems[category as keyof typeof newItems];
+          const itemIndex = categoryItems.findIndex(item => item.id === itemData.id);
+          if (itemIndex !== -1) {
+            categoryItems[itemIndex] = { ...categoryItems[itemIndex], ...itemData };
+          }
+        });
+        return newItems;
+      });
+    }
+  };
+
   const categories = [
     {
       title: "Clothing",
@@ -128,19 +192,51 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto p-4 space-y-6">
-        {/* Trip Header */}
-        <TripHeader
-          destination={tripData.destination}
-          dates={tripData.dates}
-          tripType={tripData.tripType}
-          travelers={tripData.travelers}
-          activities={tripData.activities}
+    <div className="min-h-screen bg-gradient-background">
+      <div className="max-w-5xl mx-auto p-4 space-y-6 lg:space-y-8">
+        {/* Header with Back Button */}
+        <div className="flex items-center justify-between animate-fade-in">
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/")}
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Trip Details
+          </Button>
+          
+          <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-success rounded-full text-white text-sm font-medium shadow-floating">
+            <CheckCircle className="w-4 h-4" />
+            AI List Generated
+          </div>
+        </div>
+
+        {/* Step Indicator */}
+        <div className="animate-slide-in">
+          <StepIndicator steps={steps} currentStep={3} />
+        </div>
+
+        {/* Onboarding Hint */}
+        <OnboardingHint
+          title="Your AI-powered packing list is ready!"
+          description="Review the suggested items, check off what you've packed, and add any custom items you need. The list is tailored to your destination and activities."
+          storageKey="packing-list-hint-seen"
+          className="animate-scale-in"
         />
 
+        {/* Trip Header */}
+        <div className="animate-fade-in">
+          <TripHeader
+            destination={tripData.destination}
+            dates={tripData.dates}
+            tripType={tripData.tripType}
+            travelers={tripData.travelers}
+            activities={tripData.activities}
+          />
+        </div>
+
         {/* Progress and Weather Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-slide-in">
           <div className="lg:col-span-2">
             <PackingProgress totalItems={totalItems} packedItems={packedItems} />
           </div>
@@ -153,39 +249,75 @@ const Index = () => {
         </div>
 
         {/* Packing Categories */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-foreground">Packing Categories</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {categories.map((category) => (
-              <PackingCategory
+        <div className="space-y-6 animate-scale-in">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl lg:text-2xl font-semibold text-foreground">Packing Categories</h2>
+            <Button
+              onClick={handleAddItem}
+              className="bg-gradient-primary hover:opacity-90 shadow-floating transition-all duration-300 hover:shadow-modal hover:scale-105"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Custom Item
+            </Button>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+            {categories.map((category, index) => (
+              <div 
                 key={category.title}
-                title={category.title}
-                icon={category.icon}
-                items={category.items}
-                onItemToggle={handleItemToggle}
-                colorClass={category.colorClass}
-              />
+                className="animate-fade-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <PackingCategory
+                  title={category.title}
+                  icon={category.icon}
+                  items={category.items}
+                  onItemToggle={handleItemToggle}
+                  colorClass={category.colorClass}
+                />
+              </div>
             ))}
           </div>
         </div>
 
         {/* AI Tips */}
-        <div className="p-6 bg-gradient-to-r from-travel-purple/10 to-travel-blue/10 rounded-lg border border-travel-purple/20">
-          <div className="flex items-start gap-3">
-            <div className="p-2 bg-travel-purple/20 rounded-lg">
-              <Briefcase className="h-5 w-5 text-travel-purple" />
+        <div className="p-6 lg:p-8 bg-gradient-to-r from-travel-purple/10 to-travel-blue/10 rounded-xl border border-travel-purple/20 shadow-soft animate-scale-in">
+          <div className="flex items-start gap-4">
+            <div className="p-3 bg-gradient-primary rounded-xl shadow-floating">
+              <Sparkles className="h-6 w-6 text-white" />
             </div>
-            <div>
-              <h3 className="font-semibold text-foreground mb-2">Smart Packing Tips</h3>
-              <div className="space-y-1 text-sm text-muted-foreground">
-                <p>• Pack layers for variable weather in Paris</p>
-                <p>• Comfortable walking shoes are essential for sightseeing</p>
-                <p>• Don't forget your camera for those memorable museum visits</p>
-                <p>• A light rain jacket will keep you prepared</p>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-foreground mb-3">AI-Powered Smart Tips</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-muted-foreground">
+                <div className="flex items-start gap-2">
+                  <div className="w-1.5 h-1.5 bg-travel-purple rounded-full mt-2 flex-shrink-0"></div>
+                  <p>Pack layers for variable weather in Paris</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-1.5 h-1.5 bg-travel-blue rounded-full mt-2 flex-shrink-0"></div>
+                  <p>Comfortable walking shoes are essential for sightseeing</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-1.5 h-1.5 bg-travel-green rounded-full mt-2 flex-shrink-0"></div>
+                  <p>Don't forget your camera for those memorable museum visits</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-1.5 h-1.5 bg-travel-orange rounded-full mt-2 flex-shrink-0"></div>
+                  <p>A light rain jacket will keep you prepared</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
+        {/* Item Modal */}
+        <ItemModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleSaveItem}
+          item={editingItem}
+          mode={modalMode}
+        />
       </div>
     </div>
   );
