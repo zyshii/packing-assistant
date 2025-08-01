@@ -475,20 +475,20 @@ function TripDetails() {
                             We'll customize your activity options accordingly.
                           </p>
                         )}
+                        
+                        {/* Daily Activities Section - Integrated within Trip Types */}
+                        {watchedTripTypes && watchedTripTypes.length > 0 && dates.length > 0 && (
+                          <div className="mt-6 pt-6 border-t border-border animate-fade-in">
+                            <DailyActivityInput 
+                              dates={dates}
+                              tripTypes={watchedTripTypes}
+                              onActivitiesChange={handleActivitiesChange}
+                            />
+                          </div>
+                        )}
                       </FormItem>
                     )}
                   />
-
-                  {/* Daily Activities Section */}
-                  {dates.length > 0 && (
-                    <div className="space-y-4">
-                      <DailyActivityInput 
-                        dates={dates}
-                        tripTypes={watchedTripTypes}
-                        onActivitiesChange={handleActivitiesChange}
-                      />
-                    </div>
-                  )}
 
                   {/* Submit Button */}
                   <div className="pt-4">
