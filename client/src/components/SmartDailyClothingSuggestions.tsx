@@ -146,21 +146,19 @@ export default function SmartDailyClothingSuggestions({
         {/* Optimized Packing List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map(category => (
-            <div key={category.key} className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
-              <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">{category.emoji}</span>
-                  <h4 className="font-semibold text-gray-900 text-sm">{category.title}</h4>
-                  <span className="ml-auto bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-xs font-medium">
-                    {category.items.reduce((sum: number, item: any) => sum + item.quantity, 0)} items
-                  </span>
-                </div>
+            <div key={category.key} className="bg-white rounded-lg border border-gray-200 p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-lg">{category.emoji}</span>
+                <h4 className="font-semibold text-gray-900 text-sm">{category.title}</h4>
+                <span className="ml-auto bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">
+                  {category.items.reduce((sum: number, item: any) => sum + item.quantity, 0)} items
+                </span>
               </div>
-              <div className="p-4 space-y-3">
+              <div className="space-y-2">
                 {category.items.map((item: any, index: number) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <h5 className="font-medium text-gray-900 text-sm">{item.item}</h5>
-                    <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-semibold">
+                  <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded hover:bg-gray-100 transition-colors">
+                    <span className="text-gray-900 text-sm">{item.item}</span>
+                    <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs font-medium">
                       {item.quantity}
                     </span>
                   </div>
@@ -372,38 +370,30 @@ export default function SmartDailyClothingSuggestions({
                       {/* Smart layering recommendations */}
                       {smartDay && !hasError ? (
                         <div className="space-y-4">
-                          {/* Start Your Day With Card */}
-                          <div className="bg-blue-50 rounded-lg p-5 border border-blue-200">
-                            <div className="flex items-center gap-3 mb-4">
-                              <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg">
-                                <Shirt className="h-5 w-5 text-blue-600" />
-                              </div>
-                              <div>
-                                <h6 className="font-semibold text-blue-900">Start Your Day With</h6>
-                              </div>
+                          {/* Outfit Guidance */}
+                          <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                            <div className="text-xs text-blue-600 mb-3">
+                              💡 <strong>Outfit Guidance:</strong> Start with your complete morning outfit, then add or remove layers as temperatures change throughout the day.
                             </div>
-                            <div className="space-y-3">
-                              <div className="text-xs text-blue-600 bg-blue-100 rounded-lg p-3">
-                                💡 <strong>Outfit Guidance:</strong> Start with your complete morning outfit, then add or remove layers as temperatures change throughout the day.
-                              </div>
-                              <div className="bg-white rounded-lg p-4 border border-blue-200">
-                                <div className="text-xs font-medium text-blue-800 mb-2">Morning: {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F</div>
-                                <ul className="space-y-1">
-                                  {smartDay.recommendations?.base?.length > 0 ? (
-                                    smartDay.recommendations.base.map((item: string, index: number) => (
-                                      <li key={index} className="text-sm text-blue-700 flex items-start gap-2">
-                                        <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
-                                        <span>{item}</span>
-                                      </li>
-                                    ))
-                                  ) : (
-                                    <li className="text-sm text-blue-600 italic">
-                                      Basic clothing for {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F
-                                    </li>
-                                  )}
-                                </ul>
-                              </div>
+                            <div className="flex items-center gap-2 mb-3">
+                              <Shirt className="h-4 w-4 text-blue-600" />
+                              <h6 className="font-semibold text-blue-900 text-sm">Start Your Day With</h6>
+                              <span className="text-xs text-blue-700 ml-auto">Morning: {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F</span>
                             </div>
+                            <ul className="space-y-1">
+                              {smartDay.recommendations?.base?.length > 0 ? (
+                                smartDay.recommendations.base.map((item: string, index: number) => (
+                                  <li key={index} className="text-sm text-blue-700 flex items-start gap-2">
+                                    <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
+                                    <span>{item}</span>
+                                  </li>
+                                ))
+                              ) : (
+                                <li className="text-sm text-blue-600 italic">
+                                  Basic clothing for {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F
+                                </li>
+                              )}
+                            </ul>
                           </div>
 
                           {/* Layering Options */}
@@ -411,61 +401,53 @@ export default function SmartDailyClothingSuggestions({
                             {/* Daytime Adjustments */}
                             <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
                               <div className="flex items-center gap-2 mb-3">
-                                <Sun className="h-5 w-5 text-orange-600" />
-                                <h6 className="font-semibold text-orange-900">As Temperature Rises</h6>
+                                <Sun className="h-4 w-4 text-orange-600" />
+                                <h6 className="font-semibold text-orange-900 text-sm">As Temperature Rises</h6>
+                                <span className="text-xs text-orange-700 ml-auto">Peak: {Math.round(day.temp.high)}°F</span>
                               </div>
-                              <div className="space-y-2">
-                                <div className="bg-white rounded-lg p-3 border border-orange-200">
-                                  <div className="text-xs font-medium text-orange-800 mb-1">Peak Temperature: {Math.round(day.temp.high)}°F</div>
-                                  <ul className="space-y-1">
-                                    {smartDay.recommendations?.daytime?.length > 0 ? (
-                                      smartDay.recommendations.daytime.map((item: string, index: number) => (
-                                        <li key={index} className="text-sm text-orange-700 flex items-start gap-2">
-                                          <span className="text-orange-500 mt-0.5 flex-shrink-0 font-semibold">
-                                            {item.startsWith('- Remove') || item.startsWith('-') ? '−' : 
-                                             item.startsWith('+ Add') || item.startsWith('+') ? '+' : '•'}
-                                          </span>
-                                          <span>{item.replace(/^[+-]\s*(Remove|Add)\s*/, '')}</span>
-                                        </li>
-                                      ))
-                                    ) : (
-                                      <li className="text-sm text-orange-600 italic">
-                                        Stay comfortable in your base layers
-                                      </li>
-                                    )}
-                                  </ul>
-                                </div>
-                              </div>
+                              <ul className="space-y-1">
+                                {smartDay.recommendations?.daytime?.length > 0 ? (
+                                  smartDay.recommendations.daytime.map((item: string, index: number) => (
+                                    <li key={index} className="text-sm text-orange-700 flex items-start gap-2">
+                                      <span className="text-orange-500 mt-0.5 flex-shrink-0 font-semibold">
+                                        {item.startsWith('- Remove') || item.startsWith('-') ? '−' : 
+                                         item.startsWith('+ Add') || item.startsWith('+') ? '+' : '•'}
+                                      </span>
+                                      <span>{item.replace(/^[+-]\s*(Remove|Add)\s*/, '')}</span>
+                                    </li>
+                                  ))
+                                ) : (
+                                  <li className="text-sm text-orange-600 italic">
+                                    Stay comfortable in your base layers
+                                  </li>
+                                )}
+                              </ul>
                             </div>
 
                             {/* Evening Adjustments */}
                             <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
                               <div className="flex items-center gap-2 mb-3">
-                                <Moon className="h-5 w-5 text-purple-600" />
-                                <h6 className="font-semibold text-purple-900">As Temperature Drops</h6>
+                                <Moon className="h-4 w-4 text-purple-600" />
+                                <h6 className="font-semibold text-purple-900 text-sm">As Temperature Drops</h6>
+                                <span className="text-xs text-purple-700 ml-auto">Evening: {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.7)}°F</span>
                               </div>
-                              <div className="space-y-2">
-                                <div className="bg-white rounded-lg p-3 border border-purple-200">
-                                  <div className="text-xs font-medium text-purple-800 mb-1">Evening Low: {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.7)}°F</div>
-                                  <ul className="space-y-1">
-                                    {smartDay.recommendations?.evening?.length > 0 ? (
-                                      smartDay.recommendations.evening.map((item: string, index: number) => (
-                                        <li key={index} className="text-sm text-purple-700 flex items-start gap-2">
-                                          <span className="text-purple-500 mt-0.5 flex-shrink-0 font-semibold">
-                                            {item.startsWith('- Remove') || item.startsWith('-') ? '−' : 
-                                             item.startsWith('+ Add') || item.startsWith('+') ? '+' : '•'}
-                                          </span>
-                                          <span>{item.replace(/^[+-]\s*(Remove|Add)\s*/, '')}</span>
-                                        </li>
-                                      ))
-                                    ) : (
-                                      <li className="text-sm text-purple-600 italic">
-                                        Your base layers should be sufficient
-                                      </li>
-                                    )}
-                                  </ul>
-                                </div>
-                              </div>
+                              <ul className="space-y-1">
+                                {smartDay.recommendations?.evening?.length > 0 ? (
+                                  smartDay.recommendations.evening.map((item: string, index: number) => (
+                                    <li key={index} className="text-sm text-purple-700 flex items-start gap-2">
+                                      <span className="text-purple-500 mt-0.5 flex-shrink-0 font-semibold">
+                                        {item.startsWith('- Remove') || item.startsWith('-') ? '−' : 
+                                         item.startsWith('+ Add') || item.startsWith('+') ? '+' : '•'}
+                                      </span>
+                                      <span>{item.replace(/^[+-]\s*(Remove|Add)\s*/, '')}</span>
+                                    </li>
+                                  ))
+                                ) : (
+                                  <li className="text-sm text-purple-600 italic">
+                                    Your base layers should be sufficient
+                                  </li>
+                                )}
+                              </ul>
                             </div>
                           </div>
                         </div>
