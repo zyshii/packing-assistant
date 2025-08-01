@@ -13,11 +13,83 @@ const getWeatherCondition = (weatherCode: number): string => {
   return 'mixed';
 };
 
+// Location normalization - remove country suffixes and clean up format
+const normalizeLocationName = (location: string): string => {
+  return location
+    .replace(/, USA$/, '')
+    .replace(/, United States$/, '')
+    .replace(/, UK$/, '')
+    .replace(/, England$/, '')
+    .replace(/, France$/, '')
+    .replace(/, Germany$/, '')
+    .replace(/, Japan$/, '')
+    .replace(/, Italy$/, '')
+    .replace(/, Spain$/, '')
+    .replace(/, Canada$/, '')
+    .replace(/, Australia$/, '')
+    .replace(/, Netherlands$/, '')
+    .replace(/, Switzerland$/, '')
+    .replace(/, Austria$/, '')
+    .replace(/, Belgium$/, '')
+    .replace(/, Norway$/, '')
+    .replace(/, Sweden$/, '')
+    .replace(/, Denmark$/, '')
+    .replace(/, Finland$/, '')
+    .replace(/, Poland$/, '')
+    .replace(/, Czech Republic$/, '')
+    .replace(/, Hungary$/, '')
+    .replace(/, Portugal$/, '')
+    .replace(/, Greece$/, '')
+    .replace(/, Turkey$/, '')
+    .replace(/, UAE$/, '')
+    .replace(/, Thailand$/, '')
+    .replace(/, Indonesia$/, '')
+    .replace(/, South Korea$/, '')
+    .replace(/, Mexico$/, '')
+    .replace(/, Brazil$/, '')
+    .replace(/, Argentina$/, '')
+    .replace(/, South Africa$/, '')
+    .replace(/, Morocco$/, '')
+    .replace(/, Egypt$/, '')
+    .replace(/, India$/, '')
+    .replace(/, China$/, '')
+    .replace(/, Iceland$/, '')
+    .replace(/, Croatia$/, '')
+    .trim();
+};
+
+// Special location mappings for common destinations that need specific search terms
+const locationMappings: Record<string, string> = {
+  'New York': 'New York City',
+  'San Francisco': 'San Francisco',
+  'Los Angeles': 'Los Angeles',
+  'Washington DC': 'Washington',
+  'Key West': 'Key West Florida',
+  'Napa Valley': 'Napa California',
+  'Grand Canyon': 'Grand Canyon Village Arizona',
+  'Yellowstone': 'Yellowstone National Park Wyoming',
+  'Maldives': 'Male Maldives',
+  'Fiji': 'Suva Fiji',
+  'Bali': 'Denpasar Bali',
+  'Phuket': 'Phuket Thailand',
+  'Santorini': 'Thira Greece',
+  'Dubrovnik': 'Dubrovnik Croatia',
+  'Reykjavik': 'Reykjavik Iceland'
+};
+
 // Geocoding service to get coordinates from location name
 const getCoordinates = async (location: string): Promise<{ latitude: number; longitude: number }> => {
   try {
+    // Normalize the location name
+    const normalizedLocation = normalizeLocationName(location);
+    
+    // Check if we have a special mapping for this location
+    const searchTerm = locationMappings[normalizedLocation] || normalizedLocation;
+    
+    console.log(`Geocoding location: "${location}" -> normalized: "${normalizedLocation}" -> search: "${searchTerm}"`);
+    
     const response = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(location)}&count=1&language=en&format=json`
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(searchTerm)}&count=1&language=en&format=json`
     );
     
     if (!response.ok) {
@@ -27,6 +99,26 @@ const getCoordinates = async (location: string): Promise<{ latitude: number; lon
     const data = await response.json();
     
     if (!data.results || data.results.length === 0) {
+      // If first attempt fails, try with just the city name (remove state/province)
+      const cityOnly = searchTerm.split(',')[0].trim();
+      if (cityOnly !== searchTerm) {
+        console.log(`Retrying with city only: "${cityOnly}"`);
+        
+        const retryResponse = await fetch(
+          `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityOnly)}&count=1&language=en&format=json`
+        );
+        
+        if (retryResponse.ok) {
+          const retryData = await retryResponse.json();
+          if (retryData.results && retryData.results.length > 0) {
+            return {
+              latitude: retryData.results[0].latitude,
+              longitude: retryData.results[0].longitude
+            };
+          }
+        }
+      }
+      
       throw new Error(`Location not found: ${location}`);
     }
     
