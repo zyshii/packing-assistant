@@ -389,8 +389,7 @@ export default function SmartDailyClothingSuggestions({
                             </div>
                             <div className="space-y-3">
                               <div className="bg-white rounded-lg p-4 border border-blue-200">
-                                <div className="flex items-center justify-between mb-2">
-                                  <div className="font-medium text-blue-800 text-sm">Complete Outfit</div>
+                                <div className="flex items-center justify-end mb-2">
                                   <div className="text-xs font-medium text-blue-800">Morning: {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F</div>
                                 </div>
                                 <ul className="space-y-1">

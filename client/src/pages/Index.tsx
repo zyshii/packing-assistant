@@ -13,14 +13,18 @@ import { type WeatherForecast } from "@shared/schema";
 const Index = () => {
   const [, setLocation] = useLocation();
   
-  // Get data from localStorage or use sample data
-  const rawTripData = JSON.parse(localStorage.getItem('tripData') || 'null');
-  const tripData = rawTripData ? {
-    ...rawTripData,
-    startDate: rawTripData.startDate ? new Date(rawTripData.startDate) : null,
-    endDate: rawTripData.endDate ? new Date(rawTripData.endDate) : null
-  } : null;
-  const dailyActivities = JSON.parse(localStorage.getItem('dailyActivities') || 'null');
+  // Get data from localStorage or use sample data (memoized to prevent unnecessary re-renders)
+  const [tripData, dailyActivities] = useMemo(() => {
+    const rawTripData = JSON.parse(localStorage.getItem('tripData') || 'null');
+    const parsedTripData = rawTripData ? {
+      ...rawTripData,
+      startDate: rawTripData.startDate ? new Date(rawTripData.startDate) : null,
+      endDate: rawTripData.endDate ? new Date(rawTripData.endDate) : null
+    } : null;
+    const parsedDailyActivities = JSON.parse(localStorage.getItem('dailyActivities') || 'null');
+    
+    return [parsedTripData, parsedDailyActivities];
+  }, []); // Empty dependency array since localStorage is read once on mount
   
   // Sample trip data (fallback)
   const defaultTripData = {
@@ -78,8 +82,6 @@ const Index = () => {
 
   // Single comprehensive data transformation to avoid multiple renders
   const dailyClothingData = useMemo(() => {
-    console.log('Generating daily clothing data...', { hasWeatherData: !!weatherData, tripDataExists: !!tripData });
-    
     let baseData = [];
     
     // Use weather data if available
@@ -128,9 +130,8 @@ const Index = () => {
       });
     }
     
-    console.log('Final daily clothing data:', baseData.length, 'days');
     return baseData;
-  }, [weatherData, tripData?.startDate, tripData?.endDate, dailyActivities]);
+  }, [weatherData?.daily, tripData?.startDate, tripData?.endDate, dailyActivities]);
 
   // Extract all unique activities from daily activities for the header
   const allUserActivities = useMemo(() => {
