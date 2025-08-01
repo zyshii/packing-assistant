@@ -337,29 +337,15 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-4">
               <Shirt className="h-5 w-5 text-primary" />
-              <div className="space-y-3">
-                {/* Trip Type Labels at Top */}
-                {tripDetails?.tripTypes && tripDetails.tripTypes.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {tripDetails.tripTypes.map((type, index) => (
-                      <span key={index} className="px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium border border-primary/20 capitalize">
-                        {type}
-                      </span>
-                    ))}
-                  </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-lg font-semibold text-foreground">
+                  Your Packing List
+                </h3>
+                {tripDetails?.luggageSize && (
+                  <span className="text-sm font-normal text-muted-foreground">
+                    (Optimized for {tripDetails.luggageSize.replace('-', ' ')})
+                  </span>
                 )}
-                
-                {/* Title and Luggage Info */}
-                <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="text-lg font-semibold text-foreground">
-                    Your Packing List
-                  </h3>
-                  {tripDetails?.luggageSize && (
-                    <span className="text-sm font-normal text-muted-foreground">
-                      (Optimized for {tripDetails.luggageSize.replace('-', ' ')})
-                    </span>
-                  )}
-                </div>
               </div>
             </div>
           

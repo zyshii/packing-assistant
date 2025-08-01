@@ -168,11 +168,7 @@ const Index = () => {
           <TripHeader
             destination={finalTripData.destination}
             dates={finalTripData.dates}
-            tripType={
-              'tripTypes' in finalTripData && Array.isArray(finalTripData.tripTypes) 
-                ? finalTripData.tripTypes[0] 
-                : finalTripData.tripType
-            }
+            tripTypes={'tripTypes' in finalTripData ? finalTripData.tripTypes : [finalTripData.tripType]}
             activities={allUserActivities}
           />
         </div>
