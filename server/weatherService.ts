@@ -142,9 +142,13 @@ const fetchWeatherFromAPI = async (
   try {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,uv_index_max,weather_code&start_date=${startDate}&end_date=${endDate}&timezone=auto`;
     
+    console.log(`Weather API call: ${url}`);
+    
     const response = await fetch(url);
     
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Weather API error: ${response.status} - ${errorText}`);
       throw new Error(`Weather API error: ${response.status}`);
     }
     
