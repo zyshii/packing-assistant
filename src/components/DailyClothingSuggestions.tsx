@@ -336,7 +336,7 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
             <div className="flex items-center gap-2 mb-4">
               <Shirt className="h-5 w-5 text-primary" />
               <h3 className="text-lg font-semibold text-foreground">
-                Personalized Packing List
+                Your Packing List
                 {tripDetails?.luggageSize && (
                   <span className="text-sm font-normal text-muted-foreground ml-2">
                     (Optimized for {tripDetails.luggageSize.replace('-', ' ')})
