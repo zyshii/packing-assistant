@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "wouter";
 import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -93,7 +93,7 @@ const popularDestinations = [
 ];
 
 function TripDetails() {
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
   const [destinationSelected, setDestinationSelected] = useState(false);
@@ -144,10 +144,13 @@ function TripDetails() {
     // Simulate AI processing
     await new Promise(resolve => setTimeout(resolve, 2000));
     
-    // Pass the data including daily activities to the packing list page
+    // Save data to localStorage for access in the packing list page
+    localStorage.setItem('tripData', JSON.stringify(values));
+    localStorage.setItem('dailyActivities', JSON.stringify(dailyActivities));
+    
     console.log({ ...values, dailyActivities });
     setIsSubmitting(false);
-    navigate("/packing-list", { state: { tripData: values, dailyActivities } });
+    setLocation("/packing-list");
   }
 
   const filteredDestinations = useMemo(() => {

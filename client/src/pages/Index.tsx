@@ -3,15 +3,15 @@ import { ArrowLeft, Sparkles, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TripHeader from "@/components/TripHeader";
 import DailyClothingSuggestions from "@/components/DailyClothingSuggestions";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "wouter";
 import { format, addDays, differenceInDays } from "date-fns";
 
 const Index = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [, setLocation] = useLocation();
   
-  // Get data from navigation state or use sample data
-  const { tripData, dailyActivities } = location.state || {};
+  // Get data from localStorage or use sample data
+  const tripData = JSON.parse(localStorage.getItem('tripData') || 'null');
+  const dailyActivities = JSON.parse(localStorage.getItem('dailyActivities') || 'null');
   
   // Sample trip data (fallback)
   const defaultTripData = {
@@ -145,7 +145,7 @@ const Index = () => {
     }
     
     const allActivities = dailyActivities.flatMap(day => day.activities || []);
-    return [...new Set(allActivities)]; // remove duplicates
+    return Array.from(new Set(allActivities)); // remove duplicates
   }, [dailyActivities, finalTripData.activities]);
 
   return (
@@ -155,7 +155,7 @@ const Index = () => {
         <div className="flex items-center justify-between animate-fade-in">
           <Button
             variant="ghost"
-            onClick={() => navigate("/")}
+            onClick={() => setLocation("/")}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
