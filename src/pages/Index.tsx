@@ -166,9 +166,9 @@ const Index = () => {
 
         {/* Onboarding Hint */}
         <OnboardingHint
-          title="Your AI-powered clothing suggestions are ready!"
-          description="Review the time-specific clothing recommendations for each day of your trip, tailored to weather conditions and activities."
-          storageKey="clothing-suggestions-hint-seen"
+          title="Your personalized packing list is ready!"
+          description="Use the 'Your Packing List' section to pack efficiently, then review daily clothing suggestions for each time period. Check off items as you pack them."
+          storageKey="packing-list-hint-seen"
           className="animate-scale-in"
         />
 
