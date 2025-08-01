@@ -79,13 +79,12 @@ const Index = () => {
   // Transform weather data for the components
   const generateDailyClothingData = useMemo(() => {
     if (weatherData) {
-      console.log('Weather data received:', weatherData);
-      console.log('Trip dates:', tripData?.startDate, tripData?.endDate);
-      
       return weatherData.daily.map(day => {
-        console.log('Processing weather day:', day.date, 'formatted as:', format(new Date(day.date), 'MMM d'));
+        // Parse date as local timezone to avoid UTC offset issues
+        const [year, month, dayOfMonth] = day.date.split('-').map(Number);
+        const localDate = new Date(year, month - 1, dayOfMonth);
         return {
-          date: format(new Date(day.date), 'MMM d'),
+          date: format(localDate, 'MMM d'),
           condition: day.condition as 'sunny' | 'cloudy' | 'mixed' | 'rainy' | 'snowy',
           temp: {
             high: day.temperatureHigh,
@@ -115,9 +114,14 @@ const Index = () => {
   // Daily clothing data state - initialize once and only update when needed
   const [dailyClothingData, setDailyClothingData] = useState(generateDailyClothingData);
 
-  // Update clothing data with activities from navigation state only once
+  // Update the data when trip data changes
   useEffect(() => {
-    if (dailyActivities && Array.isArray(dailyActivities)) {
+    setDailyClothingData(generateDailyClothingData);
+  }, [weatherData, tripData?.startDate, tripData?.endDate]);
+
+  // Update clothing data with activities from navigation state
+  useEffect(() => {
+    if (dailyActivities && Array.isArray(dailyActivities) && dailyClothingData.length > 0) {
       setDailyClothingData(prevData => {
         return prevData.map(day => {
           const dayActivities = dailyActivities.find(a => a.date === day.date);
@@ -130,12 +134,7 @@ const Index = () => {
         });
       });
     }
-  }, []);
-
-  // Update the data when trip data changes
-  useEffect(() => {
-    setDailyClothingData(generateDailyClothingData);
-  }, [generateDailyClothingData]);
+  }, [dailyActivities]);
 
   // Extract all unique activities from daily activities for the header
   const allUserActivities = useMemo(() => {
