@@ -388,10 +388,11 @@ export default function SmartDailyClothingSuggestions({
                               </div>
                             </div>
                             <div className="space-y-3">
+                              <div className="text-xs text-blue-600 bg-blue-100 rounded-lg p-3">
+                                💡 <strong>Outfit Guidance:</strong> Start with your complete morning outfit, then add or remove layers as temperatures change throughout the day.
+                              </div>
                               <div className="bg-white rounded-lg p-4 border border-blue-200">
-                                <div className="flex items-center justify-end mb-2">
-                                  <div className="text-xs font-medium text-blue-800">Morning: {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F</div>
-                                </div>
+                                <div className="text-xs font-medium text-blue-800 mb-2">Morning: {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F</div>
                                 <ul className="space-y-1">
                                   {smartDay.recommendations?.base?.length > 0 ? (
                                     smartDay.recommendations.base.map((item: string, index: number) => (
@@ -406,9 +407,6 @@ export default function SmartDailyClothingSuggestions({
                                     </li>
                                   )}
                                 </ul>
-                              </div>
-                              <div className="text-xs text-blue-600 bg-blue-100 rounded-lg p-2">
-                                💡 <strong>Tip:</strong> This is your complete morning outfit. Add or remove layers as needed throughout the day.
                               </div>
                             </div>
                           </div>
