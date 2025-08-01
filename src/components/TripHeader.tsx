@@ -13,7 +13,7 @@ export default function TripHeader({ destination, dates, tripTypes, activities }
     <Card className="p-6 shadow-card border-0 bg-card">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">Your Packing List</h1>
+          <h1 className="text-2xl font-bold text-foreground">Trip Overview</h1>
           {/* Trip Types Display */}
           {tripTypes && tripTypes.length > 0 && (
             <div className="flex flex-wrap gap-2">
