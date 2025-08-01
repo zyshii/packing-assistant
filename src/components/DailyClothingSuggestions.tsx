@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Sun, Moon, Shirt, Cloud, CloudRain, CloudSnow, Wind, Activity, CheckCircle2, Thermometer } from "lucide-react";
+import { Sun, Moon, Shirt, Cloud, CloudRain, CloudSnow, Wind, Activity, CheckCircle2, Thermometer, Sunrise } from "lucide-react";
 
 interface DailyClothingData {
   date: string;
@@ -470,7 +470,7 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                        <div className="flex items-center justify-between">
                          <div className="flex items-center gap-2">
                            <div className="p-2 bg-warning/10 rounded-full">
-                             <Sun className="h-4 w-4 text-warning" />
+                             <Sunrise className="h-4 w-4 text-warning" />
                            </div>
                            <div>
                              <h5 className="font-semibold text-foreground">Morning</h5>
