@@ -60,11 +60,20 @@ export default function SimpleDailyClothingSuggestions({ dailyData, tripDetails,
       <p style={{ fontSize: '16px', color: 'black', margin: '10px 0' }}>
         Weather Data Real: {isWeatherDataReal ? 'YES' : 'NO'}
       </p>
-      {dailyData.map((day, index) => (
-        <div key={index} style={{ border: '1px solid black', margin: '5px', padding: '10px', backgroundColor: 'white' }}>
-          <strong>{day.date}</strong> - {day.condition} - {day.temp.high}°F/{day.temp.low}°F
-        </div>
-      ))}
+      <div style={{ border: '2px solid blue', padding: '10px', backgroundColor: 'lightblue' }}>
+        <h3>Raw Daily Data (should be 2 items for Aug 2-3):</h3>
+        <pre style={{ color: 'black', fontSize: '12px' }}>
+          {JSON.stringify(dailyData, null, 2)}
+        </pre>
+      </div>
+      <div style={{ border: '2px solid green', padding: '10px', backgroundColor: 'lightgreen', marginTop: '10px' }}>
+        <h3>Map Results:</h3>
+        {dailyData.map((day, index) => (
+          <div key={index} style={{ border: '1px solid black', margin: '5px', padding: '10px', backgroundColor: 'white' }}>
+            <strong>Index {index}: {day.date}</strong> - {day.condition} - {day.temp.high}°F/{day.temp.low}°F
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
