@@ -104,3 +104,12 @@ The architecture emphasizes type safety, accessibility, and developer experience
 - **Temperature Conversion**: Automatic Celsius to Fahrenheit conversion for US users
 
 The weather integration provides users with accurate, location-specific weather forecasts including temperature highs/lows, UV index, and precipitation data to improve packing recommendations. All app destinations now successfully retrieve real weather data.
+
+### Database Integrity Improvements (August 1, 2025)
+- **Duplicate Data Resolution**: Fixed critical issue where weather data was being duplicated in the database, causing multiple identical clothing suggestion lists to appear
+- **Database Constraints**: Added unique constraint on `location + date` in weather_data table to prevent future duplicates
+- **Upsert Implementation**: Enhanced storage layer with proper upsert logic using `onConflictDoUpdate` to update existing weather entries instead of creating duplicates
+- **Data Cleanup**: Removed existing duplicate weather entries while preserving the most recent cached data
+- **UI Fix Verification**: Confirmed that daily clothing suggestions now display exactly the correct number of days without duplication
+
+This resolves the user-reported issue of seeing multiple identical lists in the daily clothing suggestions section.
