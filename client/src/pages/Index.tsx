@@ -202,8 +202,9 @@ const Index = () => {
                 Fetching real-time weather data for {finalTripData.destination}...
               </p>
             </div>
-          ) : (
+          ) : dailyClothingData.length > 0 ? (
             <DailyClothingSuggestions 
+              key={`clothing-${dailyClothingData.length}-${dailyClothingData[0]?.date}-${Date.now()}`}
               dailyData={dailyClothingData}
               tripDetails={{
                 destination: finalTripData.destination,
@@ -213,6 +214,10 @@ const Index = () => {
               }}
               isWeatherDataReal={!!weatherData && !weatherError}
             />
+          ) : (
+            <div className="bg-white/70 dark:bg-gray-900/70 rounded-lg p-8 text-center">
+              <p className="text-muted-foreground">Loading clothing suggestions...</p>
+            </div>
           )}
         </div>
 
