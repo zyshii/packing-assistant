@@ -63,7 +63,8 @@ const getDetailedClothingSuggestions = (condition: string, temp: { high: number;
   
   if (period === 'morning') {
     if (temp.low < 60) {
-      suggestions.push("Light long-sleeve shirt or T-shirt with a thin sweater or hoodie");
+      suggestions.push("Light long-sleeve shirt or T-shirt");
+      suggestions.push("Thin sweater or hoodie");
       suggestions.push("Comfortable pants or jeans");
       suggestions.push("Closed shoes or lightweight sneakers");
     } else {
@@ -75,37 +76,37 @@ const getDetailedClothingSuggestions = (condition: string, temp: { high: number;
     if (temp.high >= 75) {
       suggestions.push("Short-sleeve shirts or breathable T-shirts");
       suggestions.push("Shorts, skirts, or lightweight trousers");
-      suggestions.push("Light socks and comfortable walking shoes or sandals");
-      suggestions.push("Sunglasses, hat, and sunscreen recommended due to strong summer sun");
+      suggestions.push("Light socks and walking shoes or sandals");
+      suggestions.push("Sunglasses, hat, and sunscreen");
     } else if (temp.high >= 65) {
       suggestions.push("Comfortable T-shirts or light sweaters");
       suggestions.push("Pants or jeans");
       suggestions.push("Comfortable walking shoes");
-      suggestions.push("Light jacket for temperature variations");
+      suggestions.push("Light jacket");
     } else {
       suggestions.push("Warm layers - sweater or light jacket");
       suggestions.push("Long pants or jeans");
       suggestions.push("Closed shoes or boots");
-      suggestions.push("Consider gloves if very cold");
+      suggestions.push("Gloves (if very cold)");
     }
     
     if (condition === 'rainy' || condition === 'mixed') {
-      suggestions.push("Light rain jacket or umbrella");
-      suggestions.push("Waterproof shoes recommended");
+      suggestions.push("Rain jacket or umbrella");
+      suggestions.push("Waterproof shoes");
     }
   } else if (period === 'evening') {
     if (temp.low < 65) {
-      suggestions.push("Carry a light jacket or cardigan");
-      suggestions.push("Jeans or long pants again, if going out or staying into the evening");
+      suggestions.push("Light jacket or cardigan");
+      suggestions.push("Jeans or long pants");
       suggestions.push("Comfortable closed shoes");
     } else {
-      suggestions.push("Light layers for comfort");
+      suggestions.push("Light layers");
       suggestions.push("Comfortable pants or evening wear");
-      suggestions.push("Comfortable shoes for walking");
+      suggestions.push("Comfortable walking shoes");
     }
     
     if (condition === 'rainy') {
-      suggestions.push("Keep umbrella or rain jacket handy");
+      suggestions.push("Umbrella or rain jacket");
     }
   }
   
