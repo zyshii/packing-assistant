@@ -86,10 +86,13 @@ The architecture emphasizes type safety, accessibility, and developer experience
 - **Error Handling**: Graceful fallback to estimated weather when API unavailable
 
 ### Location Compatibility Improvements
-- **Smart Location Normalization**: Implemented intelligent location name processing to remove country suffixes (e.g., "Austin, USA" → "Austin")
+- **Smart Location Normalization**: Implemented intelligent location name processing to remove country suffixes and state abbreviations for API calls while preserving full names for display (e.g., "Austin, TX, USA" → "Austin" for geocoding)
+- **Enhanced Destination List**: Updated all US cities to include state abbreviations for better geolocation specificity (e.g., "Austin, TX, USA" instead of "Austin, USA")
 - **Special Location Mappings**: Added custom mappings for destinations requiring specific search terms (e.g., "New York" → "New York City", "Grand Canyon" → "Grand Canyon Village Arizona")
 - **Fallback Geocoding**: Automatic retry with city-only names when full location strings fail
-- **Enhanced Logging**: Added detailed geocoding process logging for troubleshooting
+- **Date Range Validation**: Added proper validation for Open-Meteo API date limits (currently limited to August 16, 2025)
+- **Enhanced Error Handling**: Improved error messages for date range and API limitations
+- **Enhanced Logging**: Added detailed geocoding process logging and API response debugging
 - **100% Destination Compatibility**: All destinations in the app's predefined list now work with the weather API
 
 ### Technical Implementation

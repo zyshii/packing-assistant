@@ -27,6 +27,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
+      // Check if end date is within Open-Meteo's allowed range
+      const maxAllowedDate = new Date('2025-08-16'); // Based on API error message
+      if (end > maxAllowedDate) {
+        return res.status(400).json({ 
+          error: `Weather forecasts are only available until ${maxAllowedDate.toISOString().split('T')[0]}. Please select an earlier end date.` 
+        });
+      }
+      
       // Limit to 14 days to prevent abuse
       const daysDiff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
       if (daysDiff > 14) {

@@ -13,9 +13,10 @@ const getWeatherCondition = (weatherCode: number): string => {
   return 'mixed';
 };
 
-// Location normalization - remove country suffixes and clean up format
+// Location normalization - remove country suffixes and state abbreviations for geocoding
 const normalizeLocationName = (location: string): string => {
   return location
+    // Remove country suffixes
     .replace(/, USA$/, '')
     .replace(/, United States$/, '')
     .replace(/, UK$/, '')
@@ -55,6 +56,8 @@ const normalizeLocationName = (location: string): string => {
     .replace(/, China$/, '')
     .replace(/, Iceland$/, '')
     .replace(/, Croatia$/, '')
+    // Remove US state abbreviations for geocoding (but keep for display)
+    .replace(/, [A-Z]{2}$/, '')
     .trim();
 };
 
