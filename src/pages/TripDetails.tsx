@@ -9,8 +9,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { CalendarIcon, MapPin, Clock, Users, Activity, Sparkles, ArrowRight, Globe } from "lucide-react";
+import { CalendarIcon, MapPin, Clock, Users, Activity, Sparkles, ArrowRight, Globe, Luggage } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -30,6 +31,9 @@ const formSchema = z.object({
   }),
   tripType: z.enum(["business", "leisure", "adventure"], {
     required_error: "Please select a trip type.",
+  }),
+  luggageSize: z.enum(["carry-on", "backpack", "medium-suitcase", "large-suitcase"], {
+    required_error: "Please select your luggage size.",
   }),
   activities: z.string().optional(),
 }).refine((data) => data.endDate >= data.startDate, {
@@ -390,6 +394,72 @@ export default function TripDetails() {
                           </RadioGroup>
                         </FormControl>
                         <FormMessage />
+                      </FormItem>
+                    )}
+                   />
+
+                  {/* Luggage Size */}
+                  <FormField
+                    control={form.control}
+                    name="luggageSize"
+                    render={({ field }) => (
+                      <FormItem className="space-y-3">
+                        <FormLabel className="flex items-center gap-2 text-base font-semibold">
+                          <Luggage className="h-5 w-5 text-primary" />
+                          Luggage Size
+                          <HelpTooltip content="Select your luggage type to help us suggest appropriate quantities of clothing and accessories that will fit comfortably." />
+                        </FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <SelectTrigger className="h-12 text-base">
+                              <SelectValue placeholder="Choose your luggage size" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-background border border-border shadow-lg">
+                              <SelectItem value="carry-on" className="cursor-pointer">
+                                <div className="flex items-center gap-3 py-2">
+                                  <div className="text-2xl">🎒</div>
+                                  <div>
+                                    <div className="font-medium">Carry-on Bag</div>
+                                    <div className="text-sm text-muted-foreground">Small roller bag (22" x 14" x 9")</div>
+                                  </div>
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="backpack" className="cursor-pointer">
+                                <div className="flex items-center gap-3 py-2">
+                                  <div className="text-2xl">🎒</div>
+                                  <div>
+                                    <div className="font-medium">Backpack</div>
+                                    <div className="text-sm text-muted-foreground">Travel backpack (40-60L)</div>
+                                  </div>
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="medium-suitcase" className="cursor-pointer">
+                                <div className="flex items-center gap-3 py-2">
+                                  <div className="text-2xl">🧳</div>
+                                  <div>
+                                    <div className="font-medium">Medium Suitcase</div>
+                                    <div className="text-sm text-muted-foreground">Check-in bag (24-26 inches)</div>
+                                  </div>
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="large-suitcase" className="cursor-pointer">
+                                <div className="flex items-center gap-3 py-2">
+                                  <div className="text-2xl">🧳</div>
+                                  <div>
+                                    <div className="font-medium">Large Suitcase</div>
+                                    <div className="text-sm text-muted-foreground">Large check-in bag (28+ inches)</div>
+                                  </div>
+                                </div>
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                        {field.value && (
+                          <p className="text-sm text-travel-blue animate-fade-in">
+                            ✨ Perfect! We'll adjust clothing quantities to fit your {field.value.replace('-', ' ')}
+                          </p>
+                        )}
                       </FormItem>
                     )}
                   />
