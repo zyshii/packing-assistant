@@ -12,11 +12,11 @@ interface DailyActivity {
 
 interface DailyActivityInputProps {
   dates: string[];
-  tripType?: string;
+  tripTypes?: string[];
   onActivitiesChange: (activities: DailyActivity[]) => void;
 }
 
-const getActivitiesByTripType = (tripType?: string) => {
+const getActivitiesByTripTypes = (tripTypes?: string[]) => {
   const baseActivities = {
     business: [
       "Business meetings", "Conferences", "Networking events", "Client dinners", 
@@ -35,7 +35,7 @@ const getActivitiesByTripType = (tripType?: string) => {
     ]
   };
 
-  if (!tripType) {
+  if (!tripTypes || tripTypes.length === 0) {
     return [
       ...baseActivities.business,
       ...baseActivities.leisure,
@@ -43,10 +43,17 @@ const getActivitiesByTripType = (tripType?: string) => {
     ];
   }
 
-  return baseActivities[tripType as keyof typeof baseActivities] || [];
+  // Combine activities from all selected trip types
+  const combinedActivities = tripTypes.reduce((acc, tripType) => {
+    const activities = baseActivities[tripType as keyof typeof baseActivities] || [];
+    return [...acc, ...activities];
+  }, [] as string[]);
+
+  // Remove duplicates and return
+  return [...new Set(combinedActivities)];
 };
 
-export default function DailyActivityInput({ dates, tripType, onActivitiesChange }: DailyActivityInputProps) {
+export default function DailyActivityInput({ dates, tripTypes, onActivitiesChange }: DailyActivityInputProps) {
   const [dailyActivities, setDailyActivities] = useState<DailyActivity[]>([]);
 
   // Sync dailyActivities with dates prop changes
@@ -72,7 +79,7 @@ export default function DailyActivityInput({ dates, tripType, onActivitiesChange
     }
   };
 
-  const predefinedActivities = getActivitiesByTripType(tripType);
+  const predefinedActivities = getActivitiesByTripTypes(tripTypes);
 
   return (
     <Card className="p-6 shadow-card border-0 bg-card">
@@ -82,8 +89,8 @@ export default function DailyActivityInput({ dates, tripType, onActivitiesChange
           <h3 className="text-lg font-semibold text-foreground">Plan Your Daily Activities</h3>
         </div>
         <p className="text-muted-foreground text-sm">
-          {tripType 
-            ? `Based on your ${tripType} trip, here are some relevant activities. Specify what you plan to do each day for personalized packing recommendations.`
+          {tripTypes && tripTypes.length > 0
+            ? `Based on your ${tripTypes.join(', ')} trip${tripTypes.length > 1 ? 's' : ''}, here are some relevant activities. Specify what you plan to do each day for personalized packing recommendations.`
             : "Specify your planned activities for each day to get more personalized packing recommendations."
           }
         </p>
@@ -118,8 +125,8 @@ export default function DailyActivityInput({ dates, tripType, onActivitiesChange
                 <Select onValueChange={(value) => addActivity(dateIndex, value)}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder={
-                      tripType 
-                        ? `Choose ${tripType} activity` 
+                      tripTypes && tripTypes.length > 0
+                        ? `Choose ${tripTypes.join('/')} activity` 
                         : "Choose an activity"
                     } />
                   </SelectTrigger>
@@ -140,8 +147,8 @@ export default function DailyActivityInput({ dates, tripType, onActivitiesChange
 
         <div className="mt-4 p-3 bg-travel-green/10 rounded-lg border border-travel-green/20">
           <p className="text-sm text-travel-green">
-            💡 {tripType 
-              ? `These ${tripType}-focused activities will help us recommend the perfect gear and clothing for your trip.`
+            💡 {tripTypes && tripTypes.length > 0
+              ? `These ${tripTypes.join(', ')}-focused activities will help us recommend the perfect gear and clothing for your trip.`
               : "Adding specific activities helps us suggest the right gear, footwear, and clothing for each day."
             }
           </p>

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { CalendarIcon, MapPin, Clock, Users, Activity, Sparkles, ArrowRight, Globe, Luggage } from "lucide-react";
@@ -29,8 +29,8 @@ const formSchema = z.object({
   endDate: z.date({
     required_error: "End date is required.",
   }),
-  tripType: z.enum(["business", "leisure", "adventure"], {
-    required_error: "Please select a trip type.",
+  tripTypes: z.array(z.enum(["business", "leisure", "adventure"])).min(1, {
+    message: "Please select at least one trip type.",
   }),
   luggageSize: z.enum(["carry-on", "backpack", "medium-suitcase", "large-suitcase"], {
     required_error: "Please select your luggage size.",
@@ -102,13 +102,14 @@ function TripDetails() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       destination: "",
+      tripTypes: [],
     },
   });
 
   const watchedDestination = form.watch("destination");
   const watchedStartDate = form.watch("startDate");
   const watchedEndDate = form.watch("endDate");
-  const watchedTripType = form.watch("tripType");
+  const watchedTripTypes = form.watch("tripTypes");
 
   // Generate dates array when start and end dates are available
   const dates = useMemo(() => {
@@ -353,64 +354,65 @@ function TripDetails() {
                     </div>
                   )}
 
-                  {/* Trip Type */}
+                  {/* Trip Types */}
                   <FormField
                     control={form.control}
-                    name="tripType"
-                    render={({ field }) => (
+                    name="tripTypes"
+                    render={() => (
                       <FormItem className="space-y-4">
-                         <FormLabel className="flex items-center gap-2 text-base font-semibold">
-                           <Activity className="h-5 w-5 text-primary" />
-                            Trip Type
-                         </FormLabel>
+                        <FormLabel className="flex items-center gap-2 text-base font-semibold">
+                          <Activity className="h-5 w-5 text-primary" />
+                           Trip Types
+                        </FormLabel>
                         <FormControl>
-                          <RadioGroup
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                            className="grid grid-cols-1 md:grid-cols-3 gap-4"
-                          >
-                            <div className={cn(
-                              "flex items-center space-x-3 p-6 border-2 rounded-xl hover:bg-muted/50 transition-all duration-200 cursor-pointer",
-                              field.value === "business" && "border-primary bg-primary/5"
-                            )}>
-                              <RadioGroupItem value="business" id="business" />
-                              <div>
-                                <label htmlFor="business" className="text-base font-medium cursor-pointer block">
-                                  Business
-                                </label>
-                                <p className="text-sm text-muted-foreground">Meetings & conferences</p>
-                              </div>
-                            </div>
-                            <div className={cn(
-                              "flex items-center space-x-3 p-6 border-2 rounded-xl hover:bg-muted/50 transition-all duration-200 cursor-pointer",
-                              field.value === "leisure" && "border-primary bg-primary/5"
-                            )}>
-                              <RadioGroupItem value="leisure" id="leisure" />
-                              <div>
-                                <label htmlFor="leisure" className="text-base font-medium cursor-pointer block">
-                                  Leisure
-                                </label>
-                                <p className="text-sm text-muted-foreground">Vacation & relaxation</p>
-                              </div>
-                            </div>
-                            <div className={cn(
-                              "flex items-center space-x-3 p-6 border-2 rounded-xl hover:bg-muted/50 transition-all duration-200 cursor-pointer",
-                              field.value === "adventure" && "border-primary bg-primary/5"
-                            )}>
-                              <RadioGroupItem value="adventure" id="adventure" />
-                              <div>
-                                <label htmlFor="adventure" className="text-base font-medium cursor-pointer block">
-                                  Adventure
-                                </label>
-                                <p className="text-sm text-muted-foreground">Outdoor activities</p>
-                              </div>
-                            </div>
-                          </RadioGroup>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {(["business", "leisure", "adventure"] as const).map((tripType) => (
+                              <FormField
+                                key={tripType}
+                                control={form.control}
+                                name="tripTypes"
+                                render={({ field }) => (
+                                  <FormItem className={cn(
+                                    "flex items-center space-x-3 p-6 border-2 rounded-xl hover:bg-muted/50 transition-all duration-200 cursor-pointer",
+                                    field.value?.includes(tripType) && "border-primary bg-primary/5"
+                                  )}>
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes(tripType)}
+                                        onCheckedChange={(checked) => {
+                                          const updatedTypes = checked
+                                            ? [...(field.value || []), tripType]
+                                            : field.value?.filter((value) => value !== tripType) || [];
+                                          field.onChange(updatedTypes);
+                                        }}
+                                      />
+                                    </FormControl>
+                                    <div className="flex-1">
+                                      <label className="text-base font-medium cursor-pointer block capitalize">
+                                        {tripType}
+                                      </label>
+                                      <p className="text-sm text-muted-foreground">
+                                        {tripType === "business" && "Meetings & conferences"}
+                                        {tripType === "leisure" && "Vacation & relaxation"}
+                                        {tripType === "adventure" && "Outdoor activities"}
+                                      </p>
+                                    </div>
+                                  </FormItem>
+                                )}
+                              />
+                            ))}
+                          </div>
                         </FormControl>
                         <FormMessage />
+                        {watchedTripTypes && watchedTripTypes.length > 0 && (
+                          <p className="text-sm text-travel-blue animate-fade-in">
+                            ✨ Great! You've selected {watchedTripTypes.length} trip type{watchedTripTypes.length > 1 ? 's' : ''}. 
+                            We'll customize your activity options accordingly.
+                          </p>
+                        )}
                       </FormItem>
                     )}
-                   />
+                  />
 
                   {/* Luggage Size */}
                   <FormField
@@ -482,7 +484,7 @@ function TripDetails() {
                     <div className="space-y-4">
                       <DailyActivityInput 
                         dates={dates}
-                        tripType={watchedTripType}
+                        tripTypes={watchedTripTypes}
                         onActivitiesChange={handleActivitiesChange}
                       />
                     </div>
