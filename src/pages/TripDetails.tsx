@@ -143,16 +143,17 @@ function TripDetails() {
   }
 
   const filteredDestinations = useMemo(() => {
-    if (!watchedDestination) return [];
-    const filtered = popularDestinations.filter(destination =>
+    if (!watchedDestination || watchedDestination.length < 2) return [];
+    return popularDestinations.filter(destination =>
       destination.toLowerCase().includes(watchedDestination.toLowerCase())
     );
-    // Keep suggestions visible if no exact match is selected
-    const hasExactMatch = popularDestinations.some(dest => 
-      dest.toLowerCase() === watchedDestination.toLowerCase()
+  }, [watchedDestination]);
+
+  // Check if current input exactly matches a destination from our list
+  const isValidDestination = useMemo(() => {
+    return popularDestinations.some(dest => 
+      dest.toLowerCase() === watchedDestination?.toLowerCase()
     );
-    setDestinationSelected(hasExactMatch);
-    return filtered;
   }, [watchedDestination]);
   return (
     <div className="min-h-screen bg-gradient-background p-4">
@@ -205,33 +206,45 @@ function TripDetails() {
                            Destination
                         </FormLabel>
                         <FormControl>
-                          <Popover open={open && filteredDestinations.length > 0 && !destinationSelected} onOpenChange={setOpen}>
+                          <Popover open={open && filteredDestinations.length > 0} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
                               <div className="relative">
                                 <Input 
                                   placeholder="Type to search destinations..."
                                   {...field}
                                   className="pl-10 h-12 text-base"
-                                  onFocus={() => setOpen(true)}
+                                  onFocus={() => {
+                                    if (filteredDestinations.length > 0) {
+                                      setOpen(true);
+                                    }
+                                  }}
                                   onChange={(e) => {
                                     field.onChange(e);
-                                    setOpen(true);
+                                    setDestinationSelected(false);
+                                    if (e.target.value.length >= 2) {
+                                      setOpen(true);
+                                    }
                                   }}
                                 />
                                 <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                               </div>
                             </PopoverTrigger>
                             <PopoverContent className="w-full p-0 z-50 bg-background border border-border shadow-lg" align="start">
-                              <Command>
+                              <Command shouldFilter={false}>
                                 <CommandList className="max-h-[200px]">
-                                  <CommandEmpty>No destinations found.</CommandEmpty>
+                                  <CommandEmpty>
+                                    {watchedDestination && watchedDestination.length < 2 
+                                      ? "Type at least 2 characters to search..." 
+                                      : "No destinations found."
+                                    }
+                                  </CommandEmpty>
                                   <CommandGroup>
                                     {filteredDestinations.map((destination) => (
                                       <CommandItem
                                         key={destination}
                                         value={destination}
-                                        onSelect={(value) => {
-                                          field.onChange(value);
+                                        onSelect={() => {
+                                          field.onChange(destination);
                                           setDestinationSelected(true);
                                           setOpen(false);
                                         }}
@@ -248,14 +261,17 @@ function TripDetails() {
                           </Popover>
                         </FormControl>
                         <FormMessage />
-                        {watchedDestination && destinationSelected && (
+                        {watchedDestination && isValidDestination && (
                           <p className="text-sm text-travel-blue animate-fade-in">
                             ✨ Great choice! We'll check the weather and local customs for {watchedDestination}
                           </p>
                         )}
-                        {watchedDestination && !destinationSelected && filteredDestinations.length > 0 && (
+                        {watchedDestination && !isValidDestination && watchedDestination.length >= 2 && (
                           <p className="text-sm text-muted-foreground animate-fade-in">
-                            💡 Please select a destination from the suggestions above
+                            💡 {filteredDestinations.length > 0 
+                              ? "Please select a destination from the suggestions above" 
+                              : "No matching destinations found. Try a different search term."
+                            }
                           </p>
                         )}
                       </FormItem>

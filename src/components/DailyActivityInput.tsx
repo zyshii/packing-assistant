@@ -97,7 +97,7 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
 
   const getFilteredActivities = (dateIndex: number) => {
     const input = activityInputs[dateIndex] || '';
-    if (!input.trim()) return [];
+    if (!input.trim() || input.length < 2) return [];
     
     return predefinedActivities.filter(activity => 
       activity.toLowerCase().includes(input.toLowerCase()) &&
@@ -107,11 +107,19 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
 
   const handleInputChange = (dateIndex: number, value: string) => {
     setActivityInputs(prev => ({ ...prev, [dateIndex]: value }));
-    setOpenPopovers(prev => ({ ...prev, [dateIndex]: true }));
+    // Only open popover if we have enough characters to search
+    if (value.length >= 2) {
+      setOpenPopovers(prev => ({ ...prev, [dateIndex]: true }));
+    } else {
+      setOpenPopovers(prev => ({ ...prev, [dateIndex]: false }));
+    }
   };
 
   const handleInputFocus = (dateIndex: number) => {
-    setOpenPopovers(prev => ({ ...prev, [dateIndex]: true }));
+    const input = activityInputs[dateIndex] || '';
+    if (input.length >= 2 && getFilteredActivities(dateIndex).length > 0) {
+      setOpenPopovers(prev => ({ ...prev, [dateIndex]: true }));
+    }
   };
 
   const predefinedActivities = getActivitiesByTripTypes(tripTypes);
@@ -178,9 +186,14 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
                     </div>
                   </PopoverTrigger>
                   <PopoverContent className="w-full p-0 z-50 bg-background border border-border shadow-lg" align="start">
-                    <Command>
+                    <Command shouldFilter={false}>
                       <CommandList className="max-h-[200px]">
-                        <CommandEmpty>No activities found.</CommandEmpty>
+                        <CommandEmpty>
+                          {(activityInputs[dateIndex]?.length || 0) < 2 
+                            ? "Type at least 2 characters to search..." 
+                            : "No matching activities found."
+                          }
+                        </CommandEmpty>
                         <CommandGroup>
                           {getFilteredActivities(dateIndex).map((activity) => (
                             <CommandItem
@@ -199,10 +212,18 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
                   </PopoverContent>
                 </Popover>
                 
-                {activityInputs[dateIndex] && getFilteredActivities(dateIndex).length === 0 && activityInputs[dateIndex].trim() && (
-                  <p className="text-sm text-muted-foreground">
-                    💡 No matching activities found. Try a different search term.
-                  </p>
+                {activityInputs[dateIndex] && activityInputs[dateIndex].length >= 2 && (
+                  <div className="mt-2">
+                    {getFilteredActivities(dateIndex).length === 0 ? (
+                      <p className="text-sm text-muted-foreground">
+                        💡 No matching activities found. Try a different search term.
+                      </p>
+                    ) : (
+                      <p className="text-sm text-travel-green">
+                        ✨ {getFilteredActivities(dateIndex).length} activit{getFilteredActivities(dateIndex).length === 1 ? 'y' : 'ies'} found - select one from the list above
+                      </p>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
