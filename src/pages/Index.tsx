@@ -7,6 +7,7 @@ import PackingCategory from "@/components/PackingCategory";
 import WeatherInfo from "@/components/WeatherInfo";
 import StepIndicator from "@/components/StepIndicator";
 import OnboardingHint from "@/components/OnboardingHint";
+import DailyWeatherForecast from "@/components/DailyWeatherForecast";
 import ItemModal from "@/components/ItemModal";
 import { useNavigate } from "react-router-dom";
 
@@ -53,8 +54,21 @@ const Index = () => {
     }
   };
 
-  // Sample packing data
-  const [packingItems, setPackingItems] = useState({
+  // Daily weather forecasts
+  const dailyForecasts = [
+    { date: "May 30", condition: 'sunny' as const, temp: { high: 74, low: 60 }, humidity: 60 },
+    { date: "May 31", condition: 'mixed' as const, temp: { high: 70, low: 58 }, humidity: 70 },
+    { date: "Jun 1", condition: 'rainy' as const, temp: { high: 68, low: 55 }, humidity: 80 },
+  ];
+
+  // Sample packing data - using PackingItem type consistently
+  const [packingItems, setPackingItems] = useState<{
+    clothing: PackingItem[];
+    electronics: PackingItem[];
+    documents: PackingItem[];
+    personal: PackingItem[];
+    entertainment: PackingItem[];
+  }>({
     clothing: [
       { id: "1", name: "T-shirts", quantity: 3, essential: true, packed: true, weatherDependent: false },
       { id: "2", name: "Pants/Jeans", quantity: 2, essential: true, packed: false, weatherDependent: false },
@@ -236,8 +250,8 @@ const Index = () => {
         </div>
 
         {/* Progress and Weather Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-slide-in">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 animate-slide-in">
+          <div className="xl:col-span-2">
             <PackingProgress totalItems={totalItems} packedItems={packedItems} />
           </div>
           <div>
@@ -246,6 +260,14 @@ const Index = () => {
               forecast={weatherData.forecast}
             />
           </div>
+        </div>
+
+        {/* Daily Weather Forecast */}
+        <div className="animate-fade-in">
+          <DailyWeatherForecast 
+            destination={tripData.destination}
+            forecasts={dailyForecasts}
+          />
         </div>
 
         {/* Packing Categories */}
