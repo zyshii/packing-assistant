@@ -466,7 +466,7 @@ function TripDetails() {
                                 <div className="flex items-center gap-3 py-2">
                                   <div className="text-2xl">🎒</div>
                                   <div>
-                                    <div className="font-medium">Carry-on Bag</div>
+                                    <div className="font-medium">Carry-on - 22 inch</div>
                                     <div className="text-sm text-muted-foreground">Small roller bag (22" x 14" x 9")</div>
                                   </div>
                                 </div>
@@ -475,7 +475,7 @@ function TripDetails() {
                                 <div className="flex items-center gap-3 py-2">
                                   <div className="text-2xl">🎒</div>
                                   <div>
-                                    <div className="font-medium">Backpack</div>
+                                    <div className="font-medium">Backpack - 50 L</div>
                                     <div className="text-sm text-muted-foreground">Travel backpack (40-60L)</div>
                                   </div>
                                 </div>
@@ -484,7 +484,7 @@ function TripDetails() {
                                 <div className="flex items-center gap-3 py-2">
                                   <div className="text-2xl">🧳</div>
                                   <div>
-                                    <div className="font-medium">Medium Suitcase</div>
+                                    <div className="font-medium">Medium Suitcase - 24 inch</div>
                                     <div className="text-sm text-muted-foreground">Check-in bag (24-26 inches)</div>
                                   </div>
                                 </div>
@@ -493,7 +493,7 @@ function TripDetails() {
                                 <div className="flex items-center gap-3 py-2">
                                   <div className="text-2xl">🧳</div>
                                   <div>
-                                    <div className="font-medium">Large Suitcase</div>
+                                    <div className="font-medium">Large Suitcase - 28 inch</div>
                                     <div className="text-sm text-muted-foreground">Large check-in bag (28+ inches)</div>
                                   </div>
                                 </div>
