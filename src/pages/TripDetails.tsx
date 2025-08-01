@@ -15,7 +15,7 @@ import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import HelpTooltip from "@/components/HelpTooltip";
+
 import OnboardingHint from "@/components/OnboardingHint";
 import DailyActivityInput from "@/components/DailyActivityInput";
 
