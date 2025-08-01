@@ -337,14 +337,25 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
           <div className="space-y-4">
             <div className="flex items-center gap-2 mb-4">
               <Shirt className="h-5 w-5 text-primary" />
-              <h3 className="text-lg font-semibold text-foreground">
-                Your Packing List
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-lg font-semibold text-foreground">
+                  Your Packing List
+                </h3>
+                {tripDetails?.tripTypes && tripDetails.tripTypes.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {tripDetails.tripTypes.map((type, index) => (
+                      <span key={index} className="px-2 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium border border-primary/20 capitalize">
+                        {type}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 {tripDetails?.luggageSize && (
-                  <span className="text-sm font-normal text-muted-foreground ml-2">
+                  <span className="text-sm font-normal text-muted-foreground">
                     (Optimized for {tripDetails.luggageSize.replace('-', ' ')})
                   </span>
                 )}
-              </h3>
+              </div>
             </div>
           
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -404,8 +415,10 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
             
             <div className="mt-4 p-3 bg-success-light rounded-lg border border-success/20">
               <p className="text-sm text-success">
-                📋 This personalized list is optimized for your {tripDetails?.luggageSize?.replace('-', ' ') || 'luggage'}, 
-                {tripDetails?.tripTypes?.join(' & ') || 'trip type'}, and planned activities. 
+                📋 This personalized list is optimized for your {tripDetails?.luggageSize?.replace('-', ' ') || 'luggage'}
+                {tripDetails?.tripTypes && tripDetails.tripTypes.length > 0 && (
+                  <span>, <strong>{tripDetails.tripTypes.join(' & ')}</strong> trip{tripDetails.tripTypes.length > 1 ? 's' : ''}</span>
+                )}, and planned activities. 
                 Quantities are calculated based on your {dailyData.length}-day trip duration.
               </p>
             </div>
