@@ -1,89 +1,98 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Sun, Sunset, Moon, Shirt, Glasses, Umbrella, Wind, Cloud, CloudRain, CloudSnow, Thermometer, Snowflake } from "lucide-react";
-
-interface ClothingSuggestion {
-  item: string;
-  icon: React.ReactNode;
-  priority: 'essential' | 'recommended' | 'optional';
-}
-
-interface TimeOfDayData {
-  period: string;
-  timeRange: string;
-  icon: React.ReactNode;
-  suggestions: ClothingSuggestion[];
-  color: string;
-}
+import { Sun, Moon, Shirt } from "lucide-react";
 
 interface DailyClothingData {
   date: string;
   condition: 'sunny' | 'cloudy' | 'rainy' | 'snowy' | 'mixed';
   temp: { high: number; low: number };
-  timeOfDay: TimeOfDayData[];
+  timeOfDay: any[];
 }
 
 interface DailyClothingSuggestionsProps {
   dailyData: DailyClothingData[];
 }
 
-const getClothingSuggestions = (condition: string, temp: { high: number; low: number }, period: string): ClothingSuggestion[] => {
-  const suggestions: ClothingSuggestion[] = [];
+const getTimeTemperature = (period: string, temp: { high: number; low: number }) => {
+  switch (period) {
+    case 'morning':
+      const morningLow = temp.low;
+      const morningHigh = temp.low + 7;
+      return { 
+        fahrenheit: `${morningLow}–${morningHigh} °F`,
+        celsius: `${Math.round((morningLow - 32) * 5/9)}–${Math.round((morningHigh - 32) * 5/9)} °C`
+      };
+    case 'daytime':
+      const daytimeLow = temp.high - 5;
+      const daytimeHigh = temp.high;
+      return { 
+        fahrenheit: `${daytimeLow}–${daytimeHigh} °F`,
+        celsius: `${Math.round((daytimeLow - 32) * 5/9)}–${Math.round((daytimeHigh - 32) * 5/9)} °C`
+      };
+    case 'evening':
+      const eveningLow = temp.low + 2;
+      const eveningHigh = temp.low + 7;
+      return { 
+        fahrenheit: `${eveningLow}–${eveningHigh} °F`,
+        celsius: `${Math.round((eveningLow - 32) * 5/9)}–${Math.round((eveningHigh - 32) * 5/9)} °C`
+      };
+    default:
+      return { fahrenheit: '', celsius: '' };
+  }
+};
+
+const getDetailedClothingSuggestions = (condition: string, temp: { high: number; low: number }, period: string) => {
+  const suggestions: string[] = [];
   
   if (period === 'morning') {
-    // Morning suggestions (dawn to ~9 AM)
     if (temp.low < 60) {
-      suggestions.push({ item: "Light jacket or cardigan", icon: <Shirt className="h-3 w-3" />, priority: 'recommended' });
-    }
-    suggestions.push({ item: "Comfortable walking shoes", icon: <Shirt className="h-3 w-3" />, priority: 'essential' });
-    if (condition === 'sunny' || condition === 'mixed') {
-      suggestions.push({ item: "Sunglasses", icon: <Glasses className="h-3 w-3" />, priority: 'recommended' });
+      suggestions.push("Light long-sleeve shirt or T-shirt with a thin sweater or hoodie");
+      suggestions.push("Comfortable pants or jeans");
+      suggestions.push("Closed shoes or lightweight sneakers");
+    } else {
+      suggestions.push("Light T-shirt or thin long-sleeve shirt");
+      suggestions.push("Comfortable pants or light trousers");
+      suggestions.push("Comfortable walking shoes");
     }
   } else if (period === 'daytime') {
-    // Daytime suggestions (~9 AM–6 PM)
     if (temp.high >= 75) {
-      suggestions.push({ item: "Light breathable clothing", icon: <Shirt className="h-3 w-3" />, priority: 'essential' });
-      suggestions.push({ item: "Sunscreen", icon: <Sun className="h-3 w-3" />, priority: 'essential' });
+      suggestions.push("Short-sleeve shirts or breathable T-shirts");
+      suggestions.push("Shorts, skirts, or lightweight trousers");
+      suggestions.push("Light socks and comfortable walking shoes or sandals");
+      suggestions.push("Sunglasses, hat, and sunscreen recommended due to strong summer sun");
     } else if (temp.high >= 65) {
-      suggestions.push({ item: "Comfortable layers", icon: <Shirt className="h-3 w-3" />, priority: 'recommended' });
+      suggestions.push("Comfortable T-shirts or light sweaters");
+      suggestions.push("Pants or jeans");
+      suggestions.push("Comfortable walking shoes");
+      suggestions.push("Light jacket for temperature variations");
     } else {
-      suggestions.push({ item: "Warm layers", icon: <Shirt className="h-3 w-3" />, priority: 'essential' });
+      suggestions.push("Warm layers - sweater or light jacket");
+      suggestions.push("Long pants or jeans");
+      suggestions.push("Closed shoes or boots");
+      suggestions.push("Consider gloves if very cold");
     }
-    
-    suggestions.push({ item: "Hat", icon: <Sun className="h-3 w-3" />, priority: 'recommended' });
-    suggestions.push({ item: "Sunglasses", icon: <Glasses className="h-3 w-3" />, priority: 'recommended' });
     
     if (condition === 'rainy' || condition === 'mixed') {
-      suggestions.push({ item: "Light rain jacket", icon: <Umbrella className="h-3 w-3" />, priority: 'essential' });
+      suggestions.push("Light rain jacket or umbrella");
+      suggestions.push("Waterproof shoes recommended");
     }
   } else if (period === 'evening') {
-    // Evening suggestions (after ~6 PM)
     if (temp.low < 65) {
-      suggestions.push({ item: "Light jacket or sweater", icon: <Shirt className="h-3 w-3" />, priority: 'recommended' });
+      suggestions.push("Carry a light jacket or cardigan");
+      suggestions.push("Jeans or long pants again, if going out or staying into the evening");
+      suggestions.push("Comfortable closed shoes");
+    } else {
+      suggestions.push("Light layers for comfort");
+      suggestions.push("Comfortable pants or evening wear");
+      suggestions.push("Comfortable shoes for walking");
     }
-    suggestions.push({ item: "Comfortable walking shoes", icon: <Shirt className="h-3 w-3" />, priority: 'essential' });
+    
     if (condition === 'rainy') {
-      suggestions.push({ item: "Umbrella", icon: <Umbrella className="h-3 w-3" />, priority: 'essential' });
-    }
-    if (temp.low < 60) {
-      suggestions.push({ item: "Warm layers", icon: <Wind className="h-3 w-3" />, priority: 'recommended' });
+      suggestions.push("Keep umbrella or rain jacket handy");
     }
   }
   
   return suggestions;
-};
-
-const getPriorityColor = (priority: string) => {
-  switch (priority) {
-    case 'essential':
-      return 'bg-red-100 text-red-800 border-red-200';
-    case 'recommended':
-      return 'bg-blue-100 text-blue-800 border-blue-200';
-    case 'optional':
-      return 'bg-gray-100 text-gray-800 border-gray-200';
-    default:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
-  }
 };
 
 export default function DailyClothingSuggestions({ dailyData }: DailyClothingSuggestionsProps) {
@@ -107,72 +116,51 @@ export default function DailyClothingSuggestions({ dailyData }: DailyClothingSug
               </Badge>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-6">
               {/* Morning */}
-              <div className="p-4 rounded-lg bg-yellow-50/50 border border-yellow-200/50">
-                <div className="flex items-center gap-2 mb-3">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
                   <Sun className="h-4 w-4 text-yellow-600" />
-                  <h5 className="font-medium text-foreground">Morning</h5>
-                  <span className="text-xs text-muted-foreground">dawn - 9 AM</span>
+                  <h5 className="font-medium text-foreground">Morning (dawn to ~9 AM):</h5>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    ~{getTimeTemperature('morning', day.temp).fahrenheit} / ~{getTimeTemperature('morning', day.temp).celsius}
+                  </span>
                 </div>
-                <div className="space-y-2">
-                  {getClothingSuggestions(day.condition, day.temp, 'morning').map((suggestion, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      {suggestion.icon}
-                      <span className="text-sm text-foreground">{suggestion.item}</span>
-                      <Badge 
-                        variant="outline" 
-                        className={`text-xs ml-auto ${getPriorityColor(suggestion.priority)}`}
-                      >
-                        {suggestion.priority}
-                      </Badge>
-                    </div>
+                <div className="ml-6 space-y-1">
+                  {getDetailedClothingSuggestions(day.condition, day.temp, 'morning').map((suggestion, index) => (
+                    <p key={index} className="text-sm text-foreground">• {suggestion}</p>
                   ))}
                 </div>
               </div>
 
               {/* Daytime */}
-              <div className="p-4 rounded-lg bg-blue-50/50 border border-blue-200/50">
-                <div className="flex items-center gap-2 mb-3">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
                   <Sun className="h-4 w-4 text-blue-600" />
-                  <h5 className="font-medium text-foreground">Daytime</h5>
-                  <span className="text-xs text-muted-foreground">9 AM - 6 PM</span>
+                  <h5 className="font-medium text-foreground">Daytime (~9 AM–6 PM):</h5>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    ~{getTimeTemperature('daytime', day.temp).fahrenheit} / ~{getTimeTemperature('daytime', day.temp).celsius}
+                  </span>
                 </div>
-                <div className="space-y-2">
-                  {getClothingSuggestions(day.condition, day.temp, 'daytime').map((suggestion, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      {suggestion.icon}
-                      <span className="text-sm text-foreground">{suggestion.item}</span>
-                      <Badge 
-                        variant="outline" 
-                        className={`text-xs ml-auto ${getPriorityColor(suggestion.priority)}`}
-                      >
-                        {suggestion.priority}
-                      </Badge>
-                    </div>
+                <div className="ml-6 space-y-1">
+                  {getDetailedClothingSuggestions(day.condition, day.temp, 'daytime').map((suggestion, index) => (
+                    <p key={index} className="text-sm text-foreground">• {suggestion}</p>
                   ))}
                 </div>
               </div>
 
               {/* Evening */}
-              <div className="p-4 rounded-lg bg-purple-50/50 border border-purple-200/50">
-                <div className="flex items-center gap-2 mb-3">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
                   <Moon className="h-4 w-4 text-purple-600" />
-                  <h5 className="font-medium text-foreground">Evening</h5>
-                  <span className="text-xs text-muted-foreground">after 6 PM</span>
+                  <h5 className="font-medium text-foreground">Evening (after ~6 PM):</h5>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    ~{getTimeTemperature('evening', day.temp).fahrenheit} / ~{getTimeTemperature('evening', day.temp).celsius}
+                  </span>
                 </div>
-                <div className="space-y-2">
-                  {getClothingSuggestions(day.condition, day.temp, 'evening').map((suggestion, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      {suggestion.icon}
-                      <span className="text-sm text-foreground">{suggestion.item}</span>
-                      <Badge 
-                        variant="outline" 
-                        className={`text-xs ml-auto ${getPriorityColor(suggestion.priority)}`}
-                      >
-                        {suggestion.priority}
-                      </Badge>
-                    </div>
+                <div className="ml-6 space-y-1">
+                  {getDetailedClothingSuggestions(day.condition, day.temp, 'evening').map((suggestion, index) => (
+                    <p key={index} className="text-sm text-foreground">• {suggestion}</p>
                   ))}
                 </div>
               </div>
