@@ -139,6 +139,16 @@ const Index = () => {
     }
   }, [dailyActivities]);
 
+  // Extract all unique activities from daily activities for the header
+  const allUserActivities = useMemo(() => {
+    if (!dailyActivities || !Array.isArray(dailyActivities)) {
+      return finalTripData.activities; // fallback to default
+    }
+    
+    const allActivities = dailyActivities.flatMap(day => day.activities || []);
+    return [...new Set(allActivities)]; // remove duplicates
+  }, [dailyActivities, finalTripData.activities]);
+
   return (
     <div className="min-h-screen bg-gradient-background">
       <div className="max-w-5xl mx-auto p-4 space-y-6 lg:space-y-8">
@@ -172,7 +182,7 @@ const Index = () => {
                 ? finalTripData.tripTypes[0] 
                 : finalTripData.tripType
             }
-            activities={finalTripData.activities}
+            activities={allUserActivities}
           />
         </div>
 
