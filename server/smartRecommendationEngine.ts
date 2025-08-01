@@ -310,17 +310,20 @@ function deduplicateRecommendations(recommendations: string[]): string[] {
       
       // Check for similar quick-dry items
       if (normalized.includes('quick-dry') && seenItem.includes('quick-dry')) {
-        // Keep the more specific one
-        if (normalized.length > seenItem.length) {
-          // Remove the previous less specific item
-          const index = deduplicated.findIndex(rec => 
-            rec.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().trim() === seenItem);
-          if (index !== -1) deduplicated.splice(index, 1);
-          seen.delete(seenItem);
-        } else {
-          isDuplicate = true;
-          break;
-        }
+        isDuplicate = true;
+        break;
+      }
+      
+      // Check for similar moisture-wicking items
+      if (normalized.includes('moisture-wicking') && seenItem.includes('moisture-wicking')) {
+        isDuplicate = true;
+        break;
+      }
+      
+      // Check for similar breathable items
+      if (normalized.includes('breathable') && seenItem.includes('breathable')) {
+        isDuplicate = true;
+        break;
       }
       
       // Check for similar clothing items

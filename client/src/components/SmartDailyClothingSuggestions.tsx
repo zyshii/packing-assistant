@@ -284,7 +284,7 @@ export default function SmartDailyClothingSuggestions({
               </div>
               <div>
                 <h3 className="text-xl font-bold text-gray-900">Daily Clothing Suggestions</h3>
-                <p className="text-sm text-gray-600 mt-1">Recommendations for each day</p>
+                <p className="text-sm text-gray-600 mt-1">💡 Start with your complete morning outfit, then add or remove layers as temperatures change throughout the day</p>
               </div>
             </div>
             {isWeatherDataReal !== undefined && (
@@ -370,11 +370,8 @@ export default function SmartDailyClothingSuggestions({
                       {/* Smart layering recommendations */}
                       {smartDay && !hasError ? (
                         <div className="space-y-4">
-                          {/* Outfit Guidance */}
+                          {/* Start Your Day With */}
                           <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                            <div className="text-xs text-blue-600 mb-3">
-                              💡 <strong>Outfit Guidance:</strong> Start with your complete morning outfit, then add or remove layers as temperatures change throughout the day.
-                            </div>
                             <div className="flex items-center gap-2 mb-3">
                               <Shirt className="h-4 w-4 text-blue-600" />
                               <h6 className="font-semibold text-blue-900 text-sm">Start Your Day With</h6>
