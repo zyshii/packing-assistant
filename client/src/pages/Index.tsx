@@ -79,18 +79,24 @@ const Index = () => {
   // Transform weather data for the components
   const generateDailyClothingData = useMemo(() => {
     if (weatherData) {
-      return weatherData.daily.map(day => ({
-        date: format(new Date(day.date), 'MMM d'),
-        condition: day.condition as 'sunny' | 'cloudy' | 'mixed' | 'rainy' | 'snowy',
-        temp: {
-          high: day.temperatureHigh,
-          low: day.temperatureLow
-        },
-        uvIndex: day.uvIndex,
-        precipitation: day.precipitationSum,
-        timeOfDay: [],
-        activities: []
-      }));
+      console.log('Weather data received:', weatherData);
+      console.log('Trip dates:', tripData?.startDate, tripData?.endDate);
+      
+      return weatherData.daily.map(day => {
+        console.log('Processing weather day:', day.date, 'formatted as:', format(new Date(day.date), 'MMM d'));
+        return {
+          date: format(new Date(day.date), 'MMM d'),
+          condition: day.condition as 'sunny' | 'cloudy' | 'mixed' | 'rainy' | 'snowy',
+          temp: {
+            high: day.temperatureHigh,
+            low: day.temperatureLow
+          },
+          uvIndex: day.uvIndex,
+          precipitation: day.precipitationSum,
+          timeOfDay: [],
+          activities: []
+        };
+      });
     }
 
     // Fallback data when no real trip data exists

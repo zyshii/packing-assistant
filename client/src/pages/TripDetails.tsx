@@ -230,9 +230,13 @@ function TripDetails() {
     const dateArray = [];
     const daysDiff = differenceInDays(watchedEndDate, watchedStartDate);
     
+    console.log('Generating dates from:', watchedStartDate, 'to:', watchedEndDate, 'daysDiff:', daysDiff);
+    
     for (let i = 0; i <= daysDiff; i++) {
       const currentDate = addDays(watchedStartDate, i);
-      dateArray.push(format(currentDate, "MMM d"));
+      const formattedDate = format(currentDate, "MMM d");
+      console.log('Generated date:', currentDate, 'formatted as:', formattedDate);
+      dateArray.push(formattedDate);
     }
     return dateArray;
   }, [watchedStartDate, watchedEndDate]);
