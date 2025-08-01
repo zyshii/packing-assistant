@@ -59,6 +59,7 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
   const [dailyActivities, setDailyActivities] = useState<DailyActivity[]>([]);
   const [activityInputs, setActivityInputs] = useState<{ [key: number]: string }>({});
   const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>({});
+  const [inputFocused, setInputFocused] = useState<{ [key: number]: boolean }>({});
 
   // Sync dailyActivities with dates prop changes
   useEffect(() => {
@@ -66,12 +67,15 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
     // Initialize input states for each date
     const initialInputs: { [key: number]: string } = {};
     const initialPopovers: { [key: number]: boolean } = {};
+    const initialFocused: { [key: number]: boolean } = {};
     dates.forEach((_, index) => {
       initialInputs[index] = '';
       initialPopovers[index] = false;
+      initialFocused[index] = false;
     });
     setActivityInputs(initialInputs);
     setOpenPopovers(initialPopovers);
+    setInputFocused(initialFocused);
   }, [dates]);
 
   const addActivity = (dateIndex: number, activity: string) => {
@@ -80,9 +84,10 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
       updated[dateIndex].activities.push(activity);
       setDailyActivities(updated);
       onActivitiesChange(updated);
-      // Clear the input and close popover for this date
+      // Clear the input, close popover, and remove focus for this date
       setActivityInputs(prev => ({ ...prev, [dateIndex]: '' }));
       setOpenPopovers(prev => ({ ...prev, [dateIndex]: false }));
+      setInputFocused(prev => ({ ...prev, [dateIndex]: false }));
     }
   };
 
@@ -107,6 +112,7 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
 
   const handleInputChange = (dateIndex: number, value: string) => {
     setActivityInputs(prev => ({ ...prev, [dateIndex]: value }));
+    setInputFocused(prev => ({ ...prev, [dateIndex]: true }));
     // Only open popover if we have enough characters to search
     if (value.length >= 2) {
       setOpenPopovers(prev => ({ ...prev, [dateIndex]: true }));
@@ -116,10 +122,20 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
   };
 
   const handleInputFocus = (dateIndex: number) => {
+    setInputFocused(prev => ({ ...prev, [dateIndex]: true }));
     const input = activityInputs[dateIndex] || '';
     if (input.length >= 2 && getFilteredActivities(dateIndex).length > 0) {
       setOpenPopovers(prev => ({ ...prev, [dateIndex]: true }));
     }
+  };
+
+  const handleInputBlur = (dateIndex: number) => {
+    // Only remove focus state if dropdown is closed and no typing activity
+    setTimeout(() => {
+      if (!openPopovers[dateIndex]) {
+        setInputFocused(prev => ({ ...prev, [dateIndex]: false }));
+      }
+    }, 150);
   };
 
   const predefinedActivities = getActivitiesByTripTypes(tripTypes);
@@ -180,7 +196,12 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
                         value={activityInputs[dateIndex] || ''}
                         onChange={(e) => handleInputChange(dateIndex, e.target.value)}
                         onFocus={() => handleInputFocus(dateIndex)}
-                        className="w-full"
+                        onBlur={() => handleInputBlur(dateIndex)}
+                        className={`w-full transition-all duration-200 ${
+                          inputFocused[dateIndex] || openPopovers[dateIndex]
+                            ? 'ring-2 ring-primary ring-offset-2 border-primary' 
+                            : ''
+                        }`}
                       />
                       <Activity className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     </div>

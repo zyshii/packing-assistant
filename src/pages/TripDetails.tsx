@@ -97,6 +97,7 @@ function TripDetails() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
   const [destinationSelected, setDestinationSelected] = useState(false);
+  const [destinationFocused, setDestinationFocused] = useState(false);
   const [dailyActivities, setDailyActivities] = useState<Array<{ date: string; activities: string[] }>>([]);
 
   const form = useForm<FormData>({
@@ -212,15 +213,29 @@ function TripDetails() {
                                 <Input 
                                   placeholder="Type to search destinations..."
                                   {...field}
-                                  className="pl-10 h-12 text-base"
+                                  className={`pl-10 h-12 text-base transition-all duration-200 ${
+                                    destinationFocused || open 
+                                      ? 'ring-2 ring-primary ring-offset-2 border-primary' 
+                                      : ''
+                                  }`}
                                   onFocus={() => {
+                                    setDestinationFocused(true);
                                     if (filteredDestinations.length > 0) {
                                       setOpen(true);
                                     }
                                   }}
+                                  onBlur={() => {
+                                    // Only remove focus state if dropdown is closed and no typing activity
+                                    setTimeout(() => {
+                                      if (!open) {
+                                        setDestinationFocused(false);
+                                      }
+                                    }, 150);
+                                  }}
                                   onChange={(e) => {
                                     field.onChange(e);
                                     setDestinationSelected(false);
+                                    setDestinationFocused(true);
                                     if (e.target.value.length >= 2) {
                                       setOpen(true);
                                     }
@@ -246,6 +261,7 @@ function TripDetails() {
                                         onSelect={() => {
                                           field.onChange(destination);
                                           setDestinationSelected(true);
+                                          setDestinationFocused(false);
                                           setOpen(false);
                                         }}
                                         className="cursor-pointer hover:bg-muted"
