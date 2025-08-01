@@ -3,7 +3,7 @@ import { ArrowLeft, Sparkles, CheckCircle, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import TripHeader from "@/components/TripHeader";
-import EnhancedDailyClothingSuggestions from "@/components/EnhancedDailyClothingSuggestions";
+import SmartDailyClothingSuggestions from "@/components/SmartDailyClothingSuggestions";
 import { useLocation } from "wouter";
 import { format, addDays, differenceInDays } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
@@ -203,7 +203,7 @@ const Index = () => {
               </p>
             </div>
           ) : dailyClothingData.length > 0 ? (
-            <EnhancedDailyClothingSuggestions 
+            <SmartDailyClothingSuggestions 
               key={`clothing-${dailyClothingData.length}-${dailyClothingData[0]?.date}-${Date.now()}`}
               dailyData={dailyClothingData}
               tripDetails={{
@@ -213,7 +213,6 @@ const Index = () => {
                 duration: dailyClothingData.length
               }}
               isWeatherDataReal={!!weatherData && !weatherError}
-              enableAI={true}
             />
           ) : (
             <div className="bg-white/70 dark:bg-gray-900/70 rounded-lg p-8 text-center">

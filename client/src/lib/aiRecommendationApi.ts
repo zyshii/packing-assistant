@@ -17,6 +17,13 @@ export interface DailyClothingRecommendation {
     activitySpecific: string[];
   };
   priorities: string[];
+  weatherDetails?: {
+    condition: string;
+    temperatureRange: string;
+    uvIndex?: string;
+    precipitation: string;
+    tips: string[];
+  };
 }
 
 export interface PackingListOptimization {
@@ -103,13 +110,12 @@ export async function fetchDailyRecommendations(
 
 export async function fetchPackingOptimization(
   tripContext: TripContext,
-  dailyRecommendations: DailyClothingRecommendation[]
+  dailyRecommendations: DailyClothingRecommendation[] = []
 ): Promise<PackingListOptimization> {
   const response = await makeApiRequest<{ packingOptimization: PackingListOptimization }>(
     '/api/recommendations/packing',
     {
-      tripContext,
-      dailyRecommendations
+      tripContext
     }
   );
   

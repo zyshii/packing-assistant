@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { getWeatherForecast } from "./weatherService";
 import { generateDailyClothingRecommendations, optimizePackingList, getActivitySpecificRecommendations } from "./aiRecommendationService";
+import { generateDetailedDailyRecommendations, generateOptimizedPackingList } from "./smartRecommendationEngine";
 import { aiRecommendationRequestSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -97,12 +98,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // AI Recommendations API routes
+  // Smart Dataset-based Recommendations API routes
   app.post("/api/recommendations/daily", async (req, res) => {
     try {
       const validatedRequest = aiRecommendationRequestSchema.parse(req.body);
       
-      const recommendations = await generateDailyClothingRecommendations(validatedRequest.tripContext);
+      // Use smart dataset-based engine instead of AI
+      const recommendations = generateDetailedDailyRecommendations(
+        validatedRequest.tripContext.dailyData,
+        validatedRequest.tripContext
+      );
       res.json({ dailyRecommendations: recommendations });
       
     } catch (error) {
@@ -123,15 +128,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/recommendations/packing", async (req, res) => {
     try {
-      const { tripContext, dailyRecommendations } = req.body;
+      const { tripContext } = req.body;
       
-      if (!tripContext || !dailyRecommendations) {
+      if (!tripContext) {
         return res.status(400).json({ 
-          error: "Missing required fields: tripContext and dailyRecommendations" 
+          error: "Missing required field: tripContext" 
         });
       }
       
-      const optimizedPacking = await optimizePackingList(tripContext, dailyRecommendations);
+      // Use smart dataset-based engine for packing optimization
+      const optimizedPacking = generateOptimizedPackingList(
+        tripContext.dailyData,
+        tripContext
+      );
       res.json({ packingOptimization: optimizedPacking });
       
     } catch (error) {
