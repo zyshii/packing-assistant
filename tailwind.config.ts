@@ -62,7 +62,7 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				/* Modern, accessible color system */
+				/* WCAG AA compliant color system */
 				success: {
 					DEFAULT: 'hsl(var(--success))',
 					light: 'hsl(var(--success-light))'
@@ -75,9 +75,9 @@ export default {
 					DEFAULT: 'hsl(var(--warning))',
 					light: 'hsl(var(--warning-light))'
 				},
-				neutral: 'hsl(var(--travel-neutral))',
-				surface: 'hsl(var(--travel-surface))',
-				'accent-light': 'hsl(var(--travel-accent))'
+				neutral: 'hsl(var(--neutral))',
+				surface: 'hsl(var(--surface))',
+				'accent-light': 'hsl(var(--accent-light))'
 			},
 			boxShadow: {
 				'soft': 'var(--shadow-soft)',
