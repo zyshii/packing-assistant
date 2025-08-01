@@ -39,11 +39,6 @@ const Index = () => {
             <ArrowLeft className="h-4 w-4" />
             Back to Trip Details
           </Button>
-          
-          <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-success rounded-full text-white text-sm font-medium shadow-floating">
-            <CheckCircle className="w-4 h-4" />
-            AI Suggestions Ready
-          </div>
         </div>
 
         {/* Onboarding Hint */}
@@ -60,7 +55,6 @@ const Index = () => {
             destination={tripData.destination}
             dates={tripData.dates}
             tripType={tripData.tripType}
-            travelers={tripData.travelers}
             activities={tripData.activities}
           />
         </div>
@@ -70,35 +64,6 @@ const Index = () => {
           <DailyClothingSuggestions dailyData={dailyClothingData} />
         </div>
 
-        {/* AI Tips */}
-        <div className="p-6 lg:p-8 bg-gradient-to-r from-travel-purple/10 to-travel-blue/10 rounded-xl border border-travel-purple/20 shadow-soft animate-scale-in">
-          <div className="flex items-start gap-4">
-            <div className="p-3 bg-gradient-primary rounded-xl shadow-floating">
-              <Sparkles className="h-6 w-6 text-white" />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold text-foreground mb-3">AI-Powered Smart Tips</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-muted-foreground">
-                <div className="flex items-start gap-2">
-                  <div className="w-1.5 h-1.5 bg-travel-purple rounded-full mt-2 flex-shrink-0"></div>
-                  <p>Pack layers for variable weather in Paris</p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="w-1.5 h-1.5 bg-travel-blue rounded-full mt-2 flex-shrink-0"></div>
-                  <p>Comfortable walking shoes are essential for sightseeing</p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="w-1.5 h-1.5 bg-travel-green rounded-full mt-2 flex-shrink-0"></div>
-                  <p>Don't forget your camera for those memorable museum visits</p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <div className="w-1.5 h-1.5 bg-travel-orange rounded-full mt-2 flex-shrink-0"></div>
-                  <p>A light rain jacket will keep you prepared</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -1,15 +1,14 @@
-import { Calendar, MapPin, Users, Target } from "lucide-react";
+import { Calendar, MapPin, Target } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 interface TripHeaderProps {
   destination: string;
   dates: string;
   tripType: string;
-  travelers: number;
   activities: string[];
 }
 
-export default function TripHeader({ destination, dates, tripType, travelers, activities }: TripHeaderProps) {
+export default function TripHeader({ destination, dates, tripType, activities }: TripHeaderProps) {
   return (
     <Card className="p-6 shadow-card border-0 bg-card">
       <div className="space-y-4">
@@ -21,7 +20,7 @@ export default function TripHeader({ destination, dates, tripType, travelers, ac
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-travel-purple/20 rounded-lg">
               <MapPin className="h-4 w-4 text-travel-purple" />
@@ -39,16 +38,6 @@ export default function TripHeader({ destination, dates, tripType, travelers, ac
             <div>
               <p className="text-sm text-muted-foreground">Travel Dates</p>
               <p className="font-medium text-foreground">{dates}</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-travel-orange/20 rounded-lg">
-              <Users className="h-4 w-4 text-travel-orange" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Travelers</p>
-              <p className="font-medium text-foreground">{travelers} {travelers === 1 ? 'person' : 'people'}</p>
             </div>
           </div>
         </div>
