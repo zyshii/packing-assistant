@@ -96,6 +96,7 @@ function TripDetails() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [open, setOpen] = useState(false);
+  const [destinationSelected, setDestinationSelected] = useState(false);
   const [dailyActivities, setDailyActivities] = useState<Array<{ date: string; activities: string[] }>>([]);
 
   const form = useForm<FormData>({
@@ -143,9 +144,15 @@ function TripDetails() {
 
   const filteredDestinations = useMemo(() => {
     if (!watchedDestination) return [];
-    return popularDestinations.filter(destination =>
+    const filtered = popularDestinations.filter(destination =>
       destination.toLowerCase().includes(watchedDestination.toLowerCase())
     );
+    // Keep suggestions visible if no exact match is selected
+    const hasExactMatch = popularDestinations.some(dest => 
+      dest.toLowerCase() === watchedDestination.toLowerCase()
+    );
+    setDestinationSelected(hasExactMatch);
+    return filtered;
   }, [watchedDestination]);
   return (
     <div className="min-h-screen bg-gradient-background p-4">
@@ -198,7 +205,7 @@ function TripDetails() {
                            Destination
                         </FormLabel>
                         <FormControl>
-                          <Popover open={open && filteredDestinations.length > 0} onOpenChange={setOpen}>
+                          <Popover open={open && filteredDestinations.length > 0 && !destinationSelected} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
                               <div className="relative">
                                 <Input 
@@ -206,12 +213,15 @@ function TripDetails() {
                                   {...field}
                                   className="pl-10 h-12 text-base"
                                   onFocus={() => setOpen(true)}
-                                  onBlur={() => setTimeout(() => setOpen(false), 200)}
+                                  onChange={(e) => {
+                                    field.onChange(e);
+                                    setOpen(true);
+                                  }}
                                 />
                                 <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                               </div>
                             </PopoverTrigger>
-                            <PopoverContent className="w-full p-0" align="start">
+                            <PopoverContent className="w-full p-0 z-50 bg-background border border-border shadow-lg" align="start">
                               <Command>
                                 <CommandList className="max-h-[200px]">
                                   <CommandEmpty>No destinations found.</CommandEmpty>
@@ -222,9 +232,10 @@ function TripDetails() {
                                         value={destination}
                                         onSelect={(value) => {
                                           field.onChange(value);
+                                          setDestinationSelected(true);
                                           setOpen(false);
                                         }}
-                                        className="cursor-pointer"
+                                        className="cursor-pointer hover:bg-muted"
                                       >
                                         <MapPin className="mr-2 h-4 w-4" />
                                         {destination}
@@ -237,9 +248,14 @@ function TripDetails() {
                           </Popover>
                         </FormControl>
                         <FormMessage />
-                        {watchedDestination && (
+                        {watchedDestination && destinationSelected && (
                           <p className="text-sm text-travel-blue animate-fade-in">
                             ✨ Great choice! We'll check the weather and local customs for {watchedDestination}
+                          </p>
+                        )}
+                        {watchedDestination && !destinationSelected && filteredDestinations.length > 0 && (
+                          <p className="text-sm text-muted-foreground animate-fade-in">
+                            💡 Please select a destination from the suggestions above
                           </p>
                         )}
                       </FormItem>
