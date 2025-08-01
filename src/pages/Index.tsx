@@ -5,7 +5,6 @@ import TripHeader from "@/components/TripHeader";
 import PackingProgress from "@/components/PackingProgress";
 import PackingCategory from "@/components/PackingCategory";
 import WeatherInfo from "@/components/WeatherInfo";
-import StepIndicator from "@/components/StepIndicator";
 import OnboardingHint from "@/components/OnboardingHint";
 import DailyWeatherForecast from "@/components/DailyWeatherForecast";
 import ItemModal from "@/components/ItemModal";
@@ -20,13 +19,6 @@ interface PackingItem {
   weatherDependent?: boolean;
   notes?: string;
 }
-
-const steps = [
-  { id: 1, title: "Trip Details", description: "Where & when" },
-  { id: 2, title: "AI Suggestions", description: "Smart packing" },
-  { id: 3, title: "Customize", description: "Your perfect list" },
-  { id: 4, title: "Pack & Go", description: "Track progress" },
-];
 
 const Index = () => {
   const navigate = useNavigate();
@@ -225,11 +217,6 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Step Indicator */}
-        <div className="animate-slide-in">
-          <StepIndicator steps={steps} currentStep={3} />
-        </div>
-
         {/* Onboarding Hint */}
         <OnboardingHint
           title="Your AI-powered packing list is ready!"
@@ -249,20 +236,14 @@ const Index = () => {
           />
         </div>
 
-        {/* Progress and Weather Row */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 animate-slide-in">
-          <div className="xl:col-span-2">
-            <PackingProgress totalItems={totalItems} packedItems={packedItems} />
-          </div>
-          <div>
-            <WeatherInfo 
-              destination={weatherData.destination}
-              forecast={weatherData.forecast}
-            />
-          </div>
+        {/* Weather Info */}
+        <div className="animate-slide-in">
+          <WeatherInfo 
+            destination={weatherData.destination}
+            forecast={weatherData.forecast}
+          />
         </div>
 
-        {/* Daily Weather Forecast */}
         <div className="animate-fade-in">
           <DailyWeatherForecast 
             destination={tripData.destination}

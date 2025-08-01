@@ -14,7 +14,6 @@ import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import StepIndicator from "@/components/StepIndicator";
 import HelpTooltip from "@/components/HelpTooltip";
 import OnboardingHint from "@/components/OnboardingHint";
 
@@ -43,13 +42,6 @@ const formSchema = z.object({
 });
 
 type FormData = z.infer<typeof formSchema>;
-
-const steps = [
-  { id: 1, title: "Trip Details", description: "Where & when" },
-  { id: 2, title: "AI Suggestions", description: "Smart packing" },
-  { id: 3, title: "Customize", description: "Your perfect list" },
-  { id: 4, title: "Pack & Go", description: "Track progress" },
-];
 
 export default function TripDetails() {
   const navigate = useNavigate();
@@ -95,11 +87,6 @@ export default function TripDetails() {
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Tell us about your journey and our AI will create a personalized packing list based on your destination, weather, and activities
             </p>
-          </div>
-
-          {/* Step Indicator */}
-          <div className="animate-slide-in">
-            <StepIndicator steps={steps} currentStep={1} />
           </div>
 
           {/* Onboarding Hint */}
