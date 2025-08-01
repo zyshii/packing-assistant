@@ -384,16 +384,16 @@ export default function SmartDailyClothingSuggestions({
                                 <Shirt className="h-5 w-5 text-blue-600" />
                               </div>
                               <div>
-                                <h6 className="font-semibold text-blue-900">Base Layer (All Day)</h6>
-                                <p className="text-xs text-blue-700">Start with these essentials</p>
+                                <h6 className="font-semibold text-blue-900">Start Your Day With</h6>
+                                <p className="text-xs text-blue-700">Essential base clothing for {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F</p>
                               </div>
                             </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                              <div>
-                                <div className="font-medium text-blue-800 text-sm mb-2">Core Items</div>
+                            <div className="space-y-3">
+                              <div className="bg-white rounded-lg p-4 border border-blue-200">
+                                <div className="font-medium text-blue-800 text-sm mb-2">Foundation Layer</div>
                                 <ul className="space-y-1">
-                                  {smartDay.recommendations?.morning?.length > 0 ? (
-                                    smartDay.recommendations.morning.slice(0, 3).map((item: string, index: number) => (
+                                  {smartDay.recommendations?.base?.length > 0 ? (
+                                    smartDay.recommendations.base.map((item: string, index: number) => (
                                       <li key={index} className="text-sm text-blue-700 flex items-start gap-2">
                                         <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
                                         <span>{item}</span>
@@ -401,46 +401,41 @@ export default function SmartDailyClothingSuggestions({
                                     ))
                                   ) : (
                                     <li className="text-sm text-blue-600 italic">
-                                      Basic clothing items for {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F weather
+                                      Basic clothing for {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F
                                     </li>
                                   )}
                                 </ul>
                               </div>
-                              <div>
-                                <div className="font-medium text-blue-800 text-sm mb-2">Temperature</div>
-                                <div className="bg-white rounded-lg p-3 border border-blue-200">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    {getWeatherIcon(day.condition)}
-                                    <span className="font-semibold text-blue-900">{Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F</span>
-                                  </div>
-                                  <div className="text-xs text-blue-600 capitalize">{day.condition} morning</div>
-                                </div>
+                              <div className="text-xs text-blue-600 bg-blue-100 rounded-lg p-2">
+                                💡 <strong>Tip:</strong> This is your core outfit that you'll wear all day. Add or remove layers as needed throughout the day.
                               </div>
                             </div>
                           </div>
 
                           {/* Layering Options */}
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {/* Add Layers */}
+                            {/* Daytime Adjustments */}
                             <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
                               <div className="flex items-center gap-2 mb-3">
                                 <Sun className="h-5 w-5 text-orange-600" />
-                                <h6 className="font-semibold text-orange-900">Add When Needed</h6>
+                                <h6 className="font-semibold text-orange-900">As Temperature Rises</h6>
                               </div>
                               <div className="space-y-2">
                                 <div className="bg-white rounded-lg p-3 border border-orange-200">
-                                  <div className="text-xs font-medium text-orange-800 mb-1">Daytime ({Math.round(day.temp.high)}°F)</div>
+                                  <div className="text-xs font-medium text-orange-800 mb-1">Peak Temperature: {Math.round(day.temp.high)}°F</div>
                                   <ul className="space-y-1">
                                     {smartDay.recommendations?.daytime?.length > 0 ? (
-                                      smartDay.recommendations.daytime.slice(0, 2).map((item: string, index: number) => (
+                                      smartDay.recommendations.daytime.map((item: string, index: number) => (
                                         <li key={index} className="text-sm text-orange-700 flex items-start gap-2">
-                                          <span className="text-orange-500 mt-0.5 flex-shrink-0">+</span>
+                                          <span className="text-orange-500 mt-0.5 flex-shrink-0 font-semibold">
+                                            {item.toLowerCase().includes('remove') ? '−' : '+'}
+                                          </span>
                                           <span>{item}</span>
                                         </li>
                                       ))
                                     ) : (
                                       <li className="text-sm text-orange-600 italic">
-                                        No additional layers needed for {Math.round(day.temp.high)}°F
+                                        Stay comfortable in your base layers
                                       </li>
                                     )}
                                   </ul>
@@ -448,26 +443,28 @@ export default function SmartDailyClothingSuggestions({
                               </div>
                             </div>
 
-                            {/* Remove Layers */}
+                            {/* Evening Adjustments */}
                             <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
                               <div className="flex items-center gap-2 mb-3">
                                 <Moon className="h-5 w-5 text-purple-600" />
-                                <h6 className="font-semibold text-purple-900">Evening Adjustments</h6>
+                                <h6 className="font-semibold text-purple-900">As Temperature Drops</h6>
                               </div>
                               <div className="space-y-2">
                                 <div className="bg-white rounded-lg p-3 border border-purple-200">
-                                  <div className="text-xs font-medium text-purple-800 mb-1">Evening ({Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.7)}°F)</div>
+                                  <div className="text-xs font-medium text-purple-800 mb-1">Evening Low: {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.7)}°F</div>
                                   <ul className="space-y-1">
                                     {smartDay.recommendations?.evening?.length > 0 ? (
-                                      smartDay.recommendations.evening.slice(0, 2).map((item: string, index: number) => (
+                                      smartDay.recommendations.evening.map((item: string, index: number) => (
                                         <li key={index} className="text-sm text-purple-700 flex items-start gap-2">
-                                          <span className="text-purple-500 mt-0.5 flex-shrink-0">±</span>
+                                          <span className="text-purple-500 mt-0.5 flex-shrink-0 font-semibold">
+                                            {item.toLowerCase().includes('remove') ? '−' : '+'}
+                                          </span>
                                           <span>{item}</span>
                                         </li>
                                       ))
                                     ) : (
                                       <li className="text-sm text-purple-600 italic">
-                                        Keep base layers for {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.7)}°F evening
+                                        Your base layers should be sufficient
                                       </li>
                                     )}
                                   </ul>

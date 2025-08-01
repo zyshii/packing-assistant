@@ -311,7 +311,7 @@ export function generateDetailedDailyRecommendations(
     };
     
     const timeSpecificRecommendations = {
-      morning: generateTimeSpecificRecommendations("morning", weather, day.activities),
+      base: generateTimeSpecificRecommendations("base", weather, day.activities),
       daytime: generateTimeSpecificRecommendations("daytime", weather, day.activities),
       evening: generateTimeSpecificRecommendations("evening", weather, day.activities)
     };
@@ -346,28 +346,45 @@ function generateTimeSpecificRecommendations(
 ): string[] {
   const recommendations = [];
   
-  // Morning base layer recommendations (always provide something)
-  if (timeOfDay === "morning") {
+  // Base layer recommendations (core clothing to start with)
+  if (timeOfDay === "base") {
+    // Always include essential base items
+    recommendations.push("Underwear and socks");
+    
     if (weather.temp.low < 50) {
-      recommendations.push("Warm sweater or fleece");
-      recommendations.push("Long pants or jeans");
-      recommendations.push("Closed-toe shoes");
+      recommendations.push("Long-sleeve shirt or thermal top");
+      recommendations.push("Long pants or warm trousers");
     } else if (weather.temp.low < 65) {
-      recommendations.push("Light sweater or cardigan");
-      recommendations.push("Long pants or comfortable jeans");
-      recommendations.push("Comfortable walking shoes");
+      recommendations.push("T-shirt or light long-sleeve");
+      recommendations.push("Comfortable pants or jeans");
     } else {
-      recommendations.push("Light T-shirt or casual top");
-      recommendations.push("Comfortable pants or light jeans");
-      recommendations.push("Comfortable walking shoes");
+      recommendations.push("Lightweight T-shirt or tank top");
+      recommendations.push("Shorts or light pants");
     }
+    
+    // Basic footwear
+    recommendations.push("Comfortable walking shoes");
   }
   
-  if (timeOfDay === "daytime" && weather.temp.high > 75) {
-    recommendations.push("Lightweight, breathable fabrics");
-    recommendations.push("Short sleeves or tank tops");
+  if (timeOfDay === "daytime") {
+    if (weather.temp.high > 85) {
+      recommendations.push("Remove layers - stay in base clothing");
+      recommendations.push("Sun hat for UV protection");
+    } else if (weather.temp.high > 75) {
+      recommendations.push("Light cardigan or jacket (removable)");
+      if (weather.uvIndex && weather.uvIndex > 6) {
+        recommendations.push("Sun hat and sunglasses");
+      }
+    } else if (weather.temp.high > 60) {
+      recommendations.push("Light sweater or jacket");
+      recommendations.push("Comfortable outer layer");
+    } else {
+      recommendations.push("Warm jacket or coat");
+      recommendations.push("Additional warm layers");
+    }
+    
+    // UV protection for sunny days
     if (weather.uvIndex && weather.uvIndex > 6) {
-      recommendations.push("Sun hat and sunglasses");
       recommendations.push("SPF 30+ sunscreen");
     }
   }
