@@ -10,7 +10,12 @@ const Index = () => {
   const [, setLocation] = useLocation();
   
   // Get data from localStorage or use sample data
-  const tripData = JSON.parse(localStorage.getItem('tripData') || 'null');
+  const rawTripData = JSON.parse(localStorage.getItem('tripData') || 'null');
+  const tripData = rawTripData ? {
+    ...rawTripData,
+    startDate: rawTripData.startDate ? new Date(rawTripData.startDate) : null,
+    endDate: rawTripData.endDate ? new Date(rawTripData.endDate) : null
+  } : null;
   const dailyActivities = JSON.parse(localStorage.getItem('dailyActivities') || 'null');
   
   // Sample trip data (fallback)
@@ -29,7 +34,7 @@ const Index = () => {
         ...defaultTripData,
         destination: tripData.destination,
         dates: tripData.startDate && tripData.endDate 
-          ? `${tripData.startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${tripData.endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
+          ? `${format(tripData.startDate, 'MMM d')} - ${format(tripData.endDate, 'MMM d')}`
           : defaultTripData.dates,
         tripTypes: tripData.tripTypes || [defaultTripData.tripType],
         luggageSize: tripData.luggageSize,

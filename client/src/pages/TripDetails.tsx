@@ -152,13 +152,17 @@ function TripDetails() {
       // Convert dates to ISO strings for proper serialization
       const tripDataToSave = {
         ...values,
-        startDate: values.startDate,
-        endDate: values.endDate
+        startDate: values.startDate.toISOString(),
+        endDate: values.endDate.toISOString()
       };
+      // Clear any old localStorage data to prevent conflicts and save fresh data
+      localStorage.removeItem('tripData');
+      localStorage.removeItem('dailyActivities');
       localStorage.setItem('tripData', JSON.stringify(tripDataToSave));
       localStorage.setItem('dailyActivities', JSON.stringify(dailyActivities));
       
       console.log('Data saved successfully, navigating to packing list');
+      
       setIsSubmitting(false);
       setLocation("/packing-list");
     } catch (error) {
