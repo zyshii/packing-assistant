@@ -241,43 +241,53 @@ function getOptimizedQuantity(
   
   const constraints = luggageConstraints[tripContext.luggageSize as keyof typeof luggageConstraints] || luggageConstraints.checked;
   
-  // Essential items always get trip duration + 1
+  // Essential items for carry-on optimization
   if (category === "essentials") {
     if (item.item.includes("undergarments") || item.item.includes("socks")) {
-      return Math.min(tripContext.duration + 1, 7); // Max 7 for any trip
+      if (tripContext.luggageSize === "carry-on") {
+        return Math.min(tripContext.duration + 1, 4); // Max 4 for carry-on
+      }
+      return Math.min(tripContext.duration + 1, 6); // Max 6 for checked
     }
     return 1; // Other essentials just need 1
   }
   
-  // Footwear is limited based on luggage and trip type
+  // Strict footwear limits
   if (category === "footwear") {
     if (tripContext.luggageSize === "carry-on") {
-      return Math.min(2, score > 15 ? 2 : 1); // Max 2 pairs for carry-on
+      return score > 18 ? 2 : 1; // Very selective for carry-on
     }
-    return Math.min(3, score > 15 ? 2 : 1); // Max 3 pairs for checked
+    return score > 15 ? 2 : 1; // Max 2 pairs even for checked
   }
   
-  // Weather-appropriate clothing quantities
+  // Optimized clothing quantities for carry-on
   if (category === "tops") {
-    if (item.priority === "essential") {
-      return Math.min(tripContext.duration, constraints.maxItems);
+    if (tripContext.luggageSize === "carry-on") {
+      if (item.priority === "essential") {
+        return Math.min(Math.ceil(tripContext.duration * 0.8), 3); // Reduced for carry-on
+      }
+      return score > 18 ? 2 : 1; // Higher threshold for carry-on
     }
-    return score > 15 ? Math.min(2, tripContext.duration) : 1;
+    // Checked luggage
+    if (item.priority === "essential") {
+      return Math.min(tripContext.duration, 4);
+    }
+    return score > 15 ? 2 : 1;
   }
   
   if (category === "bottoms") {
-    // Fewer pants/shorts needed since they can be worn multiple times
-    return Math.min(Math.ceil(tripContext.duration / 2) + 1, constraints.maxItems);
+    if (tripContext.luggageSize === "carry-on") {
+      return Math.min(2, Math.ceil(tripContext.duration / 2)); // Max 2 for carry-on
+    }
+    return Math.min(3, Math.ceil(tripContext.duration / 2) + 1);
   }
   
   if (category === "outerwear") {
-    // One piece of outerwear per type is usually sufficient
-    return score > 20 ? 2 : 1;
+    return score > 25 ? 2 : 1; // Higher threshold
   }
   
   if (category === "accessories") {
-    // Accessories are typically one-offs unless essential for weather
-    return score > 20 ? 2 : 1;
+    return score > 25 ? 2 : 1; // Higher threshold
   }
   
   return 1;
@@ -492,7 +502,7 @@ export function generateOptimizedPackingList(
   
   // Process each category
   for (const [category, items] of Object.entries(clothingDatabase)) {
-    const categoryItems = [];
+    let categoryItems = [];
     
     for (const item of items) {
       let totalScore = 0;
@@ -501,7 +511,7 @@ export function generateOptimizedPackingList(
       // Calculate average score across all days
       for (const weather of allWeatherConditions) {
         const dayScore = calculateItemScore(item, weather, allActivities, tripContext);
-        if (dayScore > 5) { // Only count if item is somewhat relevant
+        if (dayScore > 8) { // Higher threshold for inclusion
           totalScore += dayScore;
           relevantDays++;
         }
@@ -511,7 +521,8 @@ export function generateOptimizedPackingList(
         const avgScore = totalScore / relevantDays;
         const quantity = getOptimizedQuantity(item, avgScore, tripContext, category);
         
-        if (quantity > 0) {
+        // Only include items with sufficient score and quantity
+        if (quantity > 0 && avgScore > 10) {
           categoryItems.push({
             item: item.item,
             quantity,
@@ -523,8 +534,23 @@ export function generateOptimizedPackingList(
       }
     }
     
-    // Sort by score and add to packing list
+    // Sort by score and limit items for carry-on
     categoryItems.sort((a, b) => b.score - a.score);
+    
+    // Apply category limits for carry-on
+    if (tripContext.luggageSize === "carry-on") {
+      const categoryLimits = {
+        tops: 4,
+        bottoms: 3,
+        outerwear: 2,
+        footwear: 2,
+        accessories: 3,
+        essentials: 6
+      };
+      const limit = categoryLimits[category as keyof typeof categoryLimits] || 5;
+      categoryItems = categoryItems.slice(0, limit);
+    }
+    
     packingList[category] = categoryItems;
   }
   
