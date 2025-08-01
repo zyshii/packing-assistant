@@ -207,7 +207,16 @@ function TripDetails() {
                            Destination
                         </FormLabel>
                         <FormControl>
-                          <Popover open={open && filteredDestinations.length > 0} onOpenChange={setOpen}>
+                          <Popover 
+                            open={open && filteredDestinations.length > 0} 
+                            onOpenChange={(newOpen) => {
+                              // Prevent closing dropdown when clicking in input
+                              if (!newOpen && destinationFocused) {
+                                return;
+                              }
+                              setOpen(newOpen);
+                            }}
+                          >
                             <PopoverTrigger asChild>
                               <div className="relative">
                                 <Input 
@@ -244,7 +253,14 @@ function TripDetails() {
                                 <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                               </div>
                             </PopoverTrigger>
-                            <PopoverContent className="w-full p-0 z-50 bg-background border border-border shadow-lg" align="start">
+                            <PopoverContent 
+                              className="w-full p-0 z-50 bg-background border border-border shadow-lg" 
+                              align="start"
+                              onOpenAutoFocus={(e) => {
+                                // Prevent popover from stealing focus from input
+                                e.preventDefault();
+                              }}
+                            >
                               <Command shouldFilter={false}>
                                 <CommandList className="max-h-[200px]">
                                   <CommandEmpty>

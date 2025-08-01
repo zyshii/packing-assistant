@@ -183,7 +183,13 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
               <div className="flex flex-col gap-2">
                 <Popover 
                   open={openPopovers[dateIndex] && getFilteredActivities(dateIndex).length > 0} 
-                  onOpenChange={(open) => setOpenPopovers(prev => ({ ...prev, [dateIndex]: open }))}
+                  onOpenChange={(newOpen) => {
+                    // Prevent closing dropdown when clicking in input or while typing
+                    if (!newOpen && inputFocused[dateIndex]) {
+                      return;
+                    }
+                    setOpenPopovers(prev => ({ ...prev, [dateIndex]: newOpen }));
+                  }}
                 >
                   <PopoverTrigger asChild>
                     <div className="relative">
@@ -206,7 +212,14 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
                       <Activity className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     </div>
                   </PopoverTrigger>
-                  <PopoverContent className="w-full p-0 z-50 bg-background border border-border shadow-lg" align="start">
+                  <PopoverContent 
+                    className="w-full p-0 z-50 bg-background border border-border shadow-lg" 
+                    align="start"
+                    onOpenAutoFocus={(e) => {
+                      // Prevent popover from stealing focus from input
+                      e.preventDefault();
+                    }}
+                  >
                     <Command shouldFilter={false}>
                       <CommandList className="max-h-[200px]">
                         <CommandEmpty>
