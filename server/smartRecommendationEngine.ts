@@ -378,17 +378,62 @@ export function generateDetailedDailyRecommendations(
       evening: deduplicateRecommendations(generateTimeSpecificRecommendations("evening", weather, day.activities))
     };
     
-    const activitySpecific = generateActivitySpecificRecommendations(day.activities, weather);
-    const priorities = generatePriorities(weather, day.activities);
+    const activitySpecific = deduplicateRecommendations(generateActivitySpecificRecommendations(day.activities, weather));
+    const priorities = deduplicateRecommendations(generatePriorities(weather, day.activities));
+    
+    // Apply global deduplication across all recommendation types for this day
+    const allRecommendations = [
+      ...timeSpecificRecommendations.base,
+      ...timeSpecificRecommendations.daytime,
+      ...timeSpecificRecommendations.evening,
+      ...activitySpecific
+    ];
+    const globallyDeduplicated = deduplicateRecommendations(allRecommendations);
+    
+    // Redistribute back to categories while maintaining structure
+    const finalRecommendations = {
+      base: timeSpecificRecommendations.base.filter(item => 
+        globallyDeduplicated.includes(item) || 
+        !globallyDeduplicated.some(global => 
+          item.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().includes('quick-dry') &&
+          global.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().includes('quick-dry')
+        )
+      ),
+      daytime: timeSpecificRecommendations.daytime.filter(item => 
+        globallyDeduplicated.includes(item) || 
+        !globallyDeduplicated.some(global => 
+          item.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().includes('quick-dry') &&
+          global.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().includes('quick-dry')
+        )
+      ),
+      evening: timeSpecificRecommendations.evening.filter(item => 
+        globallyDeduplicated.includes(item) || 
+        !globallyDeduplicated.some(global => 
+          item.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().includes('quick-dry') &&
+          global.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().includes('quick-dry')
+        )
+      ),
+      activitySpecific: activitySpecific.filter(item => 
+        !timeSpecificRecommendations.base.some(base => 
+          item.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().includes('quick-dry') &&
+          base.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().includes('quick-dry')
+        ) &&
+        !timeSpecificRecommendations.daytime.some(day => 
+          item.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().includes('quick-dry') &&
+          day.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().includes('quick-dry')
+        ) &&
+        !timeSpecificRecommendations.evening.some(eve => 
+          item.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().includes('quick-dry') &&
+          eve.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().includes('quick-dry')
+        )
+      )
+    };
     
     return {
       date: day.date,
       weather,
       activities: day.activities,
-      recommendations: {
-        ...timeSpecificRecommendations,
-        activitySpecific
-      },
+      recommendations: finalRecommendations,
       priorities,
       weatherDetails: {
         condition: day.condition,

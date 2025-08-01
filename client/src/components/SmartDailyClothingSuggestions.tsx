@@ -287,16 +287,7 @@ export default function SmartDailyClothingSuggestions({
                 <p className="text-sm text-gray-600 mt-1">💡 Start with your complete morning outfit, then add or remove layers as temperatures change throughout the day</p>
               </div>
             </div>
-            {isWeatherDataReal !== undefined && (
-              <div className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
-                isWeatherDataReal 
-                  ? "bg-green-100 text-green-700" 
-                  : "bg-gray-100 text-gray-600"
-              }`}>
-                <span className="mr-1">{isWeatherDataReal ? "🌡️" : "📊"}</span>
-                {isWeatherDataReal ? "Real-time weather" : "Estimated weather"}
-              </div>
-            )}
+
           </div>
         </div>
 
