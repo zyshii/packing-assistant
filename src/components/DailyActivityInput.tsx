@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, X, Calendar, Activity } from "lucide-react";
+import { X, Calendar, Activity } from "lucide-react";
 
 interface DailyActivity {
   date: string;
@@ -51,7 +50,6 @@ export default function DailyActivityInput({ dates, tripType, onActivitiesChange
   const [dailyActivities, setDailyActivities] = useState<DailyActivity[]>(
     dates.map(date => ({ date, activities: [] }))
   );
-  const [customActivity, setCustomActivity] = useState("");
 
   const addActivity = (dateIndex: number, activity: string) => {
     const updated = [...dailyActivities];
@@ -60,7 +58,6 @@ export default function DailyActivityInput({ dates, tripType, onActivitiesChange
       setDailyActivities(updated);
       onActivitiesChange(updated);
     }
-    setCustomActivity("");
   };
 
   const removeActivity = (dateIndex: number, activityIndex: number) => {
@@ -68,12 +65,6 @@ export default function DailyActivityInput({ dates, tripType, onActivitiesChange
     updated[dateIndex].activities.splice(activityIndex, 1);
     setDailyActivities(updated);
     onActivitiesChange(updated);
-  };
-
-  const addCustomActivity = (dateIndex: number) => {
-    if (customActivity.trim()) {
-      addActivity(dateIndex, customActivity.trim());
-    }
   };
 
   const predefinedActivities = getActivitiesByTripType(tripType);
@@ -120,7 +111,7 @@ export default function DailyActivityInput({ dates, tripType, onActivitiesChange
               {/* Add Activities */}
               <div className="flex flex-col sm:flex-row gap-2">
                 <Select onValueChange={(value) => addActivity(dateIndex, value)}>
-                  <SelectTrigger className="flex-1">
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder={
                       tripType 
                         ? `Choose ${tripType} activity` 
@@ -137,24 +128,6 @@ export default function DailyActivityInput({ dates, tripType, onActivitiesChange
                       ))}
                   </SelectContent>
                 </Select>
-
-                <div className="flex gap-2 flex-1">
-                  <Input
-                    placeholder="Custom activity"
-                    value={customActivity}
-                    onChange={(e) => setCustomActivity(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && addCustomActivity(dateIndex)}
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addCustomActivity(dateIndex)}
-                    disabled={!customActivity.trim()}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
               </div>
             </div>
           ))}

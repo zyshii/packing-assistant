@@ -29,8 +29,12 @@ const formSchema = z.object({
   endDate: z.date({
     required_error: "End date is required.",
   }),
-  tripType: z.enum(["business", "leisure", "adventure"]).optional(),
-  luggageSize: z.enum(["carry-on", "backpack", "medium-suitcase", "large-suitcase"]).optional(),
+  tripType: z.enum(["business", "leisure", "adventure"], {
+    required_error: "Please select a trip type.",
+  }),
+  luggageSize: z.enum(["carry-on", "backpack", "medium-suitcase", "large-suitcase"], {
+    required_error: "Please select your luggage size.",
+  }),
 }).refine((data) => data.endDate >= data.startDate, {
   message: "End date must be after start date.",
   path: ["endDate"],
@@ -357,7 +361,7 @@ function TripDetails() {
                       <FormItem className="space-y-4">
                          <FormLabel className="flex items-center gap-2 text-base font-semibold">
                            <Activity className="h-5 w-5 text-primary" />
-                            Trip Type (Optional)
+                            Trip Type
                          </FormLabel>
                         <FormControl>
                           <RadioGroup
@@ -416,7 +420,7 @@ function TripDetails() {
                       <FormItem className="space-y-3">
                          <FormLabel className="flex items-center gap-2 text-base font-semibold">
                            <Luggage className="h-5 w-5 text-primary" />
-                            Luggage Size (Optional)
+                            Luggage Size
                          </FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
