@@ -39,46 +39,6 @@ const Index = () => {
     return defaultTripData;
   }, [tripData]);
 
-  // Generate daily clothing data based on actual travel dates
-  const generateDailyClothingData = useMemo(() => {
-    if (!tripData?.startDate || !tripData?.endDate) {
-      // Fallback data for demo purposes
-      return [
-        { date: "May 30", condition: 'sunny' as const, temp: { high: 74, low: 60 }, timeOfDay: [], activities: [] },
-        { date: "May 31", condition: 'mixed' as const, temp: { high: 70, low: 58 }, timeOfDay: [], activities: [] },
-        { date: "Jun 1", condition: 'rainy' as const, temp: { high: 68, low: 55 }, timeOfDay: [], activities: [] },
-      ];
-    }
-
-    const startDate = new Date(tripData.startDate);
-    const endDate = new Date(tripData.endDate);
-    const numberOfDays = differenceInDays(endDate, startDate) + 1;
-    
-    // Generate realistic weather conditions and temperatures
-    const weatherConditions = ['sunny', 'cloudy', 'mixed', 'rainy'] as const;
-    const baseTemp = getSeasonalTemperature(startDate, tripData.destination);
-    
-    return Array.from({ length: numberOfDays }, (_, index) => {
-      const currentDate = addDays(startDate, index);
-      const dateString = format(currentDate, 'MMM d');
-      
-      // Generate varied but realistic weather
-      const condition = getWeatherCondition(index, tripData.destination);
-      const tempVariation = (Math.random() - 0.5) * 10; // ±5 degrees variation
-      
-      return {
-        date: dateString,
-        condition,
-        temp: {
-          high: Math.round(baseTemp.high + tempVariation),
-          low: Math.round(baseTemp.low + tempVariation)
-        },
-        timeOfDay: [],
-        activities: []
-      };
-    });
-  }, [tripData]);
-
   // Helper function to get seasonal temperature based on date and destination
   const getSeasonalTemperature = (date: Date, destination?: string) => {
     const month = date.getMonth(); // 0-11
@@ -116,6 +76,45 @@ const Index = () => {
     if (random < 0.9) return 'mixed';
     return 'cloudy';
   };
+
+  // Generate daily clothing data based on actual travel dates
+  const generateDailyClothingData = useMemo(() => {
+    if (!tripData?.startDate || !tripData?.endDate) {
+      // Fallback data for demo purposes
+      return [
+        { date: "May 30", condition: 'sunny' as const, temp: { high: 74, low: 60 }, timeOfDay: [], activities: [] },
+        { date: "May 31", condition: 'mixed' as const, temp: { high: 70, low: 58 }, timeOfDay: [], activities: [] },
+        { date: "Jun 1", condition: 'rainy' as const, temp: { high: 68, low: 55 }, timeOfDay: [], activities: [] },
+      ];
+    }
+
+    const startDate = new Date(tripData.startDate);
+    const endDate = new Date(tripData.endDate);
+    const numberOfDays = differenceInDays(endDate, startDate) + 1;
+    
+    // Generate realistic weather conditions and temperatures
+    const baseTemp = getSeasonalTemperature(startDate, tripData.destination);
+    
+    return Array.from({ length: numberOfDays }, (_, index) => {
+      const currentDate = addDays(startDate, index);
+      const dateString = format(currentDate, 'MMM d');
+      
+      // Generate varied but realistic weather
+      const condition = getWeatherCondition(index, tripData.destination);
+      const tempVariation = (Math.random() - 0.5) * 10; // ±5 degrees variation
+      
+      return {
+        date: dateString,
+        condition,
+        temp: {
+          high: Math.round(baseTemp.high + tempVariation),
+          low: Math.round(baseTemp.low + tempVariation)
+        },
+        timeOfDay: [],
+        activities: []
+      };
+    });
+  }, [tripData]);
 
   // Daily clothing data state
   const [dailyClothingData, setDailyClothingData] = useState(() => generateDailyClothingData);
