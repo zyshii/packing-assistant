@@ -377,7 +377,7 @@ export default function SmartDailyClothingSuggestions({
                       {/* Smart layering recommendations */}
                       {smartDay && !hasError ? (
                         <div className="space-y-4">
-                          {/* Base Layer Card */}
+                          {/* Start Your Day With Card */}
                           <div className="bg-blue-50 rounded-lg p-5 border border-blue-200">
                             <div className="flex items-center gap-3 mb-4">
                               <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg">
@@ -385,12 +385,14 @@ export default function SmartDailyClothingSuggestions({
                               </div>
                               <div>
                                 <h6 className="font-semibold text-blue-900">Start Your Day With</h6>
-                                <p className="text-xs text-blue-700">Essential base clothing for {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F</p>
                               </div>
                             </div>
                             <div className="space-y-3">
                               <div className="bg-white rounded-lg p-4 border border-blue-200">
-                                <div className="font-medium text-blue-800 text-sm mb-2">Foundation Layer</div>
+                                <div className="flex items-center justify-between mb-2">
+                                  <div className="font-medium text-blue-800 text-sm">Complete Outfit</div>
+                                  <div className="text-xs font-medium text-blue-800">Morning: {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F</div>
+                                </div>
                                 <ul className="space-y-1">
                                   {smartDay.recommendations?.base?.length > 0 ? (
                                     smartDay.recommendations.base.map((item: string, index: number) => (
@@ -407,7 +409,7 @@ export default function SmartDailyClothingSuggestions({
                                 </ul>
                               </div>
                               <div className="text-xs text-blue-600 bg-blue-100 rounded-lg p-2">
-                                💡 <strong>Tip:</strong> This is your core outfit that you'll wear all day. Add or remove layers as needed throughout the day.
+                                💡 <strong>Tip:</strong> This is your complete morning outfit. Add or remove layers as needed throughout the day.
                               </div>
                             </div>
                           </div>
@@ -428,9 +430,9 @@ export default function SmartDailyClothingSuggestions({
                                       smartDay.recommendations.daytime.map((item: string, index: number) => (
                                         <li key={index} className="text-sm text-orange-700 flex items-start gap-2">
                                           <span className="text-orange-500 mt-0.5 flex-shrink-0 font-semibold">
-                                            {item.toLowerCase().includes('remove') ? '−' : '+'}
+                                            {item.startsWith('-') ? '−' : item.startsWith('+') ? '+' : '•'}
                                           </span>
-                                          <span>{item}</span>
+                                          <span>{item.replace(/^[+-]\s*/, '')}</span>
                                         </li>
                                       ))
                                     ) : (
@@ -457,9 +459,9 @@ export default function SmartDailyClothingSuggestions({
                                       smartDay.recommendations.evening.map((item: string, index: number) => (
                                         <li key={index} className="text-sm text-purple-700 flex items-start gap-2">
                                           <span className="text-purple-500 mt-0.5 flex-shrink-0 font-semibold">
-                                            {item.toLowerCase().includes('remove') ? '−' : '+'}
+                                            {item.startsWith('-') ? '−' : item.startsWith('+') ? '+' : '•'}
                                           </span>
-                                          <span>{item}</span>
+                                          <span>{item.replace(/^[+-]\s*/, '')}</span>
                                         </li>
                                       ))
                                     ) : (

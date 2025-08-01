@@ -346,19 +346,23 @@ function generateTimeSpecificRecommendations(
 ): string[] {
   const recommendations = [];
   
-  // Base layer recommendations (core clothing to start with)
+  // Base layer recommendations (complete outfit with all layers)
   if (timeOfDay === "base") {
-    // Always include essential base items
+    // Essential base items
     recommendations.push("Underwear and socks");
     
+    // Core clothing based on morning temperature
     if (weather.temp.low < 50) {
       recommendations.push("Long-sleeve shirt or thermal top");
+      recommendations.push("Warm sweater or fleece");
       recommendations.push("Long pants or warm trousers");
     } else if (weather.temp.low < 65) {
       recommendations.push("T-shirt or light long-sleeve");
+      recommendations.push("Light sweater or jacket");
       recommendations.push("Comfortable pants or jeans");
     } else {
       recommendations.push("Lightweight T-shirt or tank top");
+      recommendations.push("Light cardigan (if needed)");
       recommendations.push("Shorts or light pants");
     }
     
@@ -368,24 +372,25 @@ function generateTimeSpecificRecommendations(
   
   if (timeOfDay === "daytime") {
     if (weather.temp.high > 85) {
-      recommendations.push("Remove layers - stay in base clothing");
-      recommendations.push("Sun hat for UV protection");
-    } else if (weather.temp.high > 75) {
-      recommendations.push("Light cardigan or jacket (removable)");
+      recommendations.push("- Light sweater or jacket");
+      recommendations.push("- Any extra layers");
+      recommendations.push("+ Sun hat for UV protection");
+    } else if (weather.temp.high > 75 && weather.temp.low < 65) {
+      recommendations.push("- Light sweater or jacket");
       if (weather.uvIndex && weather.uvIndex > 6) {
-        recommendations.push("Sun hat and sunglasses");
+        recommendations.push("+ Sun hat and sunglasses");
       }
-    } else if (weather.temp.high > 60) {
-      recommendations.push("Light sweater or jacket");
-      recommendations.push("Comfortable outer layer");
+    } else if (weather.temp.high > 65 && weather.temp.low < 65) {
+      recommendations.push("Keep light sweater or jacket");
+      recommendations.push("+ Sunglasses if sunny");
     } else {
-      recommendations.push("Warm jacket or coat");
-      recommendations.push("Additional warm layers");
+      recommendations.push("Keep all layers");
+      recommendations.push("+ Additional warm layer if cold");
     }
     
     // UV protection for sunny days
     if (weather.uvIndex && weather.uvIndex > 6) {
-      recommendations.push("SPF 30+ sunscreen");
+      recommendations.push("+ SPF 30+ sunscreen");
     }
   }
   
