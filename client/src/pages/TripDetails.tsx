@@ -139,18 +139,32 @@ function TripDetails() {
   }, [dates]);
 
   async function onSubmit(values: FormData) {
+    console.log('Form submitted with values:', values);
+    console.log('Form validation errors:', form.formState.errors);
+    
     setIsSubmitting(true);
     
-    // Simulate AI processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Save data to localStorage for access in the packing list page
-    localStorage.setItem('tripData', JSON.stringify(values));
-    localStorage.setItem('dailyActivities', JSON.stringify(dailyActivities));
-    
-    console.log({ ...values, dailyActivities });
-    setIsSubmitting(false);
-    setLocation("/packing-list");
+    try {
+      // Simulate AI processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Save data to localStorage for access in the packing list page
+      // Convert dates to ISO strings for proper serialization
+      const tripDataToSave = {
+        ...values,
+        startDate: values.startDate,
+        endDate: values.endDate
+      };
+      localStorage.setItem('tripData', JSON.stringify(tripDataToSave));
+      localStorage.setItem('dailyActivities', JSON.stringify(dailyActivities));
+      
+      console.log('Data saved successfully, navigating to packing list');
+      setIsSubmitting(false);
+      setLocation("/packing-list");
+    } catch (error) {
+      console.error('Error in form submission:', error);
+      setIsSubmitting(false);
+    }
   }
 
   const filteredDestinations = useMemo(() => {
