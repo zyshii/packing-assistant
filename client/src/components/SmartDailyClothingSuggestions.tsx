@@ -34,25 +34,14 @@ interface SmartDailyClothingSuggestionsProps {
   isWeatherDataReal?: boolean;
 }
 
-const getPriorityIcon = (priority: "essential" | "recommended" | "optional") => {
+const getPriorityEmoji = (priority: "essential" | "recommended" | "optional") => {
   switch (priority) {
     case "essential":
-      return <Star className="h-3 w-3 text-yellow-500 fill-current" />;
+      return "⭐";
     case "recommended":
-      return <CheckCircle2 className="h-3 w-3 text-blue-500" />;
+      return "✅";
     case "optional":
-      return <span className="h-3 w-3 rounded-full bg-gray-300 inline-block" />;
-  }
-};
-
-const getPriorityColor = (priority: "essential" | "recommended" | "optional") => {
-  switch (priority) {
-    case "essential":
-      return "border-yellow-200 bg-yellow-50 text-yellow-800";
-    case "recommended":
-      return "border-blue-200 bg-blue-50 text-blue-800";
-    case "optional":
-      return "border-gray-200 bg-gray-50 text-gray-600";
+      return "💡";
   }
 };
 
@@ -141,49 +130,69 @@ export default function SmartDailyClothingSuggestions({
 
   const renderSmartPackingList = (optimization: PackingListOptimization) => {
     const categories = [
-      { key: 'tops', title: '👕 Tops', items: optimization.optimizedList.tops },
-      { key: 'bottoms', title: '👖 Bottoms', items: optimization.optimizedList.bottoms },
-      { key: 'outerwear', title: '🧥 Outerwear', items: optimization.optimizedList.outerwear },
-      { key: 'footwear', title: '👟 Footwear', items: optimization.optimizedList.footwear },
-      { key: 'accessories', title: '✨ Accessories', items: optimization.optimizedList.accessories },
-      { key: 'essentials', title: '🎒 Essentials', items: optimization.optimizedList.essentials }
+      { key: 'tops', title: '👕 Tops', emoji: '👕', items: optimization.optimizedList.tops },
+      { key: 'bottoms', title: '👖 Bottoms', emoji: '👖', items: optimization.optimizedList.bottoms },
+      { key: 'outerwear', title: '🧥 Outerwear', emoji: '🧥', items: optimization.optimizedList.outerwear },
+      { key: 'footwear', title: '👟 Footwear', emoji: '👟', items: optimization.optimizedList.footwear },
+      { key: 'accessories', title: '✨ Accessories', emoji: '✨', items: optimization.optimizedList.accessories },
+      { key: 'essentials', title: '🎒 Essentials', emoji: '🎒', items: optimization.optimizedList.essentials }
     ];
 
     return (
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Luggage Optimization Summary */}
-        <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-4 border border-primary/20">
-          <div className="flex items-center gap-2 mb-3">
-            <Package className="h-5 w-5 text-primary" />
-            <h4 className="font-semibold text-foreground">Smart Luggage Optimization</h4>
-          </div>
-          <div className="space-y-3">
-            <div>
-              <div className="flex justify-between text-sm mb-1">
-                <span>Space Utilization</span>
-                <span className="font-medium">{optimization.luggageOptimization.spaceUtilization}%</span>
-              </div>
-              <Progress value={optimization.luggageOptimization.spaceUtilization} className="h-2" />
+        <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center justify-center w-10 h-10 bg-blue-50 rounded-lg">
+              <span className="text-xl">🎒</span>
             </div>
-            <p className="text-sm text-muted-foreground">{optimization.summary}</p>
+            <div>
+              <h4 className="font-semibold text-gray-900">Luggage Optimization</h4>
+              <p className="text-sm text-gray-600">Space-efficient packing for your trip</p>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-medium text-gray-700">Space Utilization</span>
+                <span className="text-sm font-semibold text-blue-600">{optimization.luggageOptimization.spaceUtilization}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className="bg-blue-500 h-2 rounded-full transition-all duration-300" 
+                  style={{ width: `${optimization.luggageOptimization.spaceUtilization}%` }}
+                ></div>
+              </div>
+            </div>
+            <p className="text-sm text-gray-600 leading-relaxed">{optimization.summary}</p>
           </div>
         </div>
 
         {/* Optimized Packing List */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map(category => (
-            <div key={category.key}>
-              <h4 className="font-medium text-foreground mb-3 text-sm">{category.title}</h4>
-              <div className="space-y-2">
+            <div key={category.key} className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+              <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{category.emoji}</span>
+                  <h4 className="font-semibold text-gray-900 text-sm">{category.title}</h4>
+                  <span className="ml-auto bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-xs font-medium">
+                    {category.items.length} items
+                  </span>
+                </div>
+              </div>
+              <div className="p-4 space-y-3">
                 {category.items.map((item: any, index: number) => (
-                  <div 
-                    key={index} 
-                    className={`p-3 rounded-lg border text-xs flex items-start gap-2 ${getPriorityColor(item.priority)}`}
-                  >
-                    {getPriorityIcon(item.priority)}
-                    <div className="flex-1">
-                      <div className="font-medium">{item.item} ({item.quantity})</div>
-                      <div className="text-xs opacity-75 mt-1">{item.reason}</div>
+                  <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <span className="text-lg mt-0.5 flex-shrink-0">{getPriorityEmoji(item.priority)}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <h5 className="font-medium text-gray-900 text-sm leading-snug">{item.item}</h5>
+                        <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-semibold flex-shrink-0">
+                          {item.quantity}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-600 mt-1 leading-relaxed">{item.reason}</p>
                     </div>
                   </div>
                 ))}
@@ -194,14 +203,19 @@ export default function SmartDailyClothingSuggestions({
 
         {/* Packing Tips */}
         {optimization.luggageOptimization.packingTips.length > 0 && (
-          <div className="bg-info/10 rounded-lg p-4 border border-info/20">
-            <div className="flex items-center gap-2 mb-2">
-              <Lightbulb className="h-4 w-4 text-info" />
-              <h5 className="font-medium text-info">Smart Packing Tips</h5>
+          <div className="bg-amber-50 rounded-xl p-6 border border-amber-200">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center justify-center w-8 h-8 bg-amber-100 rounded-lg">
+                <span className="text-lg">💡</span>
+              </div>
+              <h5 className="font-semibold text-amber-900">Packing Tips</h5>
             </div>
-            <ul className="text-sm text-info space-y-1">
+            <ul className="space-y-2">
               {optimization.luggageOptimization.packingTips.map((tip, index) => (
-                <li key={index}>• {tip}</li>
+                <li key={index} className="flex items-start gap-2 text-sm text-amber-800">
+                  <span className="text-amber-600 mt-0.5 flex-shrink-0">•</span>
+                  <span className="leading-relaxed">{tip}</span>
+                </li>
               ))}
             </ul>
           </div>
@@ -209,14 +223,19 @@ export default function SmartDailyClothingSuggestions({
 
         {/* Space-saving Alternatives */}
         {optimization.luggageOptimization.alternatives.length > 0 && (
-          <div className="bg-warning/10 rounded-lg p-4 border border-warning/20">
-            <div className="flex items-center gap-2 mb-2">
-              <Package className="h-4 w-4 text-warning" />
-              <h5 className="font-medium text-warning">Space-Saving Alternatives</h5>
+          <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg">
+                <span className="text-lg">💼</span>
+              </div>
+              <h5 className="font-semibold text-blue-900">Space-Saving Options</h5>
             </div>
-            <ul className="text-sm text-warning space-y-1">
+            <ul className="space-y-2">
               {optimization.luggageOptimization.alternatives.map((alt, index) => (
-                <li key={index}>• {alt}</li>
+                <li key={index} className="flex items-start gap-2 text-sm text-blue-800">
+                  <span className="text-blue-600 mt-0.5 flex-shrink-0">•</span>
+                  <span className="leading-relaxed">{alt}</span>
+                </li>
               ))}
             </ul>
           </div>
@@ -268,136 +287,147 @@ export default function SmartDailyClothingSuggestions({
       )}
 
       {/* Smart Packing List */}
-      <Card className="p-6 shadow-card border-0 bg-card">
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 mb-4">
-            <Shirt className="h-5 w-5 text-primary" />
-            <div className="flex flex-wrap items-center gap-2">
-              <h3 className="text-lg font-semibold text-foreground">
-                Your Smart Packing List
-              </h3>
-              {tripDetails?.luggageSize && (
-                <span className="text-sm font-normal text-muted-foreground">
-                  (Optimized for {tripDetails.luggageSize} luggage)
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-5 border-b border-gray-200">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-12 h-12 bg-white rounded-xl shadow-sm">
+              <span className="text-2xl">🎒</span>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-gray-900">Your Smart Packing List</h3>
+              <div className="flex flex-wrap items-center gap-3 mt-1">
+                {tripDetails?.luggageSize && (
+                  <span className="text-sm text-gray-600">
+                    Optimized for {tripDetails.luggageSize} luggage
+                  </span>
+                )}
+                <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-semibold">
+                  Smart Algorithm
                 </span>
-              )}
-              <Badge variant="default" className="text-xs bg-primary/10 text-primary">
-                Dataset-Optimized
-              </Badge>
+              </div>
             </div>
           </div>
+        </div>
 
+        <div className="p-6">
           {isLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-              <span className="ml-3 text-muted-foreground">Analyzing your trip requirements...</span>
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="animate-spin rounded-full h-10 w-10 border-3 border-blue-200 border-t-blue-600 mb-4"></div>
+              <h4 className="font-semibold text-gray-900 mb-2">Analyzing Your Trip</h4>
+              <p className="text-gray-600 text-sm">Creating personalized recommendations...</p>
             </div>
           ) : smartPackingOptimization && !hasError ? (
             renderSmartPackingList(smartPackingOptimization)
           ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              Unable to generate packing recommendations. Please ensure all trip details are provided.
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">📋</span>
+              </div>
+              <h4 className="font-semibold text-gray-900 mb-2">Unable to Generate Recommendations</h4>
+              <p className="text-gray-600 text-sm">Please ensure all trip details are provided.</p>
             </div>
           )}
+        </div>
 
-          <div className="mt-6 p-3 bg-muted/30 rounded-lg">
-            <p className="text-xs text-muted-foreground">
-              💡 This list uses advanced algorithms to analyze your{" "}
-              <strong>{tripDetails?.destination || "destination"}</strong> weather conditions, 
+        <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
+          <div className="flex items-start gap-3">
+            <span className="text-lg mt-0.5 flex-shrink-0">💡</span>
+            <p className="text-sm text-gray-700 leading-relaxed">
+              This intelligent packing list analyzes your{" "}
+              <span className="font-semibold text-gray-900">{tripDetails?.destination || "destination"}</span> weather conditions
               {tripDetails?.tripTypes && tripDetails.tripTypes.length > 0 && (
-                <span> <strong>{tripDetails.tripTypes.join(' & ')}</strong> trip activities,</span>
-              )} and luggage constraints to provide intelligent, weighted recommendations. 
-              Items are prioritized based on weather conditions, planned activities, and space optimization.
+                <span>, <span className="font-semibold text-gray-900">{tripDetails.tripTypes.join(' & ')}</span> activities</span>
+              )}, and luggage constraints to provide personalized recommendations optimized for your specific trip.
             </p>
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* Enhanced Daily Clothing Suggestions */}
-      <Card className="p-6 shadow-card border-0 bg-card">
-        <div className="space-y-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Shirt className="h-5 w-5 text-primary" />
-              <h3 className="text-lg font-semibold text-foreground">Daily Clothing Suggestions</h3>
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-5 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-12 h-12 bg-white rounded-xl shadow-sm">
+                <span className="text-2xl">👕</span>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Daily Clothing Suggestions</h3>
+                <p className="text-sm text-gray-600 mt-1">Personalized recommendations for each day</p>
+              </div>
             </div>
             {isWeatherDataReal !== undefined && (
-              <Badge 
-                variant={isWeatherDataReal ? "default" : "secondary"} 
-                className={`text-xs ${
-                  isWeatherDataReal 
-                    ? "bg-success text-success-foreground" 
-                    : "bg-muted text-muted-foreground"
-                }`}
-              >
-                {isWeatherDataReal ? "🌡️ Real-time weather" : "📊 Estimated weather"}
-              </Badge>
+              <div className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
+                isWeatherDataReal 
+                  ? "bg-green-100 text-green-700" 
+                  : "bg-gray-100 text-gray-600"
+              }`}>
+                <span className="mr-1">{isWeatherDataReal ? "🌡️" : "📊"}</span>
+                {isWeatherDataReal ? "Real-time weather" : "Estimated weather"}
+              </div>
             )}
           </div>
+        </div>
 
-          <Accordion type="multiple" className="w-full">
+        <div className="p-6">
+          <div className="space-y-4">
             {dailyData.map((day, dayIndex) => {
               const smartDay = smartDailyRecommendations?.find((smart: any) => smart.date === day.date);
               
               return (
-                <AccordionItem key={dayIndex} value={`day-${dayIndex}`} className="border border-border rounded-lg mb-4">
-                  <AccordionTrigger className="px-4 py-3 hover:no-underline">
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-3">
-                        <div className="text-left">
-                          <div className="font-semibold text-foreground flex items-center gap-2">
-                            {day.date}
-                            {getWeatherIcon(day.condition)}
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <span className="capitalize">{day.condition}</span>
-                            <span>•</span>
-                            <span>{day.temp.low}°-{day.temp.high}°F</span>
+                <div key={dayIndex} className="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
+                  <div className="px-6 py-4 bg-white border-b border-gray-200">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center justify-center w-10 h-10 bg-blue-50 rounded-lg">
+                          {getWeatherIcon(day.condition)}
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-gray-900 text-lg">{day.date}</h4>
+                          <div className="flex items-center gap-3 text-sm text-gray-600 mt-1">
+                            <span className="capitalize font-medium">{day.condition}</span>
+                            <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                            <span className="font-semibold">{day.temp.low}°-{day.temp.high}°F</span>
                             {day.uvIndex && (
                               <>
-                                <span>•</span>
+                                <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
                                 <span className="flex items-center gap-1">
-                                  <Eye className="h-3 w-3" />
-                                  UV {day.uvIndex}
+                                  <span>☀️</span> UV {day.uvIndex}
                                 </span>
                               </>
                             )}
                             {day.precipitation > 0 && (
                               <>
-                                <span>•</span>
+                                <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
                                 <span className="flex items-center gap-1">
-                                  <Umbrella className="h-3 w-3" />
-                                  {day.precipitation}mm
+                                  <span>🌧️</span> {day.precipitation}mm
                                 </span>
-                              </>
-                            )}
-                            {day.activities.length > 0 && (
-                              <>
-                                <span>•</span>
-                                <span>{day.activities.length} activit{day.activities.length === 1 ? 'y' : 'ies'}</span>
                               </>
                             )}
                           </div>
                         </div>
                       </div>
                       {smartDay && (
-                        <Badge variant="outline" className="text-xs bg-primary/5 text-primary border-primary/20">
-                          Smart Analysis
-                        </Badge>
+                        <div className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">
+                          <span className="mr-1">🧠</span> Smart Analysis
+                        </div>
                       )}
                     </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="px-4 pb-4">
-                    <div className="space-y-4">
+                  </div>
+                  <div className="p-6">
+                    <div className="space-y-6">
                       {/* Activities */}
                       {day.activities.length > 0 && (
-                        <div>
-                          <h6 className="text-sm font-medium text-foreground mb-2">Today's Activities:</h6>
+                        <div className="bg-white rounded-lg p-4 border border-gray-200">
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="text-lg">🎯</span>
+                            <h6 className="font-semibold text-gray-900">Today's Activities</h6>
+                          </div>
                           <div className="flex flex-wrap gap-2">
                             {day.activities.map((activity, index) => (
-                              <Badge key={index} variant="secondary" className="text-xs">
+                              <span key={index} className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
                                 {activity}
-                              </Badge>
+                              </span>
                             ))}
                           </div>
                         </div>
@@ -405,22 +435,42 @@ export default function SmartDailyClothingSuggestions({
 
                       {/* Weather Details */}
                       {smartDay?.weatherDetails && (
-                        <div className="bg-muted/30 rounded-lg p-3">
-                          <h6 className="text-sm font-medium text-foreground mb-2">Weather Analysis:</h6>
-                          <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-                            <div>Condition: {smartDay.weatherDetails.condition}</div>
-                            <div>Temperature: {smartDay.weatherDetails.temperatureRange}</div>
+                        <div className="bg-sky-50 rounded-lg p-4 border border-sky-200">
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="text-lg">🌤️</span>
+                            <h6 className="font-semibold text-sky-900">Weather Analysis</h6>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sky-700 font-medium">Condition:</span>
+                              <span className="text-sky-800">{smartDay.weatherDetails.condition}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sky-700 font-medium">Temperature:</span>
+                              <span className="text-sky-800">{smartDay.weatherDetails.temperatureRange}</span>
+                            </div>
                             {smartDay.weatherDetails.uvIndex && (
-                              <div>UV Index: {smartDay.weatherDetails.uvIndex}</div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-sky-700 font-medium">UV Index:</span>
+                                <span className="text-sky-800">{smartDay.weatherDetails.uvIndex}</span>
+                              </div>
                             )}
-                            <div>Precipitation: {smartDay.weatherDetails.precipitation}</div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-sky-700 font-medium">Precipitation:</span>
+                              <span className="text-sky-800">{smartDay.weatherDetails.precipitation}</span>
+                            </div>
                           </div>
                           {smartDay.weatherDetails.tips.length > 0 && (
-                            <div className="mt-2">
-                              <div className="text-xs font-medium">Tips:</div>
-                              <ul className="text-xs text-muted-foreground mt-1">
+                            <div className="mt-4 pt-3 border-t border-sky-200">
+                              <h6 className="font-medium text-sky-900 mb-2 flex items-center gap-1">
+                                <span>💡</span> Weather Tips
+                              </h6>
+                              <ul className="space-y-1">
                                 {smartDay.weatherDetails.tips.map((tip: string, index: number) => (
-                                  <li key={index}>• {tip}</li>
+                                  <li key={index} className="text-sm text-sky-800 flex items-start gap-2">
+                                    <span className="text-sky-600 mt-0.5 flex-shrink-0">•</span>
+                                    <span>{tip}</span>
+                                  </li>
                                 ))}
                               </ul>
                             </div>
@@ -431,60 +481,74 @@ export default function SmartDailyClothingSuggestions({
                       {/* Smart recommendations or fallback */}
                       {smartDay && !hasError ? (
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div>
-                            <h6 className="text-sm font-medium text-foreground mb-2 flex items-center gap-1">
-                              <Sun className="h-3 w-3" /> Morning
+                          <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
+                            <h6 className="font-semibold text-orange-900 mb-3 flex items-center gap-2">
+                              <span className="text-lg">🌅</span> Morning
                             </h6>
-                            <ul className="text-xs text-muted-foreground space-y-1">
+                            <ul className="space-y-2">
                               {smartDay.recommendations.morning.map((item: string, index: number) => (
-                                <li key={index}>• {item}</li>
+                                <li key={index} className="text-sm text-orange-800 flex items-start gap-2">
+                                  <span className="text-orange-600 mt-0.5 flex-shrink-0">•</span>
+                                  <span>{item}</span>
+                                </li>
                               ))}
                             </ul>
                           </div>
-                          <div>
-                            <h6 className="text-sm font-medium text-foreground mb-2 flex items-center gap-1">
-                              <Sun className="h-3 w-3" /> Daytime
+                          <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+                            <h6 className="font-semibold text-yellow-900 mb-3 flex items-center gap-2">
+                              <span className="text-lg">☀️</span> Daytime
                             </h6>
-                            <ul className="text-xs text-muted-foreground space-y-1">
+                            <ul className="space-y-2">
                               {smartDay.recommendations.daytime.map((item: string, index: number) => (
-                                <li key={index}>• {item}</li>
+                                <li key={index} className="text-sm text-yellow-800 flex items-start gap-2">
+                                  <span className="text-yellow-600 mt-0.5 flex-shrink-0">•</span>
+                                  <span>{item}</span>
+                                </li>
                               ))}
                             </ul>
                           </div>
-                          <div>
-                            <h6 className="text-sm font-medium text-foreground mb-2 flex items-center gap-1">
-                              <Moon className="h-3 w-3" /> Evening
+                          <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                            <h6 className="font-semibold text-purple-900 mb-3 flex items-center gap-2">
+                              <span className="text-lg">🌙</span> Evening
                             </h6>
-                            <ul className="text-xs text-muted-foreground space-y-1">
+                            <ul className="space-y-2">
                               {smartDay.recommendations.evening.map((item: string, index: number) => (
-                                <li key={index}>• {item}</li>
+                                <li key={index} className="text-sm text-purple-800 flex items-start gap-2">
+                                  <span className="text-purple-600 mt-0.5 flex-shrink-0">•</span>
+                                  <span>{item}</span>
+                                </li>
                               ))}
                             </ul>
                           </div>
                         </div>
                       ) : (
-                        <div>
-                          <h6 className="text-sm font-medium text-foreground mb-2">Basic Recommendations:</h6>
-                          <ul className="text-xs text-muted-foreground space-y-1">
-                            {day.temp.low < 60 && <li>• Long-sleeve shirts and light jacket for cool weather</li>}
-                            {day.temp.high >= 75 && <li>• Light, breathable clothing and sun protection</li>}
-                            {day.condition === 'rainy' && <li>• Waterproof jacket and closed shoes</li>}
-                            {day.activities.some(a => a.toLowerCase().includes('swimming')) && <li>• Swimwear and quick-dry clothing</li>}
-                            {day.activities.some(a => a.toLowerCase().includes('business')) && <li>• Business attire and formal shoes</li>}
-                            {day.activities.some(a => a.toLowerCase().includes('hiking')) && <li>• Sturdy hiking boots and moisture-wicking clothing</li>}
+                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                          <h6 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                            <span className="text-lg">📋</span> Basic Recommendations
+                          </h6>
+                          <ul className="space-y-2">
+                            {day.temp.low < 60 && <li className="text-sm text-gray-700 flex items-start gap-2"><span className="text-gray-500 mt-0.5 flex-shrink-0">•</span><span>Long-sleeve shirts and light jacket for cool weather</span></li>}
+                            {day.temp.high >= 75 && <li className="text-sm text-gray-700 flex items-start gap-2"><span className="text-gray-500 mt-0.5 flex-shrink-0">•</span><span>Light, breathable clothing and sun protection</span></li>}
+                            {day.condition === 'rainy' && <li className="text-sm text-gray-700 flex items-start gap-2"><span className="text-gray-500 mt-0.5 flex-shrink-0">•</span><span>Waterproof jacket and closed shoes</span></li>}
+                            {day.activities.some(a => a.toLowerCase().includes('swimming')) && <li className="text-sm text-gray-700 flex items-start gap-2"><span className="text-gray-500 mt-0.5 flex-shrink-0">•</span><span>Swimwear and quick-dry clothing</span></li>}
+                            {day.activities.some(a => a.toLowerCase().includes('business')) && <li className="text-sm text-gray-700 flex items-start gap-2"><span className="text-gray-500 mt-0.5 flex-shrink-0">•</span><span>Business attire and formal shoes</span></li>}
+                            {day.activities.some(a => a.toLowerCase().includes('hiking')) && <li className="text-sm text-gray-700 flex items-start gap-2"><span className="text-gray-500 mt-0.5 flex-shrink-0">•</span><span>Sturdy hiking boots and moisture-wicking clothing</span></li>}
                           </ul>
                         </div>
                       )}
 
                       {/* Activity-specific recommendations */}
                       {smartDay?.recommendations?.activitySpecific && smartDay.recommendations.activitySpecific.length > 0 && (
-                        <div className="bg-primary/5 rounded-lg p-3 border border-primary/20">
-                          <h6 className="text-sm font-medium text-primary mb-2 flex items-center gap-1">
-                            <Activity className="h-3 w-3" /> Activity-Specific Gear
+                        <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                          <h6 className="font-semibold text-green-900 mb-3 flex items-center gap-2">
+                            <span className="text-lg">🎯</span> Activity-Specific Gear
                           </h6>
-                          <ul className="text-xs text-primary space-y-1">
+                          <ul className="space-y-2">
                             {smartDay.recommendations.activitySpecific.map((item: string, index: number) => (
-                              <li key={index}>• {item}</li>
+                              <li key={index} className="text-sm text-green-800 flex items-start gap-2">
+                                <span className="text-green-600 mt-0.5 flex-shrink-0">•</span>
+                                <span>{item}</span>
+                              </li>
                             ))}
                           </ul>
                         </div>
@@ -492,25 +556,28 @@ export default function SmartDailyClothingSuggestions({
 
                       {/* Must-have priorities */}
                       {smartDay?.priorities && smartDay.priorities.length > 0 && (
-                        <div className="bg-warning/10 rounded-lg p-3 border border-warning/20">
-                          <h6 className="text-sm font-medium text-warning mb-2 flex items-center gap-1">
-                            <Star className="h-3 w-3" /> Must-Have Items
+                        <div className="bg-red-50 rounded-lg p-4 border border-red-200">
+                          <h6 className="font-semibold text-red-900 mb-3 flex items-center gap-2">
+                            <span className="text-lg">⭐</span> Must-Have Items
                           </h6>
-                          <ul className="text-xs text-warning space-y-1">
+                          <ul className="space-y-2">
                             {smartDay.priorities.map((priority: string, index: number) => (
-                              <li key={index}>• {priority}</li>
+                              <li key={index} className="text-sm text-red-800 flex items-start gap-2">
+                                <span className="text-red-600 mt-0.5 flex-shrink-0">•</span>
+                                <span>{priority}</span>
+                              </li>
                             ))}
                           </ul>
                         </div>
                       )}
                     </div>
-                  </AccordionContent>
-                </AccordionItem>
+                  </div>
+                </div>
               );
             })}
-          </Accordion>
+          </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }
