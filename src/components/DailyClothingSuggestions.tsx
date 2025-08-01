@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Sun, Moon, Shirt, Cloud, CloudRain, CloudSnow, Wind, Activity } from "lucide-react";
+import { Sun, Moon, Shirt, Cloud, CloudRain, CloudSnow, Wind, Activity, CheckCircle2 } from "lucide-react";
 
 interface DailyClothingData {
   date: string;
@@ -52,17 +52,17 @@ const getTimeTemperature = (period: string, temp: { high: number; low: number })
 const getWeatherIcon = (condition: string) => {
   switch (condition) {
     case 'sunny':
-      return <Sun className="h-4 w-4 text-yellow-500" />;
+      return <Sun className="h-4 w-4 text-warning" />;
     case 'cloudy':
-      return <Cloud className="h-4 w-4 text-gray-500" />;
+      return <Cloud className="h-4 w-4 text-neutral" />;
     case 'rainy':
-      return <CloudRain className="h-4 w-4 text-blue-500" />;
+      return <CloudRain className="h-4 w-4 text-info" />;
     case 'snowy':
-      return <CloudSnow className="h-4 w-4 text-blue-200" />;
+      return <CloudSnow className="h-4 w-4 text-info" />;
     case 'mixed':
-      return <Wind className="h-4 w-4 text-gray-600" />;
+      return <Wind className="h-4 w-4 text-neutral" />;
     default:
-      return <Cloud className="h-4 w-4 text-gray-500" />;
+      return <Cloud className="h-4 w-4 text-neutral" />;
   }
 };
 
@@ -400,8 +400,8 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
               </div>
             </div>
             
-            <div className="mt-4 p-3 bg-travel-green/10 rounded-lg border border-travel-green/20">
-              <p className="text-sm text-travel-green">
+            <div className="mt-4 p-3 bg-success-light rounded-lg border border-success/20">
+              <p className="text-sm text-success">
                 📋 This personalized list is optimized for your {tripDetails?.luggageSize?.replace('-', ' ') || 'luggage'}, 
                 {tripDetails?.tripTypes?.join(' & ') || 'trip type'}, and planned activities. 
                 Quantities are calculated based on your {dailyData.length}-day trip duration.
@@ -431,11 +431,11 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                     {day.condition}
                   </Badge>
                   {day.activities && day.activities.length > 0 && (
-                    <Badge variant="outline" className="text-xs bg-travel-blue/20 text-travel-blue">
+                    <Badge variant="outline" className="text-xs bg-success-light text-success border-success/20">
                       {day.activities.length} activit{day.activities.length === 1 ? 'y' : 'ies'}
                     </Badge>
                   )}
-                  <Badge variant="secondary" className="text-xs bg-travel-green/20 text-travel-green ml-auto">
+                  <Badge variant="secondary" className="text-xs bg-info-light text-info ml-auto border border-info/20">
                     {getHighLevelClothingInfo(day.condition, day.temp)}
                   </Badge>
                 </div>
@@ -443,15 +443,15 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
               <AccordionContent className="px-4 pb-4">
                 {/* Planned Activities Section */}
                 {day.activities && day.activities.length > 0 && (
-                  <div className="mb-4">
-                    <Card className="p-4 bg-travel-green/10 border border-travel-green/20">
-                      <h6 className="font-medium text-foreground mb-3 flex items-center gap-2">
-                        <Activity className="h-4 w-4 text-travel-green" />
+                <div className="mb-4">
+                  <Card className="p-4 bg-success-light border border-success/20">
+                    <h6 className="font-medium text-foreground mb-3 flex items-center gap-2">
+                        <Activity className="h-4 w-4 text-success" />
                         Planned Activities for {day.date}
                       </h6>
                       <div className="flex flex-wrap gap-2">
                         {day.activities.map((activity, index) => (
-                          <Badge key={index} variant="secondary" className="bg-travel-green/20 text-travel-green">
+                          <Badge key={index} variant="secondary" className="bg-success/10 text-success border border-success/20">
                             {activity}
                           </Badge>
                         ))}
@@ -530,9 +530,9 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                 
                 {/* Packing Tips Section */}
                 <div className="mt-6">
-                  <Card className="p-4 bg-gradient-to-r from-travel-purple/10 to-travel-blue/10 border border-travel-purple/20">
+                  <Card className="p-4 bg-gradient-to-r from-primary/10 to-info/10 border border-primary/20">
                     <h6 className="font-medium text-foreground mb-3 flex items-center gap-2">
-                      <Shirt className="h-4 w-4 text-travel-purple" />
+                      <CheckCircle2 className="h-4 w-4 text-primary" />
                       Packing Tips for {day.date}
                     </h6>
                     <div className="space-y-2">
@@ -547,8 +547,8 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
           ))}
         </Accordion>
         
-        <div className="mt-4 p-3 bg-travel-blue/10 rounded-lg border border-travel-blue/20">
-          <p className="text-sm text-travel-blue">
+        <div className="mt-4 p-3 bg-info-light rounded-lg border border-info/20">
+          <p className="text-sm text-info">
             💡 These suggestions are based on weather conditions and time of day. Adjust based on your personal preferences and planned activities.
           </p>
         </div>

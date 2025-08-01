@@ -62,14 +62,22 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				travel: {
-					blue: 'hsl(var(--travel-blue))',
-					green: 'hsl(var(--travel-green))',
-					purple: 'hsl(var(--travel-purple))',
-					orange: 'hsl(var(--travel-orange))',
-					pink: 'hsl(var(--travel-pink))',
-					yellow: 'hsl(var(--travel-yellow))'
-				}
+				/* Modern, accessible color system */
+				success: {
+					DEFAULT: 'hsl(var(--success))',
+					light: 'hsl(var(--success-light))'
+				},
+				info: {
+					DEFAULT: 'hsl(var(--info))',
+					light: 'hsl(var(--info-light))'
+				},
+				warning: {
+					DEFAULT: 'hsl(var(--warning))',
+					light: 'hsl(var(--warning-light))'
+				},
+				neutral: 'hsl(var(--travel-neutral))',
+				surface: 'hsl(var(--travel-surface))',
+				'accent-light': 'hsl(var(--travel-accent))'
 			},
 			boxShadow: {
 				'soft': 'var(--shadow-soft)',

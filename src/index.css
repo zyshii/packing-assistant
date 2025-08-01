@@ -8,52 +8,58 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 248 50% 97%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 100%;
+    --foreground: 220 13% 18%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 220 13% 18%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 220 13% 18%;
 
-    --primary: 256 70% 60%;
+    --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 220 14% 96%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary-foreground: 220 13% 18%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 220 13% 95%;
+    --muted-foreground: 220 13% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 220 13% 95%;
+    --accent-foreground: 220 13% 18%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 256 70% 60%;
+    --ring: 217 91% 60%;
 
-    /* Custom travel app colors */
-    --travel-blue: 215 88% 75%;
-    --travel-green: 142 52% 70%; 
-    --travel-purple: 256 70% 80%;
-    --travel-orange: 31 81% 75%;
-    --travel-pink: 330 60% 80%;
-    --travel-yellow: 45 86% 78%;
+    /* Modern, accessible travel app colors inspired by Airbnb & Google */
+    --success: 142 76% 36%;      /* Modern green with high contrast */
+    --success-light: 142 76% 94%; /* Light green background */
     
-    /* Shadows & Elevations */
-    --shadow-soft: 0 2px 20px -2px hsla(220, 30%, 20%, 0.08);
-    --shadow-card: 0 4px 32px -4px hsla(220, 30%, 20%, 0.12);
-    --shadow-modal: 0 10px 60px -5px hsla(220, 30%, 20%, 0.15);
-    --shadow-floating: 0 8px 50px -8px hsla(220, 30%, 20%, 0.25);
+    --info: 217 91% 60%;         /* Modern blue (same as primary) */
+    --info-light: 217 91% 95%;   /* Light blue background */
     
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--travel-purple)));
-    --gradient-success: linear-gradient(135deg, hsl(var(--travel-green)), hsl(var(--travel-blue)));
-    --gradient-background: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
+    --warning: 38 92% 50%;       /* Accessible orange */
+    --warning-light: 38 92% 95%; /* Light orange background */
+    
+    --travel-neutral: 220 9% 46%; /* Neutral gray for secondary text */
+    --travel-surface: 220 14% 97%; /* Light surface color */
+    --travel-accent: 266 100% 96%; /* Very light purple accent */
+    
+    /* Modern shadows inspired by Material Design */
+    --shadow-soft: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-modal: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --shadow-floating: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    
+    /* Clean gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(217 91% 70%));
+    --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(var(--info)));
+    --gradient-background: linear-gradient(180deg, hsl(var(--background)), hsl(var(--travel-surface)));
 
     --radius: 0.5rem;
 

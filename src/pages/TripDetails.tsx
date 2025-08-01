@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { CalendarIcon, MapPin, Clock, Users, Activity, Sparkles, ArrowRight, Globe, Luggage } from "lucide-react";
+import { CalendarIcon, MapPin, Clock, Users, Activity, Sparkles, ArrowRight, Plane, Luggage } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -171,9 +171,9 @@ function TripDetails() {
           <div className="text-center space-y-4 animate-fade-in">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-primary rounded-full text-white text-sm font-medium shadow-floating">
               <Sparkles className="w-4 h-4" />
-              AI-Powered Packing Assistant
+              Trip Prep Assistant
             </div>
-            <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary to-travel-purple bg-clip-text text-transparent">
+            <h1 className="text-3xl lg:text-4xl font-bold text-foreground">
               Plan Your Perfect Trip
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -193,7 +193,7 @@ function TripDetails() {
           <Card className="shadow-card border-0 animate-scale-in">
             <CardHeader className="text-center pb-6">
               <CardTitle className="flex items-center justify-center gap-2 text-xl">
-                <Globe className="h-6 w-6 text-primary" />
+                <Plane className="h-6 w-6 text-primary" />
                 Trip Details
               </CardTitle>
               <CardDescription className="text-base">
@@ -257,7 +257,7 @@ function TripDetails() {
                                     }
                                   }}
                                 />
-                                <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral" />
                               </div>
                             </PopoverTrigger>
                             <PopoverContent 
@@ -301,7 +301,7 @@ function TripDetails() {
                         </FormControl>
                         <FormMessage />
                         {watchedDestination && isValidDestination && (
-                          <p className="text-sm text-travel-blue animate-fade-in">
+                          <p className="text-sm text-success animate-fade-in">
                             ✨ Great choice! We'll check the weather and local customs for {watchedDestination}
                           </p>
                         )}
@@ -325,7 +325,7 @@ function TripDetails() {
                       render={({ field }) => (
                         <FormItem className="flex flex-col space-y-3">
                           <FormLabel className="flex items-center gap-2 text-base font-semibold">
-                            <Clock className="h-5 w-5 text-primary" />
+                            <CalendarIcon className="h-5 w-5 text-success" />
                              Start Date
                           </FormLabel>
                           <Popover>
@@ -371,7 +371,7 @@ function TripDetails() {
                       render={({ field }) => (
                         <FormItem className="flex flex-col space-y-3">
                           <FormLabel className="flex items-center gap-2 text-base font-semibold">
-                            <Clock className="h-5 w-5 text-primary" />
+                            <CalendarIcon className="h-5 w-5 text-success" />
                              End Date
                           </FormLabel>
                           <Popover>

@@ -266,7 +266,7 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
                         💡 No matching activities found. Try a different search term.
                       </p>
                     ) : (
-                      <p className="text-sm text-travel-green">
+                      <p className="text-sm text-success">
                         ✨ {getFilteredActivities(dateIndex).length} activit{getFilteredActivities(dateIndex).length === 1 ? 'y' : 'ies'} found - select one from the list above
                       </p>
                     )}
@@ -277,8 +277,8 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
           ))}
         </div>
 
-        <div className="mt-4 p-3 bg-travel-green/10 rounded-lg border border-travel-green/20">
-          <p className="text-sm text-travel-green">
+        <div className="mt-4 p-3 bg-info-light rounded-lg border border-info/20">
+          <p className="text-sm text-info">
             💡 {tripTypes && tripTypes.length > 0
               ? `These ${tripTypes.join(', ')}-focused activities will help us recommend the perfect gear and clothing for your trip.`
               : "Adding specific activities helps us suggest the right gear, footwear, and clothing for each day."
