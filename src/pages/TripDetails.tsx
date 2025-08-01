@@ -176,8 +176,7 @@ export default function TripDetails() {
                       <FormItem className="space-y-3">
                         <FormLabel className="flex items-center gap-2 text-base font-semibold">
                           <MapPin className="h-5 w-5 text-primary" />
-                          Destination
-                          <HelpTooltip content="Enter the city, country, or specific location you're traveling to. This helps us provide weather-specific recommendations." />
+                           Destination
                         </FormLabel>
                         <FormControl>
                           <Popover open={open && filteredDestinations.length > 0} onOpenChange={setOpen}>
@@ -237,8 +236,7 @@ export default function TripDetails() {
                         <FormItem className="flex flex-col space-y-3">
                           <FormLabel className="flex items-center gap-2 text-base font-semibold">
                             <Clock className="h-5 w-5 text-primary" />
-                            Start Date
-                            <HelpTooltip content="When does your trip begin? This helps us plan for seasonal weather patterns." />
+                             Start Date
                           </FormLabel>
                           <Popover>
                             <PopoverTrigger asChild>
@@ -284,8 +282,7 @@ export default function TripDetails() {
                         <FormItem className="flex flex-col space-y-3">
                           <FormLabel className="flex items-center gap-2 text-base font-semibold">
                             <Clock className="h-5 w-5 text-primary" />
-                            End Date
-                            <HelpTooltip content="When does your trip end? Trip duration affects the quantity of items we'll suggest." />
+                             End Date
                           </FormLabel>
                           <Popover>
                             <PopoverTrigger asChild>
@@ -346,8 +343,7 @@ export default function TripDetails() {
                       <FormItem className="space-y-4">
                         <FormLabel className="flex items-center gap-2 text-base font-semibold">
                           <Activity className="h-5 w-5 text-primary" />
-                          Trip Type
-                          <HelpTooltip content="This helps us suggest appropriate clothing and accessories for your trip's purpose." />
+                           Trip Type
                         </FormLabel>
                         <FormControl>
                           <RadioGroup
@@ -406,8 +402,7 @@ export default function TripDetails() {
                       <FormItem className="space-y-3">
                         <FormLabel className="flex items-center gap-2 text-base font-semibold">
                           <Luggage className="h-5 w-5 text-primary" />
-                          Luggage Size
-                          <HelpTooltip content="Select your luggage type to help us suggest appropriate quantities of clothing and accessories that will fit comfortably." />
+                           Luggage Size
                         </FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -472,8 +467,7 @@ export default function TripDetails() {
                       <FormItem className="space-y-3">
                         <FormLabel className="flex items-center gap-2 text-base font-semibold">
                           <Activity className="h-5 w-5 text-primary" />
-                          Planned Activities (Optional)
-                          <HelpTooltip content="Describe what you plan to do - this helps us suggest activity-specific items like hiking gear, formal wear, or beach essentials." />
+                           Planned Activities (Optional)
                         </FormLabel>
                         <FormControl>
                           <Textarea
