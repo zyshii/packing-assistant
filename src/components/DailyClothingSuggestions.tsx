@@ -492,9 +492,6 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                            <p className="text-lg font-bold text-foreground">
                              {getTimeTemperature('morning', day.temp).fahrenheit}
                            </p>
-                           <p className="text-sm text-muted-foreground">
-                             {getTimeTemperature('morning', day.temp).celsius}
-                           </p>
                          </div>
                        </div>
                        
@@ -542,9 +539,6 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                            <p className="text-lg font-bold text-foreground">
                              {getTimeTemperature('daytime', day.temp).fahrenheit}
                            </p>
-                           <p className="text-sm text-muted-foreground">
-                             {getTimeTemperature('daytime', day.temp).celsius}
-                           </p>
                          </div>
                        </div>
                        
@@ -591,9 +585,6 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                          <div className="space-y-1">
                            <p className="text-lg font-bold text-foreground">
                              {getTimeTemperature('evening', day.temp).fahrenheit}
-                           </p>
-                           <p className="text-sm text-muted-foreground">
-                             {getTimeTemperature('evening', day.temp).celsius}
                            </p>
                          </div>
                        </div>
