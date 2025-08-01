@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Sun, Moon, Shirt } from "lucide-react";
+import { Sun, Moon, Shirt, Cloud, CloudRain, CloudSnow, Wind } from "lucide-react";
 
 interface DailyClothingData {
   date: string;
@@ -38,6 +38,23 @@ const getTimeTemperature = (period: string, temp: { high: number; low: number })
       };
     default:
       return { fahrenheit: '', celsius: '' };
+  }
+};
+
+const getWeatherIcon = (condition: string) => {
+  switch (condition) {
+    case 'sunny':
+      return <Sun className="h-4 w-4 text-yellow-500" />;
+    case 'cloudy':
+      return <Cloud className="h-4 w-4 text-gray-500" />;
+    case 'rainy':
+      return <CloudRain className="h-4 w-4 text-blue-500" />;
+    case 'snowy':
+      return <CloudSnow className="h-4 w-4 text-blue-200" />;
+    case 'mixed':
+      return <Wind className="h-4 w-4 text-gray-600" />;
+    default:
+      return <Cloud className="h-4 w-4 text-gray-500" />;
   }
 };
 
@@ -120,9 +137,12 @@ export default function DailyClothingSuggestions({ dailyData }: DailyClothingSug
               {/* Morning */}
               <Card className="p-4 bg-yellow-50/50 border border-yellow-200/50">
                 <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Sun className="h-4 w-4 text-yellow-600" />
-                    <h5 className="font-medium text-foreground">Morning</h5>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Sun className="h-4 w-4 text-yellow-600" />
+                      <h5 className="font-medium text-foreground">Morning</h5>
+                    </div>
+                    {getWeatherIcon(day.condition)}
                   </div>
                   <p className="text-xs text-muted-foreground">(dawn to ~9 AM)</p>
                   <p className="text-sm font-medium text-foreground">
@@ -139,9 +159,12 @@ export default function DailyClothingSuggestions({ dailyData }: DailyClothingSug
               {/* Daytime */}
               <Card className="p-4 bg-blue-50/50 border border-blue-200/50">
                 <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Sun className="h-4 w-4 text-blue-600" />
-                    <h5 className="font-medium text-foreground">Daytime</h5>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Sun className="h-4 w-4 text-blue-600" />
+                      <h5 className="font-medium text-foreground">Daytime</h5>
+                    </div>
+                    {getWeatherIcon(day.condition)}
                   </div>
                   <p className="text-xs text-muted-foreground">(~9 AM–6 PM)</p>
                   <p className="text-sm font-medium text-foreground">
@@ -158,9 +181,12 @@ export default function DailyClothingSuggestions({ dailyData }: DailyClothingSug
               {/* Evening */}
               <Card className="p-4 bg-purple-50/50 border border-purple-200/50">
                 <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Moon className="h-4 w-4 text-purple-600" />
-                    <h5 className="font-medium text-foreground">Evening</h5>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Moon className="h-4 w-4 text-purple-600" />
+                      <h5 className="font-medium text-foreground">Evening</h5>
+                    </div>
+                    {getWeatherIcon(day.condition)}
                   </div>
                   <p className="text-xs text-muted-foreground">(after ~6 PM)</p>
                   <p className="text-sm font-medium text-foreground">
