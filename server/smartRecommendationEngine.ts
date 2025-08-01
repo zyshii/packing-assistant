@@ -244,10 +244,7 @@ function getOptimizedQuantity(
   // Essential items for carry-on optimization
   if (category === "essentials") {
     if (item.item.includes("undergarments") || item.item.includes("socks")) {
-      if (tripContext.luggageSize === "carry-on") {
-        return Math.min(tripContext.duration + 1, 4); // Max 4 for carry-on
-      }
-      return Math.min(tripContext.duration + 1, 6); // Max 6 for checked
+      return tripContext.duration + 1; // Always trip duration + 1 for essentials
     }
     return 1; // Other essentials just need 1
   }
@@ -349,10 +346,21 @@ function generateTimeSpecificRecommendations(
 ): string[] {
   const recommendations = [];
   
-  // Temperature-based recommendations
-  if (timeOfDay === "morning" && weather.temp.low < 60) {
-    recommendations.push("Light sweater or jacket for cool morning");
-    recommendations.push("Long pants for warmth");
+  // Morning base layer recommendations (always provide something)
+  if (timeOfDay === "morning") {
+    if (weather.temp.low < 50) {
+      recommendations.push("Warm sweater or fleece");
+      recommendations.push("Long pants or jeans");
+      recommendations.push("Closed-toe shoes");
+    } else if (weather.temp.low < 65) {
+      recommendations.push("Light sweater or cardigan");
+      recommendations.push("Long pants or comfortable jeans");
+      recommendations.push("Comfortable walking shoes");
+    } else {
+      recommendations.push("Light T-shirt or casual top");
+      recommendations.push("Comfortable pants or light jeans");
+      recommendations.push("Comfortable walking shoes");
+    }
   }
   
   if (timeOfDay === "daytime" && weather.temp.high > 75) {
