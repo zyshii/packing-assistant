@@ -57,3 +57,30 @@ export const weatherForecastSchema = z.object({
 });
 
 export type WeatherForecast = z.infer<typeof weatherForecastSchema>;
+
+// AI Recommendation schemas
+export const tripContextSchema = z.object({
+  destination: z.string(),
+  duration: z.number(),
+  tripTypes: z.array(z.string()),
+  luggageSize: z.string(),
+  dailyData: z.array(z.object({
+    date: z.string(),
+    condition: z.string(),
+    temp: z.object({
+      high: z.number(),
+      low: z.number()
+    }),
+    uvIndex: z.number().optional(),
+    precipitation: z.number(),
+    activities: z.array(z.string())
+  }))
+});
+
+export const aiRecommendationRequestSchema = z.object({
+  tripContext: tripContextSchema,
+  includeActivitySpecific: z.boolean().default(true)
+});
+
+export type TripContext = z.infer<typeof tripContextSchema>;
+export type AiRecommendationRequest = z.infer<typeof aiRecommendationRequestSchema>;

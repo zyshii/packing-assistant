@@ -53,7 +53,7 @@ const getActivitiesByTripTypes = (tripTypes?: string[]) => {
   }, [] as string[]);
 
   // Remove duplicates and return
-  return [...new Set(combinedActivities)];
+  return Array.from(new Set(combinedActivities));
 };
 
 export default function DailyActivityInput({ dates, tripTypes, onActivitiesChange }: DailyActivityInputProps) {

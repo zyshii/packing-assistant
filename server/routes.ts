@@ -2,6 +2,8 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { getWeatherForecast } from "./weatherService";
+import { generateDailyClothingRecommendations, optimizePackingList, getActivitySpecificRecommendations } from "./aiRecommendationService";
+import { aiRecommendationRequestSchema } from "@shared/schema";
 import { z } from "zod";
 
 const weatherRequestSchema = z.object({
@@ -91,6 +93,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.status(500).json({ 
         error: "Failed to fetch cached weather data" 
+      });
+    }
+  });
+
+  // AI Recommendations API routes
+  app.post("/api/recommendations/daily", async (req, res) => {
+    try {
+      const validatedRequest = aiRecommendationRequestSchema.parse(req.body);
+      
+      const recommendations = await generateDailyClothingRecommendations(validatedRequest.tripContext);
+      res.json({ dailyRecommendations: recommendations });
+      
+    } catch (error) {
+      console.error("Daily recommendations API error:", error);
+      
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          error: "Invalid request data", 
+          details: error.errors 
+        });
+      }
+      
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to generate daily recommendations" 
+      });
+    }
+  });
+
+  app.post("/api/recommendations/packing", async (req, res) => {
+    try {
+      const { tripContext, dailyRecommendations } = req.body;
+      
+      if (!tripContext || !dailyRecommendations) {
+        return res.status(400).json({ 
+          error: "Missing required fields: tripContext and dailyRecommendations" 
+        });
+      }
+      
+      const optimizedPacking = await optimizePackingList(tripContext, dailyRecommendations);
+      res.json({ packingOptimization: optimizedPacking });
+      
+    } catch (error) {
+      console.error("Packing optimization API error:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to optimize packing list" 
+      });
+    }
+  });
+
+  app.post("/api/recommendations/activity", async (req, res) => {
+    try {
+      const { activities, weather, destination } = req.body;
+      
+      if (!activities || !weather || !destination) {
+        return res.status(400).json({ 
+          error: "Missing required fields: activities, weather, destination" 
+        });
+      }
+      
+      const recommendations = await getActivitySpecificRecommendations(activities, weather, destination);
+      res.json({ activityRecommendations: recommendations });
+      
+    } catch (error) {
+      console.error("Activity recommendations API error:", error);
+      res.status(500).json({ 
+        error: error instanceof Error ? error.message : "Failed to generate activity recommendations" 
       });
     }
   });
