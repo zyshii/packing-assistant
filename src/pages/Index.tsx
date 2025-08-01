@@ -1,7 +1,7 @@
 import { ArrowLeft, Sparkles, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TripHeader from "@/components/TripHeader";
-import WeatherInfo from "@/components/WeatherInfo";
+
 import OnboardingHint from "@/components/OnboardingHint";
 
 import DailyClothingSuggestions from "@/components/DailyClothingSuggestions";
@@ -19,29 +19,12 @@ const Index = () => {
     activities: ["Sightseeing", "Museums", "Dining", "Photography"]
   };
 
-  const weatherData = {
-    destination: tripData.destination,
-    forecast: {
-      condition: 'mixed' as const,
-      temp: { high: 72, low: 58 },
-      humidity: 65
-    }
-  };
-
-  // Daily weather forecasts
-  const dailyForecasts = [
-    { date: "May 30", condition: 'sunny' as const, temp: { high: 74, low: 60 }, humidity: 60 },
-    { date: "May 31", condition: 'mixed' as const, temp: { high: 70, low: 58 }, humidity: 70 },
-    { date: "Jun 1", condition: 'rainy' as const, temp: { high: 68, low: 55 }, humidity: 80 },
-  ];
-
   // Daily clothing data for the new component
-  const dailyClothingData = dailyForecasts.map(forecast => ({
-    date: forecast.date,
-    condition: forecast.condition,
-    temp: forecast.temp,
-    timeOfDay: [] // This will be populated by the component based on weather conditions
-  }));
+  const dailyClothingData = [
+    { date: "May 30", condition: 'sunny' as const, temp: { high: 74, low: 60 }, timeOfDay: [] },
+    { date: "May 31", condition: 'mixed' as const, temp: { high: 70, low: 58 }, timeOfDay: [] },
+    { date: "Jun 1", condition: 'rainy' as const, temp: { high: 68, low: 55 }, timeOfDay: [] },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-background">
@@ -81,15 +64,6 @@ const Index = () => {
             activities={tripData.activities}
           />
         </div>
-
-        {/* Weather Info */}
-        <div className="animate-slide-in">
-          <WeatherInfo 
-            destination={weatherData.destination}
-            forecast={weatherData.forecast}
-          />
-        </div>
-
 
         {/* Daily Clothing Suggestions */}
         <div className="animate-scale-in">
