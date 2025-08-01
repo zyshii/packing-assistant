@@ -354,6 +354,11 @@ export default function SmartDailyClothingSuggestions({
                               </>
                             )}
                           </div>
+                          {smartDay?.weatherDetails && smartDay.weatherDetails.tips.length > 0 && (
+                            <p className="text-xs text-gray-600 mt-2 leading-relaxed">
+                              {smartDay.weatherDetails.tips.join('. ')}.
+                            </p>
+                          )}
                         </div>
                       </div>
 
@@ -378,50 +383,7 @@ export default function SmartDailyClothingSuggestions({
                         </div>
                       )}
 
-                      {/* Weather Details */}
-                      {smartDay?.weatherDetails && (
-                        <div className="bg-sky-50 rounded-lg p-4 border border-sky-200">
-                          <div className="flex items-center gap-2 mb-3">
-                            <span className="text-lg">🌤️</span>
-                            <h6 className="font-semibold text-sky-900">Weather Analysis</h6>
-                          </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sky-700 font-medium">Condition:</span>
-                              <span className="text-sky-800">{smartDay.weatherDetails.condition}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-sky-700 font-medium">Temperature:</span>
-                              <span className="text-sky-800">{smartDay.weatherDetails.temperatureRange}</span>
-                            </div>
-                            {smartDay.weatherDetails.uvIndex && (
-                              <div className="flex items-center gap-2">
-                                <span className="text-sky-700 font-medium">UV Index:</span>
-                                <span className="text-sky-800">{smartDay.weatherDetails.uvIndex}</span>
-                              </div>
-                            )}
-                            <div className="flex items-center gap-2">
-                              <span className="text-sky-700 font-medium">Precipitation:</span>
-                              <span className="text-sky-800">{smartDay.weatherDetails.precipitation}</span>
-                            </div>
-                          </div>
-                          {smartDay.weatherDetails.tips.length > 0 && (
-                            <div className="mt-4 pt-3 border-t border-sky-200">
-                              <h6 className="font-medium text-sky-900 mb-2 flex items-center gap-1">
-                                <span>💡</span> Weather Tips
-                              </h6>
-                              <ul className="space-y-1">
-                                {smartDay.weatherDetails.tips.map((tip: string, index: number) => (
-                                  <li key={index} className="text-sm text-sky-800 flex items-start gap-2">
-                                    <span className="text-sky-600 mt-0.5 flex-shrink-0">•</span>
-                                    <span>{tip}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                        </div>
-                      )}
+
 
                       {/* Smart recommendations or fallback */}
                       {smartDay && !hasError ? (
@@ -518,34 +480,24 @@ export default function SmartDailyClothingSuggestions({
                         </div>
                       )}
 
-                      {/* Activity-specific recommendations */}
-                      {smartDay?.recommendations?.activitySpecific && smartDay.recommendations.activitySpecific.length > 0 && (
+                      {/* Essential Items and Activity Gear */}
+                      {((smartDay?.recommendations?.activitySpecific && smartDay.recommendations.activitySpecific.length > 0) || 
+                        (smartDay?.priorities && smartDay.priorities.length > 0)) && (
                         <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
                           <h6 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
-                            <span className="text-lg">🎯</span> Activity Gear
+                            <span className="text-lg">⭐</span> Essential Items & Activity Gear
                           </h6>
                           <ul className="space-y-2">
-                            {smartDay.recommendations.activitySpecific.map((item: string, index: number) => (
-                              <li key={index} className="text-sm text-blue-800 flex items-start gap-2">
+                            {smartDay?.priorities && smartDay.priorities.map((priority: string, index: number) => (
+                              <li key={`priority-${index}`} className="text-sm text-blue-800 flex items-start gap-2">
                                 <span className="text-blue-600 mt-0.5 flex-shrink-0">•</span>
-                                <span>{item}</span>
+                                <span>{priority}</span>
                               </li>
                             ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {/* Must-have priorities */}
-                      {smartDay?.priorities && smartDay.priorities.length > 0 && (
-                        <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
-                          <h6 className="font-semibold text-amber-900 mb-3 flex items-center gap-2">
-                            <span className="text-lg">⭐</span> Must-Have Items
-                          </h6>
-                          <ul className="space-y-2">
-                            {smartDay.priorities.map((priority: string, index: number) => (
-                              <li key={index} className="text-sm text-amber-800 flex items-start gap-2">
-                                <span className="text-amber-600 mt-0.5 flex-shrink-0">•</span>
-                                <span>{priority}</span>
+                            {smartDay?.recommendations?.activitySpecific && smartDay.recommendations.activitySpecific.map((item: string, index: number) => (
+                              <li key={`activity-${index}`} className="text-sm text-blue-800 flex items-start gap-2">
+                                <span className="text-blue-600 mt-0.5 flex-shrink-0">•</span>
+                                <span>{item}</span>
                               </li>
                             ))}
                           </ul>
