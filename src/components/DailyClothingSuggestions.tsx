@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Sun, Moon, Shirt, Cloud, CloudRain, CloudSnow, Wind, Activity, CheckCircle2, Thermometer, Sunrise } from "lucide-react";
+import { Sun, Moon, Shirt, Cloud, CloudRain, CloudSnow, Wind, Activity, CheckCircle2, Sunrise } from "lucide-react";
 
 interface DailyClothingData {
   date: string;
@@ -486,7 +486,6 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                              {getWeatherIcon(day.condition)}
                              <span className="text-sm font-medium text-foreground capitalize">{day.condition}</span>
                            </div>
-                           <Thermometer className="h-4 w-4 text-warning" />
                          </div>
                          <div className="space-y-1">
                            <p className="text-lg font-bold text-foreground">
@@ -533,7 +532,6 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                              {getWeatherIcon(day.condition)}
                              <span className="text-sm font-medium text-foreground capitalize">{day.condition}</span>
                            </div>
-                           <Thermometer className="h-4 w-4 text-info" />
                          </div>
                          <div className="space-y-1">
                            <p className="text-lg font-bold text-foreground">
@@ -580,7 +578,6 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                              {getWeatherIcon(day.condition)}
                              <span className="text-sm font-medium text-foreground capitalize">{day.condition}</span>
                            </div>
-                           <Thermometer className="h-4 w-4 text-primary" />
                          </div>
                          <div className="space-y-1">
                            <p className="text-lg font-bold text-foreground">
