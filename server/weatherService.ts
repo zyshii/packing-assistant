@@ -1,15 +1,35 @@
 import { type WeatherForecast, type InsertWeather } from "@shared/schema";
 import { storage } from "./storage";
 
-// Weather code mapping for Open-Meteo API
-const getWeatherCondition = (weatherCode: number): string => {
+// Weather code mapping for Open-Meteo API with precipitation context
+const getWeatherCondition = (weatherCode: number, precipitationSum: number = 0): string => {
+  // Clear sky
   if (weatherCode === 0) return 'sunny';
+  
+  // Partly cloudy, overcast
   if (weatherCode >= 1 && weatherCode <= 3) return 'cloudy';
+  
+  // Fog and depositing rime fog
   if (weatherCode >= 45 && weatherCode <= 48) return 'cloudy';
-  if (weatherCode >= 51 && weatherCode <= 67) return 'rainy';
+  
+  // Light drizzle/rain - consider precipitation amount
+  if (weatherCode === 51 || weatherCode === 53) {
+    // If very light precipitation (<= 1mm), treat as sunny/mixed
+    return precipitationSum <= 1.0 ? 'sunny' : 'mixed';
+  }
+  
+  // Moderate to heavy drizzle/rain
+  if (weatherCode >= 55 && weatherCode <= 67) return 'rainy';
+  
+  // Snow
   if (weatherCode >= 71 && weatherCode <= 77) return 'snowy';
+  
+  // Rain showers
   if (weatherCode >= 80 && weatherCode <= 82) return 'rainy';
+  
+  // Thunderstorm
   if (weatherCode >= 95 && weatherCode <= 99) return 'rainy';
+  
   return 'mixed';
 };
 
@@ -229,7 +249,7 @@ export const getWeatherForecast = async (
       const precipitation = weatherData.daily.precipitation_sum[index] || 0;
       const uvIndex = weatherData.daily.uv_index_max[index] || 0;
       const weatherCode = weatherData.daily.weather_code[index];
-      const condition = getWeatherCondition(weatherCode);
+      const condition = getWeatherCondition(weatherCode, precipitation);
       
       return {
         date,
