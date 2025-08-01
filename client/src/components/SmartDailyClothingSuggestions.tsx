@@ -392,12 +392,18 @@ export default function SmartDailyClothingSuggestions({
                               <div>
                                 <div className="font-medium text-blue-800 text-sm mb-2">Core Items</div>
                                 <ul className="space-y-1">
-                                  {smartDay.recommendations.morning.slice(0, 3).map((item: string, index: number) => (
-                                    <li key={index} className="text-sm text-blue-700 flex items-start gap-2">
-                                      <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
-                                      <span>{item}</span>
+                                  {smartDay.recommendations?.morning?.length > 0 ? (
+                                    smartDay.recommendations.morning.slice(0, 3).map((item: string, index: number) => (
+                                      <li key={index} className="text-sm text-blue-700 flex items-start gap-2">
+                                        <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
+                                        <span>{item}</span>
+                                      </li>
+                                    ))
+                                  ) : (
+                                    <li className="text-sm text-blue-600 italic">
+                                      Basic clothing items for {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F weather
                                     </li>
-                                  ))}
+                                  )}
                                 </ul>
                               </div>
                               <div>
@@ -425,12 +431,18 @@ export default function SmartDailyClothingSuggestions({
                                 <div className="bg-white rounded-lg p-3 border border-orange-200">
                                   <div className="text-xs font-medium text-orange-800 mb-1">Daytime ({Math.round(day.temp.high)}°F)</div>
                                   <ul className="space-y-1">
-                                    {smartDay.recommendations.daytime.slice(0, 2).map((item: string, index: number) => (
-                                      <li key={index} className="text-sm text-orange-700 flex items-start gap-2">
-                                        <span className="text-orange-500 mt-0.5 flex-shrink-0">+</span>
-                                        <span>{item}</span>
+                                    {smartDay.recommendations?.daytime?.length > 0 ? (
+                                      smartDay.recommendations.daytime.slice(0, 2).map((item: string, index: number) => (
+                                        <li key={index} className="text-sm text-orange-700 flex items-start gap-2">
+                                          <span className="text-orange-500 mt-0.5 flex-shrink-0">+</span>
+                                          <span>{item}</span>
+                                        </li>
+                                      ))
+                                    ) : (
+                                      <li className="text-sm text-orange-600 italic">
+                                        No additional layers needed for {Math.round(day.temp.high)}°F
                                       </li>
-                                    ))}
+                                    )}
                                   </ul>
                                 </div>
                               </div>
@@ -446,12 +458,18 @@ export default function SmartDailyClothingSuggestions({
                                 <div className="bg-white rounded-lg p-3 border border-purple-200">
                                   <div className="text-xs font-medium text-purple-800 mb-1">Evening ({Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.7)}°F)</div>
                                   <ul className="space-y-1">
-                                    {smartDay.recommendations.evening.slice(0, 2).map((item: string, index: number) => (
-                                      <li key={index} className="text-sm text-purple-700 flex items-start gap-2">
-                                        <span className="text-purple-500 mt-0.5 flex-shrink-0">±</span>
-                                        <span>{item}</span>
+                                    {smartDay.recommendations?.evening?.length > 0 ? (
+                                      smartDay.recommendations.evening.slice(0, 2).map((item: string, index: number) => (
+                                        <li key={index} className="text-sm text-purple-700 flex items-start gap-2">
+                                          <span className="text-purple-500 mt-0.5 flex-shrink-0">±</span>
+                                          <span>{item}</span>
+                                        </li>
+                                      ))
+                                    ) : (
+                                      <li className="text-sm text-purple-600 italic">
+                                        Keep base layers for {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.7)}°F evening
                                       </li>
-                                    ))}
+                                    )}
                                   </ul>
                                 </div>
                               </div>
