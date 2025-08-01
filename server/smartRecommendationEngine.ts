@@ -372,36 +372,36 @@ function generateTimeSpecificRecommendations(
   
   if (timeOfDay === "daytime") {
     if (weather.temp.high > 85) {
-      recommendations.push("- Light sweater or jacket");
-      recommendations.push("- Any extra layers");
-      recommendations.push("+ Sun hat for UV protection");
+      recommendations.push("- Remove light sweater or jacket");
+      recommendations.push("- Remove any extra layers");
+      recommendations.push("+ Add sun hat for UV protection");
     } else if (weather.temp.high > 75 && weather.temp.low < 65) {
-      recommendations.push("- Light sweater or jacket");
+      recommendations.push("- Remove light sweater or jacket");
       if (weather.uvIndex && weather.uvIndex > 6) {
-        recommendations.push("+ Sun hat and sunglasses");
+        recommendations.push("+ Add sun hat and sunglasses");
       }
     } else if (weather.temp.high > 65 && weather.temp.low < 65) {
       recommendations.push("Keep light sweater or jacket");
-      recommendations.push("+ Sunglasses if sunny");
+      recommendations.push("+ Add sunglasses if sunny");
     } else {
       recommendations.push("Keep all layers");
-      recommendations.push("+ Additional warm layer if cold");
+      recommendations.push("+ Add additional warm layer if cold");
     }
     
     // UV protection for sunny days
     if (weather.uvIndex && weather.uvIndex > 6) {
-      recommendations.push("+ SPF 30+ sunscreen");
+      recommendations.push("+ Add SPF 30+ sunscreen");
     }
   }
   
   if (timeOfDay === "evening") {
     if (weather.temp.low < 65) {
-      recommendations.push("Light jacket for cooling evening");
+      recommendations.push("+ Add light jacket for cooling evening");
     }
     // Check for evening activities
     const hasEveningDining = activities.some(a => a.toLowerCase().includes("din"));
     if (hasEveningDining) {
-      recommendations.push("Smart casual attire for dining");
+      recommendations.push("+ Add smart casual attire for dining");
     }
   }
   

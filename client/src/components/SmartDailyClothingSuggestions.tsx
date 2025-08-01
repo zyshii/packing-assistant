@@ -158,16 +158,11 @@ export default function SmartDailyClothingSuggestions({
               </div>
               <div className="p-4 space-y-3">
                 {category.items.map((item: any, index: number) => (
-                  <div key={index} className="flex items-start justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
-                        <h5 className="font-medium text-gray-900 text-sm leading-snug">{item.item}</h5>
-                        <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-semibold flex-shrink-0">
-                          {item.quantity}
-                        </span>
-                      </div>
-                      <p className="text-xs text-gray-600 mt-1 leading-relaxed">{item.reason}</p>
-                    </div>
+                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <h5 className="font-medium text-gray-900 text-sm">{item.item}</h5>
+                    <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-semibold">
+                      {item.quantity}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -427,9 +422,10 @@ export default function SmartDailyClothingSuggestions({
                                       smartDay.recommendations.daytime.map((item: string, index: number) => (
                                         <li key={index} className="text-sm text-orange-700 flex items-start gap-2">
                                           <span className="text-orange-500 mt-0.5 flex-shrink-0 font-semibold">
-                                            {item.startsWith('-') ? '−' : item.startsWith('+') ? '+' : '•'}
+                                            {item.startsWith('- Remove') || item.startsWith('-') ? '−' : 
+                                             item.startsWith('+ Add') || item.startsWith('+') ? '+' : '•'}
                                           </span>
-                                          <span>{item.replace(/^[+-]\s*/, '')}</span>
+                                          <span>{item}</span>
                                         </li>
                                       ))
                                     ) : (
@@ -456,9 +452,10 @@ export default function SmartDailyClothingSuggestions({
                                       smartDay.recommendations.evening.map((item: string, index: number) => (
                                         <li key={index} className="text-sm text-purple-700 flex items-start gap-2">
                                           <span className="text-purple-500 mt-0.5 flex-shrink-0 font-semibold">
-                                            {item.startsWith('-') ? '−' : item.startsWith('+') ? '+' : '•'}
+                                            {item.startsWith('- Remove') || item.startsWith('-') ? '−' : 
+                                             item.startsWith('+ Add') || item.startsWith('+') ? '+' : '•'}
                                           </span>
-                                          <span>{item.replace(/^[+-]\s*/, '')}</span>
+                                          <span>{item}</span>
                                         </li>
                                       ))
                                     ) : (
