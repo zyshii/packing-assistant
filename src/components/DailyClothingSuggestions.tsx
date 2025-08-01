@@ -174,14 +174,124 @@ const getPackingTips = (condition: string, temp: { high: number; low: number }) 
   return tips;
 };
 
+const getConsolidatedPackingList = (dailyData: DailyClothingData[]) => {
+  const allConditions = dailyData.map(day => day.condition);
+  const allTemps = dailyData.map(day => day.temp);
+  const maxTemp = Math.max(...allTemps.map(t => t.high));
+  const minTemp = Math.min(...allTemps.map(t => t.low));
+  const hasRain = allConditions.includes('rainy') || allConditions.includes('mixed');
+  const hasHotWeather = maxTemp >= 75;
+  const hasColdMornings = minTemp < 60;
+
+  const packingList = {
+    tops: [
+      "👕 Short-sleeve T-shirts (2-3)",
+      "👕 Long-sleeve shirts (1-2)",
+      ...(hasColdMornings ? ["🧥 Light sweater or hoodie"] : []),
+      ...(hasHotWeather ? ["👕 Breathable/moisture-wicking shirts"] : [])
+    ],
+    bottoms: [
+      "👖 Comfortable pants or jeans (1-2 pairs)",
+      ...(hasHotWeather ? ["🩳 Shorts or lightweight trousers"] : []),
+      "🧦 Light socks (sufficient pairs)",
+      "👙 Undergarments (sufficient for trip duration)"
+    ],
+    outerwear: [
+      "🧥 Light jacket or cardigan",
+      ...(hasRain ? ["☂️ Rain jacket or umbrella", "👟 Waterproof shoes"] : []),
+      ...(minTemp < 50 ? ["🧤 Gloves (if very cold)"] : [])
+    ],
+    footwear: [
+      "👟 Comfortable walking shoes",
+      "👟 Lightweight sneakers",
+      ...(hasHotWeather ? ["🩴 Sandals (optional)"] : [])
+    ],
+    accessories: [
+      "🕶️ Sunglasses",
+      "🧢 Hat or cap",
+      "🧴 Sunscreen (SPF 30+)",
+      ...(hasColdMornings ? ["🧣 Small scarf or shawl"] : [])
+    ]
+  };
+
+  return packingList;
+};
+
 export default function DailyClothingSuggestions({ dailyData }: DailyClothingSuggestionsProps) {
+  const packingList = getConsolidatedPackingList(dailyData);
+  
   return (
-    <Card className="p-6 shadow-card border-0 bg-card">
-      <div className="space-y-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Shirt className="h-5 w-5 text-primary" />
-          <h3 className="text-lg font-semibold text-foreground">Daily Clothing Suggestions</h3>
+    <div className="space-y-6">
+      {/* Recommended Packing List */}
+      <Card className="p-6 shadow-card border-0 bg-card">
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 mb-4">
+            <Shirt className="h-5 w-5 text-primary" />
+            <h3 className="text-lg font-semibold text-foreground">Recommended Packing List</h3>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div>
+              <h4 className="font-medium text-foreground mb-3 text-sm">👕 Tops</h4>
+              <div className="space-y-1">
+                {packingList.tops.map((item, index) => (
+                  <p key={index} className="text-sm text-muted-foreground">{item}</p>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="font-medium text-foreground mb-3 text-sm">👖 Bottoms</h4>
+              <div className="space-y-1">
+                {packingList.bottoms.map((item, index) => (
+                  <p key={index} className="text-sm text-muted-foreground">{item}</p>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="font-medium text-foreground mb-3 text-sm">🧥 Outerwear</h4>
+              <div className="space-y-1">
+                {packingList.outerwear.map((item, index) => (
+                  <p key={index} className="text-sm text-muted-foreground">{item}</p>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="font-medium text-foreground mb-3 text-sm">👟 Footwear</h4>
+              <div className="space-y-1">
+                {packingList.footwear.map((item, index) => (
+                  <p key={index} className="text-sm text-muted-foreground">{item}</p>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="font-medium text-foreground mb-3 text-sm">🕶️ Accessories</h4>
+              <div className="space-y-1">
+                {packingList.accessories.map((item, index) => (
+                  <p key={index} className="text-sm text-muted-foreground">{item}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-4 p-3 bg-travel-green/10 rounded-lg border border-travel-green/20">
+            <p className="text-sm text-travel-green">
+              📋 This comprehensive list covers all weather conditions during your trip. Use it as a reference for packing preparation.
+            </p>
+          </div>
         </div>
+      </Card>
+
+      {/* Daily Clothing Suggestions */}
+      <Card className="p-6 shadow-card border-0 bg-card">
+        <div className="space-y-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Shirt className="h-5 w-5 text-primary" />
+            <h3 className="text-lg font-semibold text-foreground">Daily Clothing Suggestions</h3>
+          </div>
         
         <Accordion type="multiple" className="w-full">
           {dailyData.map((day, dayIndex) => (
@@ -293,7 +403,8 @@ export default function DailyClothingSuggestions({ dailyData }: DailyClothingSug
             💡 These suggestions are based on weather conditions and time of day. Adjust based on your personal preferences and planned activities.
           </p>
         </div>
-      </div>
-    </Card>
+        </div>
+      </Card>
+    </div>
   );
 }
