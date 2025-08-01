@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import TripHeader from "@/components/TripHeader";
 import DailyClothingSuggestions from "@/components/DailyClothingSuggestions";
-import SimpleDailyClothingSuggestions from "@/components/SimpleDailyClothingSuggestions";
 import { useLocation } from "wouter";
 import { format, addDays, differenceInDays } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
@@ -204,7 +203,7 @@ const Index = () => {
               </p>
             </div>
           ) : dailyClothingData.length > 0 ? (
-            <SimpleDailyClothingSuggestions 
+            <DailyClothingSuggestions 
               key={`clothing-${dailyClothingData.length}-${dailyClothingData[0]?.date}-${Date.now()}`}
               dailyData={dailyClothingData}
               tripDetails={{

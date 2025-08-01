@@ -331,17 +331,14 @@ const getConsolidatedPackingList = (
 };
 
 export default function DailyClothingSuggestions({ dailyData, tripDetails, isWeatherDataReal }: DailyClothingSuggestionsProps) {
-  console.log('🔄 DailyClothingSuggestions RENDER:', { 
-    id: Math.random().toString(36).substring(7),
+  console.log('DailyClothingSuggestions render:', { 
     dailyDataLength: dailyData.length, 
     firstDate: dailyData[0]?.date, 
-    conditions: dailyData.map(d => d.condition),
-    timestamp: new Date().toISOString()
+    conditions: dailyData.map(d => d.condition)
   });
   
   // Don't render if no data
   if (!dailyData || dailyData.length === 0) {
-    console.log('❌ No data, not rendering');
     return <div>Loading daily suggestions...</div>;
   }
   

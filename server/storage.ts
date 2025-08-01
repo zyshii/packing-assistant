@@ -67,10 +67,31 @@ export class DatabaseStorage implements IStorage {
   }
 
   async saveMultipleWeatherData(weatherList: InsertWeather[]): Promise<WeatherData[]> {
-    const savedWeatherList = await db
-      .insert(weatherData)
-      .values(weatherList)
-      .returning();
+    // Use upsert to avoid duplicates based on location + date
+    const savedWeatherList: WeatherData[] = [];
+    
+    for (const weather of weatherList) {
+      const [savedWeather] = await db
+        .insert(weatherData)
+        .values(weather)
+        .onConflictDoUpdate({
+          target: [weatherData.location, weatherData.date],
+          set: {
+            latitude: weather.latitude,
+            longitude: weather.longitude,
+            temperatureHigh: weather.temperatureHigh,
+            temperatureLow: weather.temperatureLow,
+            uvIndex: weather.uvIndex,
+            precipitationSum: weather.precipitationSum,
+            weatherCode: weather.weatherCode,
+            condition: weather.condition,
+            cached_at: new Date(),
+          }
+        })
+        .returning();
+      savedWeatherList.push(savedWeather);
+    }
+    
     return savedWeatherList;
   }
 }

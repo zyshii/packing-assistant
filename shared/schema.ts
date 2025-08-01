@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, real, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, real, timestamp, unique } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -21,7 +21,9 @@ export const weatherData = pgTable("weather_data", {
   weatherCode: integer("weather_code").notNull(),
   condition: text("condition").notNull(), // sunny, cloudy, rainy, etc.
   cached_at: timestamp("cached_at").defaultNow(),
-});
+}, (table) => ({
+  uniqueLocationDate: unique().on(table.location, table.date),
+}));
 
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
