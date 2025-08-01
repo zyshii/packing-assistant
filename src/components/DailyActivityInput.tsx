@@ -63,20 +63,33 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
 
   // Sync dailyActivities with dates prop changes
   useEffect(() => {
-    setDailyActivities(dates.map(date => ({ date, activities: [] })));
-    // Initialize input states for each date
-    const initialInputs: { [key: number]: string } = {};
-    const initialPopovers: { [key: number]: boolean } = {};
-    const initialFocused: { [key: number]: boolean } = {};
-    dates.forEach((_, index) => {
-      initialInputs[index] = '';
-      initialPopovers[index] = false;
-      initialFocused[index] = false;
+    // Preserve existing activities for dates that still exist
+    const newDailyActivities = dates.map(date => {
+      const existingDay = dailyActivities.find(day => day.date === date);
+      return existingDay || { date, activities: [] };
     });
-    setActivityInputs(initialInputs);
-    setOpenPopovers(initialPopovers);
-    setInputFocused(initialFocused);
-  }, [dates]);
+    
+    setDailyActivities(newDailyActivities);
+    
+    // Initialize or update input states for each date
+    const newInputs: { [key: number]: string } = {};
+    const newPopovers: { [key: number]: boolean } = {};
+    const newFocused: { [key: number]: boolean } = {};
+    
+    dates.forEach((_, index) => {
+      // Preserve existing input states if they exist, otherwise initialize
+      newInputs[index] = activityInputs[index] || '';
+      newPopovers[index] = openPopovers[index] || false;
+      newFocused[index] = inputFocused[index] || false;
+    });
+    
+    setActivityInputs(newInputs);
+    setOpenPopovers(newPopovers);
+    setInputFocused(newFocused);
+    
+    // Notify parent component of the updated activities
+    onActivitiesChange(newDailyActivities);
+  }, [dates]); // Remove onActivitiesChange from dependency to avoid infinite loops
 
   const addActivity = (dateIndex: number, activity: string) => {
     const updated = [...dailyActivities];

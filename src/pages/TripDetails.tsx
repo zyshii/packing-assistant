@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -130,6 +130,13 @@ function TripDetails() {
   const handleActivitiesChange = (activities: Array<{ date: string; activities: string[] }>) => {
     setDailyActivities(activities);
   };
+
+  // Reset daily activities when dates change significantly
+  useEffect(() => {
+    if (dates.length === 0) {
+      setDailyActivities([]);
+    }
+  }, [dates]);
 
   async function onSubmit(values: FormData) {
     setIsSubmitting(true);
