@@ -72,40 +72,42 @@ const getDetailedClothingSuggestions = (condition: string, temp: { high: number;
   // Base clothing suggestions
   if (period === 'morning') {
     if (temp.low < 60) {
-      suggestions.push("👕 Light long-sleeve shirt or T-shirt");
-      suggestions.push("🧥 Thin sweater or hoodie");
+      suggestions.push("👕 Long-sleeve shirts");
+      suggestions.push("🧥 Light sweater or hoodie");
       suggestions.push("👖 Comfortable pants or jeans");
-      suggestions.push("👟 Closed shoes or lightweight sneakers");
+      suggestions.push("👟 Comfortable walking shoes");
     } else {
-      suggestions.push("👕 Light T-shirt or thin long-sleeve shirt");
-      suggestions.push("👖 Comfortable pants or light trousers");
+      suggestions.push("👕 Short-sleeve T-shirts");
+      suggestions.push("👖 Comfortable pants or jeans");
       suggestions.push("👟 Comfortable walking shoes");
     }
   } else if (period === 'daytime') {
     if (temp.high >= 75) {
-      suggestions.push("👕 Short-sleeve shirts or breathable T-shirts");
-      suggestions.push("🩳 Shorts, skirts, or lightweight trousers");
-      suggestions.push("🧦 Light socks");
-      suggestions.push("🕶️ Sunglasses, hat, and sunscreen");
+      suggestions.push("👕 Short-sleeve T-shirts");
+      suggestions.push("🩳 Shorts or lightweight trousers");
+      suggestions.push("🧦 Socks");
+      suggestions.push("🕶️ Sunglasses");
+      suggestions.push("🧢 Hat or cap");
+      suggestions.push("🧴 Sunscreen (SPF 30+)");
     } else if (temp.high >= 65) {
-      suggestions.push("👕 Comfortable T-shirts or light sweaters");
-      suggestions.push("🧥 Light jacket (for temperature changes)");
+      suggestions.push("👕 Short-sleeve T-shirts");
+      suggestions.push("🧥 Light jacket or cardigan");
     } else {
-      suggestions.push("🧥 Warm layers - sweater or light jacket");
-      suggestions.push("🧤 Gloves (if very cold)");
+      suggestions.push("🧥 Light jacket or cardigan");
+      suggestions.push("🧤 Gloves and warm hat");
     }
     
     if (condition === 'rainy' || condition === 'mixed') {
-      suggestions.push("☂️ Rain jacket or umbrella");
+      suggestions.push("☂️ Rain jacket or compact umbrella");
       suggestions.push("👟 Waterproof shoes");
     }
   } else if (period === 'evening') {
     if (temp.low < 65) {
-      suggestions.push("🧥 Light jacket or cardigan (if going out)");
+      suggestions.push("🧥 Light jacket or cardigan");
     }
     
     if (condition === 'rainy') {
-      suggestions.push("☂️ Umbrella or rain jacket");
+      suggestions.push("☂️ Rain jacket or compact umbrella");
     }
   }
 
@@ -115,42 +117,42 @@ const getDetailedClothingSuggestions = (condition: string, temp: { high: number;
     
     if (activityLower.includes('swimming') || activityLower.includes('beach')) {
       suggestions.push("👙 Swimwear");
-      suggestions.push("🩴 Flip-flops or beach sandals");
-      suggestions.push("🧴 Waterproof sunscreen (SPF 50+)");
+      suggestions.push("🩴 Beach sandals or flip-flops");
+      suggestions.push("🧴 Waterproof sunscreen");
       suggestions.push("🏖️ Beach towel");
     }
     
     if (activityLower.includes('hiking') || activityLower.includes('nature') || activityLower.includes('outdoor')) {
-      suggestions.push("👟 Sturdy hiking shoes/boots");
-      suggestions.push("🧢 Sun hat with UV protection");
-      suggestions.push("🎒 Small backpack for water/snacks");
-      suggestions.push("🧤 Light gloves (if cold)");
+      suggestions.push("🥾 Hiking boots or sturdy shoes");
+      suggestions.push("🧢 Hat or cap");
+      suggestions.push("🎒 Small backpack");
+      suggestions.push("💧 Water bottle");
     }
     
     if (activityLower.includes('business') || activityLower.includes('meeting') || activityLower.includes('conference')) {
-      suggestions.push("👔 Business attire - dress shirt/blouse");
+      suggestions.push("👔 Business shirts/blouses");
       suggestions.push("👞 Formal shoes");
       suggestions.push("🧥 Blazer or suit jacket");
     }
     
     if (activityLower.includes('running') || activityLower.includes('cycling') || activityLower.includes('sport')) {
-      suggestions.push("🏃 Athletic wear - moisture-wicking fabric");
+      suggestions.push("👕 Breathable/moisture-wicking shirts");
       suggestions.push("👟 Athletic shoes");
-      suggestions.push("🧢 Sports cap/headband");
+      suggestions.push("🧢 Sports cap");
+      suggestions.push("💧 Water bottle");
     }
     
     if (activityLower.includes('dining') || activityLower.includes('nightlife') || activityLower.includes('restaurant')) {
-      suggestions.push("👕 Smart casual attire");
-      suggestions.push("👞 Nice shoes (no sneakers)");
+      suggestions.push("👕 Short-sleeve T-shirts");
+      suggestions.push("👟 Lightweight sneakers or casual shoes");
       if (period === 'evening') {
-        suggestions.push("🧥 Light jacket or blazer");
+        suggestions.push("🧥 Light jacket or cardigan");
       }
     }
     
     if (activityLower.includes('spa') || activityLower.includes('yoga') || activityLower.includes('meditation')) {
-      suggestions.push("🧘 Comfortable, loose-fitting clothes");
-      suggestions.push("🩴 Sandals or slip-on shoes");
-      suggestions.push("🧘‍♀️ Yoga mat (if needed)");
+      suggestions.push("👕 Short-sleeve T-shirts");
+      suggestions.push("🩴 Sandals");
     }
     
     if (activityLower.includes('skiing') || activityLower.includes('snowboard') || activityLower.includes('snow')) {
@@ -161,10 +163,10 @@ const getDetailedClothingSuggestions = (condition: string, temp: { high: number;
     }
     
     if (activityLower.includes('water sport') || activityLower.includes('sailing') || activityLower.includes('fishing')) {
-      suggestions.push("🌊 Quick-dry clothing");
-      suggestions.push("👟 Water shoes");
-      suggestions.push("🧥 Waterproof jacket");
-      suggestions.push("🧢 Hat with chin strap");
+      suggestions.push("👕 Breathable/moisture-wicking shirts");
+      suggestions.push("👟 Waterproof shoes");
+      suggestions.push("🧥 Rain jacket or compact umbrella");
+      suggestions.push("🧢 Hat or cap");
     }
   });
   
