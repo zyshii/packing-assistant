@@ -114,6 +114,21 @@ const getDetailedClothingSuggestions = (condition: string, temp: { high: number;
   return suggestions;
 };
 
+const getHighLevelClothingInfo = (condition: string, temp: { high: number; low: number }) => {
+  if (temp.high >= 80) {
+    return "Light summer wear";
+  } else if (temp.high >= 70) {
+    if (temp.low < 60) {
+      return "Layers recommended";
+    }
+    return "Comfortable wear";
+  } else if (temp.high >= 60) {
+    return "Light layers needed";
+  } else {
+    return "Warm clothing required";
+  }
+};
+
 export default function DailyClothingSuggestions({ dailyData }: DailyClothingSuggestionsProps) {
   return (
     <Card className="p-6 shadow-card border-0 bg-card">
@@ -135,9 +150,9 @@ export default function DailyClothingSuggestions({ dailyData }: DailyClothingSug
                   <Badge variant="outline" className="text-xs capitalize">
                     {day.condition}
                   </Badge>
-                  <div className="ml-auto">
-                    {getWeatherIcon(day.condition)}
-                  </div>
+                  <Badge variant="secondary" className="text-xs bg-travel-green/20 text-travel-green ml-auto">
+                    {getHighLevelClothingInfo(day.condition, day.temp)}
+                  </Badge>
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-4 pb-4">
