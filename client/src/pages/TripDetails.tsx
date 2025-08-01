@@ -588,12 +588,7 @@ function TripDetails() {
                             {Math.ceil((watchedEndDate.getTime() - watchedStartDate.getTime()) / (1000 * 60 * 60 * 24))} days
                           </span>
                         </p>
-                        {watchedEndDate <= MAX_WEATHER_DATE && 
-                         Math.ceil((watchedEndDate.getTime() - watchedStartDate.getTime()) / (1000 * 60 * 60 * 24)) <= MAX_TRIP_DAYS && (
-                          <p className="text-sm text-success">
-                            ✅ Real-time weather forecasts available for your entire trip
-                          </p>
-                        )}
+
                         {(watchedEndDate > MAX_WEATHER_DATE || 
                           Math.ceil((watchedEndDate.getTime() - watchedStartDate.getTime()) / (1000 * 60 * 60 * 24)) > MAX_TRIP_DAYS) && (
                           <p className="text-sm text-destructive">
