@@ -9,6 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CalendarIcon, MapPin, Clock, Users, Activity, Sparkles, ArrowRight, Globe } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
@@ -37,6 +38,56 @@ const formSchema = z.object({
 });
 
 type FormData = z.infer<typeof formSchema>;
+
+const popularDestinations = [
+  "New York, USA",
+  "Paris, France", 
+  "Tokyo, Japan",
+  "London, England",
+  "Rome, Italy",
+  "Barcelona, Spain",
+  "Amsterdam, Netherlands",
+  "Dubai, UAE",
+  "Sydney, Australia",
+  "Bangkok, Thailand",
+  "Singapore",
+  "Berlin, Germany",
+  "Istanbul, Turkey",
+  "Cairo, Egypt",
+  "Mumbai, India",
+  "Seoul, South Korea",
+  "Mexico City, Mexico",
+  "Buenos Aires, Argentina",
+  "Rio de Janeiro, Brazil",
+  "Cape Town, South Africa",
+  "Marrakech, Morocco",
+  "Reykjavik, Iceland",
+  "Stockholm, Sweden",
+  "Vienna, Austria",
+  "Prague, Czech Republic",
+  "Budapest, Hungary",
+  "Lisbon, Portugal",
+  "Athens, Greece",
+  "Zurich, Switzerland",
+  "Copenhagen, Denmark",
+  "Oslo, Norway",
+  "Helsinki, Finland",
+  "Warsaw, Poland",
+  "Dubrovnik, Croatia",
+  "Santorini, Greece",
+  "Bali, Indonesia",
+  "Phuket, Thailand",
+  "Maldives",
+  "Fiji",
+  "Hawaii, USA",
+  "Las Vegas, USA",
+  "Los Angeles, USA",
+  "San Francisco, USA",
+  "Miami, USA",
+  "Toronto, Canada",
+  "Vancouver, Canada",
+  "Montreal, Canada"
+];
 
 export default function TripDetails() {
   const navigate = useNavigate();
@@ -117,14 +168,21 @@ export default function TripDetails() {
                           <HelpTooltip content="Enter the city, country, or specific location you're traveling to. This helps us provide weather-specific recommendations." />
                         </FormLabel>
                         <FormControl>
-                          <div className="relative">
-                            <Input 
-                              placeholder="e.g., Paris, France or Tokyo, Japan" 
-                              {...field}
-                              className="pl-10 h-12 text-base"
-                            />
-                            <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          </div>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <SelectTrigger className="h-12 text-base">
+                              <div className="flex items-center gap-2">
+                                <Globe className="h-4 w-4 text-muted-foreground" />
+                                <SelectValue placeholder="Select your destination" />
+                              </div>
+                            </SelectTrigger>
+                            <SelectContent className="max-h-[300px]">
+                              {popularDestinations.map((destination) => (
+                                <SelectItem key={destination} value={destination}>
+                                  {destination}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </FormControl>
                         <FormMessage />
                         {watchedDestination && (
