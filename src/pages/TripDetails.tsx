@@ -171,7 +171,7 @@ function TripDetails() {
           <div className="text-center space-y-4 animate-fade-in">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-primary rounded-full text-white text-sm font-medium shadow-floating">
               <Sparkles className="w-4 h-4" />
-              Trip Prep Assistant
+              Packing Assistant
             </div>
             <h1 className="text-3xl lg:text-4xl font-bold text-foreground">
               Plan Your Perfect Trip
@@ -183,7 +183,7 @@ function TripDetails() {
 
           {/* Onboarding Hint */}
           <OnboardingHint
-            title="First time using Trip Prep Assistant?"
+            title="First time using Packing Assistant?"
             description="We'll guide you through creating your first AI-powered packing list. Just fill out your trip details and let our smart recommendations do the rest!"
             storageKey="trip-details-hint-seen"
             className="animate-scale-in"
