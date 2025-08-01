@@ -64,6 +64,29 @@ export default {
         // Travel theme colors
         "travel-blue": "hsl(var(--travel-blue))",
         "travel-purple": "hsl(var(--travel-purple))",
+        // WCAG compliant semantic colors
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          light: "hsl(var(--success-light))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          light: "hsl(var(--info-light))",
+          foreground: "hsl(var(--info-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          light: "hsl(var(--warning-light))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
+        neutral: {
+          DEFAULT: "hsl(var(--neutral))",
+          light: "hsl(var(--neutral-light))",
+        },
+        // Enhanced accessibility utilities
+        "focus-ring": "hsl(var(--focus-ring))",
+        "hover-overlay": "hsl(var(--hover-overlay))",
       },
       keyframes: {
         "accordion-down": {

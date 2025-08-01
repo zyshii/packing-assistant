@@ -404,8 +404,8 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
               </div>
             </div>
             
-            <div className="mt-4 p-3 bg-success-light rounded-lg border border-success/20">
-              <p className="text-sm text-success">
+            <div className="mt-4 p-3 bg-success-light rounded-lg border border-success/30">
+              <p className="text-sm text-success font-medium">
                 📋 This personalized list is optimized for your {tripDetails?.luggageSize?.replace('-', ' ') || 'luggage'}
                 {tripDetails?.tripTypes && tripDetails.tripTypes.length > 0 && (
                   <span>, <strong>{tripDetails.tripTypes.join(' & ')}</strong> trip{tripDetails.tripTypes.length > 1 ? 's' : ''}</span>
@@ -437,11 +437,11 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                     {day.condition}
                   </Badge>
                   {day.activities && day.activities.length > 0 && (
-                    <Badge variant="outline" className="text-xs bg-success-light text-success border-success/20">
+                    <Badge variant="outline" className="text-xs bg-success-light text-success border-success/30 font-semibold">
                       {day.activities.length} activit{day.activities.length === 1 ? 'y' : 'ies'}
                     </Badge>
                   )}
-                  <Badge variant="secondary" className="text-xs bg-info-light text-info ml-auto border border-info/20">
+                  <Badge variant="secondary" className="text-xs bg-info-light text-info ml-auto border border-info/30 font-semibold">
                     {getHighLevelClothingInfo(day.condition, day.temp)}
                   </Badge>
                 </div>
@@ -450,14 +450,14 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                 {/* Planned Activities Section */}
                 {day.activities && day.activities.length > 0 && (
                 <div className="mb-4">
-                  <Card className="p-4 bg-success-light border border-success/20">
-                    <h6 className="font-medium text-foreground mb-3 flex items-center gap-2">
+                  <Card className="p-4 bg-success-light border border-success/30">
+                    <h6 className="font-semibold text-foreground mb-3 flex items-center gap-2">
                         <Activity className="h-4 w-4 text-success" />
                         Planned Activities for {day.date}
                       </h6>
                       <div className="flex flex-wrap gap-2">
                         {day.activities.map((activity, index) => (
-                          <Badge key={index} variant="secondary" className="bg-success/10 text-success border border-success/20">
+                          <Badge key={index} variant="secondary" className="bg-success/15 text-success border border-success/30 font-semibold">
                             {activity}
                           </Badge>
                         ))}
@@ -468,12 +468,12 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                 
                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                    {/* Morning */}
-                   <Card className="p-5 bg-warning-light border border-warning/20 hover:shadow-card transition-shadow duration-200">
+                   <Card className="p-5 bg-warning-light border border-warning/30 hover:shadow-card transition-shadow duration-200">
                      <div className="space-y-4">
                        {/* Header with Time Period */}
                        <div className="flex items-center justify-between">
                          <div className="flex items-center gap-2">
-                           <div className="p-2 bg-warning/10 rounded-full">
+                           <div className="p-2 bg-warning/15 rounded-full">
                              <Sunrise className="h-4 w-4 text-warning" />
                            </div>
                            <div>
@@ -484,7 +484,7 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                        </div>
                        
                        {/* Weather & Temperature Highlight */}
-                       <div className="bg-white/80 rounded-lg p-3 border border-warning/20">
+                       <div className="bg-white/80 rounded-lg p-3 border border-warning/30">
                          <div className="flex items-center justify-between mb-2">
                            <div className="flex items-center gap-2">
                              {getWeatherIcon(day.condition)}
@@ -514,12 +514,12 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                    </Card>
 
                    {/* Daytime */}
-                   <Card className="p-5 bg-info-light border border-info/20 hover:shadow-card transition-shadow duration-200">
+                   <Card className="p-5 bg-info-light border border-info/30 hover:shadow-card transition-shadow duration-200">
                      <div className="space-y-4">
                        {/* Header with Time Period */}
                        <div className="flex items-center justify-between">
                          <div className="flex items-center gap-2">
-                           <div className="p-2 bg-info/10 rounded-full">
+                           <div className="p-2 bg-info/15 rounded-full">
                              <Sun className="h-4 w-4 text-info" />
                            </div>
                            <div>
@@ -530,7 +530,7 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                        </div>
                        
                        {/* Weather & Temperature Highlight */}
-                       <div className="bg-white/80 rounded-lg p-3 border border-info/20">
+                       <div className="bg-white/80 rounded-lg p-3 border border-info/30">
                          <div className="flex items-center justify-between mb-2">
                            <div className="flex items-center gap-2">
                              {getWeatherIcon(day.condition)}
@@ -560,12 +560,12 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                    </Card>
 
                    {/* Evening */}
-                   <Card className="p-5 bg-accent-light border border-primary/20 hover:shadow-card transition-shadow duration-200">
+                   <Card className="p-5 bg-accent-light border border-primary/30 hover:shadow-card transition-shadow duration-200">
                      <div className="space-y-4">
                        {/* Header with Time Period */}
                        <div className="flex items-center justify-between">
                          <div className="flex items-center gap-2">
-                           <div className="p-2 bg-primary/10 rounded-full">
+                           <div className="p-2 bg-primary/15 rounded-full">
                              <Moon className="h-4 w-4 text-primary" />
                            </div>
                            <div>
@@ -576,7 +576,7 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                        </div>
                        
                        {/* Weather & Temperature Highlight */}
-                       <div className="bg-white/80 rounded-lg p-3 border border-primary/20">
+                       <div className="bg-white/80 rounded-lg p-3 border border-primary/30">
                          <div className="flex items-center justify-between mb-2">
                            <div className="flex items-center gap-2">
                              {getWeatherIcon(day.condition)}
@@ -608,7 +608,7 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                 
                 {/* Packing Tips Section */}
                 <div className="mt-6">
-                  <Card className="p-4 bg-gradient-to-r from-primary/10 to-info/10 border border-primary/20">
+                  <Card className="p-4 bg-gradient-to-r from-primary/15 to-info/15 border border-primary/30">
                     <h6 className="font-medium text-foreground mb-3 flex items-center gap-2">
                       <CheckCircle2 className="h-4 w-4 text-primary" />
                       Packing Tips for {day.date}
@@ -625,8 +625,8 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
           ))}
         </Accordion>
         
-        <div className="mt-4 p-3 bg-info-light rounded-lg border border-info/20">
-          <p className="text-sm text-info">
+        <div className="mt-4 p-3 bg-info-light rounded-lg border border-info/30">
+          <p className="text-sm text-info font-medium">
             💡 These suggestions are based on weather conditions and time of day. Adjust based on your personal preferences and planned activities.
           </p>
         </div>

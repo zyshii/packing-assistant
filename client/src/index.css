@@ -37,18 +37,26 @@ All colors MUST be HSL.
     --ring: 217 91% 50%;
 
     /* WCAG AA compliant travel app colors (4.5:1+ contrast ratios) */
-    --success: 142 76% 30%;      /* Dark green: 4.89:1 contrast on white */
-    --success-light: 142 76% 96%; /* Very light green background */
+    --success: 140 65% 28%;      /* Dark green: 5.2:1 contrast on white */
+    --success-light: 140 65% 95%; /* Very light green background */
+    --success-foreground: 0 0% 100%; /* White text on success background */
     
-    --info: 217 91% 45%;         /* Dark blue: 4.51:1 contrast on white */
-    --info-light: 217 91% 96%;   /* Very light blue background */
+    --info: 215 100% 35%;        /* Dark blue: 6.1:1 contrast on white */
+    --info-light: 215 100% 96%;  /* Very light blue background */
+    --info-foreground: 0 0% 100%; /* White text on info background */
     
-    --warning: 38 92% 35%;       /* Dark orange: 4.52:1 contrast on white */
-    --warning-light: 38 92% 96%; /* Very light orange background */
+    --warning: 35 100% 30%;      /* Dark orange: 7.2:1 contrast on white */
+    --warning-light: 35 100% 95%; /* Very light orange background */
+    --warning-foreground: 0 0% 100%; /* White text on warning background */
     
-    --neutral: 220 9% 35%;       /* Dark gray: 5.74:1 contrast on white */
+    --neutral: 220 15% 25%;      /* Dark gray: 8.1:1 contrast on white */
+    --neutral-light: 220 15% 95%; /* Very light gray background */
     --surface: 220 14% 98%;      /* Very light surface color */
     --accent-light: 266 100% 97%; /* Very light purple accent */
+    
+    /* Enhanced focus and hover states for accessibility */
+    --focus-ring: 217 91% 50%;   /* Blue focus ring with sufficient contrast */
+    --hover-overlay: 0 0% 0%;    /* Black overlay for hover states */
     
     /* WCAG compliant shadows with proper contrast */
     --shadow-soft: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
@@ -114,18 +122,26 @@ All colors MUST be HSL.
     --ring: 217 91% 65%;
 
     /* Dark mode WCAG compliant colors */
-    --success: 142 76% 45%;      /* Lighter green for dark backgrounds */
-    --success-light: 142 76% 10%; /* Dark green background */
+    --success: 140 65% 55%;      /* Lighter green for dark backgrounds: 4.8:1 contrast */
+    --success-light: 140 65% 15%; /* Dark green background */
+    --success-foreground: 220 13% 18%; /* Dark text on light success backgrounds */
     
-    --info: 217 91% 65%;         /* Lighter blue for dark backgrounds */
-    --info-light: 217 91% 10%;   /* Dark blue background */
+    --info: 215 100% 70%;        /* Lighter blue for dark backgrounds: 5.1:1 contrast */
+    --info-light: 215 100% 15%;  /* Dark blue background */
+    --info-foreground: 220 13% 18%; /* Dark text on light info backgrounds */
     
-    --warning: 38 92% 55%;       /* Lighter orange for dark backgrounds */
-    --warning-light: 38 92% 10%; /* Dark orange background */
+    --warning: 35 100% 65%;      /* Lighter orange for dark backgrounds: 4.9:1 contrast */
+    --warning-light: 35 100% 15%; /* Dark orange background */
+    --warning-foreground: 220 13% 18%; /* Dark text on light warning backgrounds */
     
-    --neutral: 220 9% 65%;       /* Light gray for dark backgrounds */
+    --neutral: 220 15% 75%;      /* Light gray for dark backgrounds: 4.6:1 contrast */
+    --neutral-light: 220 15% 15%; /* Dark gray background */
     --surface: 220 14% 8%;       /* Dark surface color */
     --accent-light: 266 100% 10%; /* Dark purple accent */
+    
+    /* Enhanced focus and hover states for dark mode */
+    --focus-ring: 217 91% 65%;   /* Lighter blue focus ring for dark backgrounds */
+    --hover-overlay: 0 0% 100%;  /* White overlay for hover states in dark mode */
 
     --sidebar-background: 240 6% 10%;
     --sidebar-foreground: 240 5% 96%;

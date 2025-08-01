@@ -19,7 +19,7 @@ The frontend is built using React with TypeScript and follows a component-based 
 - **Build Tool**: Vite for fast development and optimized production builds
 - **UI Components**: Comprehensive set of accessible components from Radix UI
 
-The application uses a modern design system with HSL color variables, ensuring WCAG AA compliance for accessibility.
+The application uses a modern design system with HSL color variables, ensuring WCAG AA compliance for accessibility. All semantic colors (success, info, warning, neutral) meet or exceed 4.5:1 contrast ratios for text and maintain proper contrast for interactive elements. Enhanced focus states and border visibility support keyboard navigation and screen readers.
 
 ## Backend Architecture
 

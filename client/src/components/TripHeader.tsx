@@ -18,9 +18,9 @@ export default function TripHeader({ destination, dates, tripTypes, activities }
           {tripTypes && tripTypes.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {tripTypes.map((type, index) => (
-                <div key={index} className="flex items-center gap-2 px-3 py-1.5 bg-info-light rounded-full border border-info/20">
+                <div key={index} className="flex items-center gap-2 px-3 py-1.5 bg-info-light rounded-full border border-info/30">
                   <Target className="h-4 w-4 text-info" />
-                  <span className="text-sm font-medium capitalize text-info">{type}</span>
+                  <span className="text-sm font-semibold capitalize text-info">{type}</span>
                 </div>
               ))}
             </div>
@@ -29,7 +29,7 @@ export default function TripHeader({ destination, dates, tripTypes, activities }
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/10 rounded-lg border border-primary/20">
+            <div className="p-2 bg-primary/15 rounded-lg border border-primary/30">
               <MapPin className="h-4 w-4 text-primary" />
             </div>
             <div>
@@ -39,7 +39,7 @@ export default function TripHeader({ destination, dates, tripTypes, activities }
           </div>
           
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-success-light rounded-lg border border-success/20">
+            <div className="p-2 bg-success-light rounded-lg border border-success/30">
               <Calendar className="h-4 w-4 text-success" />
             </div>
             <div>
@@ -58,7 +58,7 @@ export default function TripHeader({ destination, dates, tripTypes, activities }
               activities.map((activity, index) => (
                 <span 
                   key={index}
-                  className="px-3 py-1 bg-warning-light text-warning rounded-full text-sm font-medium border border-warning/20"
+                  className="px-3 py-1 bg-warning-light text-warning rounded-full text-sm font-semibold border border-warning/30"
                 >
                   {activity}
                 </span>
