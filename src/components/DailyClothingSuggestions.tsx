@@ -64,50 +64,40 @@ const getDetailedClothingSuggestions = (condition: string, temp: { high: number;
   
   if (period === 'morning') {
     if (temp.low < 60) {
-      suggestions.push("Light long-sleeve shirt or T-shirt");
-      suggestions.push("Thin sweater or hoodie");
-      suggestions.push("Comfortable pants or jeans");
-      suggestions.push("Closed shoes or lightweight sneakers");
+      suggestions.push("👕 Light long-sleeve shirt or T-shirt");
+      suggestions.push("🧥 Thin sweater or hoodie");
+      suggestions.push("👖 Comfortable pants or jeans");
+      suggestions.push("👟 Closed shoes or lightweight sneakers");
     } else {
-      suggestions.push("Light T-shirt or thin long-sleeve shirt");
-      suggestions.push("Comfortable pants or light trousers");
-      suggestions.push("Comfortable walking shoes");
+      suggestions.push("👕 Light T-shirt or thin long-sleeve shirt");
+      suggestions.push("👖 Comfortable pants or light trousers");
+      suggestions.push("👟 Comfortable walking shoes");
     }
   } else if (period === 'daytime') {
     if (temp.high >= 75) {
-      suggestions.push("Short-sleeve shirts or breathable T-shirts");
-      suggestions.push("Shorts, skirts, or lightweight trousers");
-      suggestions.push("Light socks and walking shoes or sandals");
-      suggestions.push("Sunglasses, hat, and sunscreen");
+      suggestions.push("👕 Short-sleeve shirts or breathable T-shirts");
+      suggestions.push("🩳 Shorts, skirts, or lightweight trousers");
+      suggestions.push("🧦 Light socks");
+      suggestions.push("🕶️ Sunglasses, hat, and sunscreen");
     } else if (temp.high >= 65) {
-      suggestions.push("Comfortable T-shirts or light sweaters");
-      suggestions.push("Pants or jeans");
-      suggestions.push("Comfortable walking shoes");
-      suggestions.push("Light jacket");
+      suggestions.push("👕 Comfortable T-shirts or light sweaters");
+      suggestions.push("🧥 Light jacket (for temperature changes)");
     } else {
-      suggestions.push("Warm layers - sweater or light jacket");
-      suggestions.push("Long pants or jeans");
-      suggestions.push("Closed shoes or boots");
-      suggestions.push("Gloves (if very cold)");
+      suggestions.push("🧥 Warm layers - sweater or light jacket");
+      suggestions.push("🧤 Gloves (if very cold)");
     }
     
     if (condition === 'rainy' || condition === 'mixed') {
-      suggestions.push("Rain jacket or umbrella");
-      suggestions.push("Waterproof shoes");
+      suggestions.push("☂️ Rain jacket or umbrella");
+      suggestions.push("👟 Waterproof shoes");
     }
   } else if (period === 'evening') {
     if (temp.low < 65) {
-      suggestions.push("Light jacket or cardigan");
-      suggestions.push("Jeans or long pants");
-      suggestions.push("Comfortable closed shoes");
-    } else {
-      suggestions.push("Light layers");
-      suggestions.push("Comfortable pants or evening wear");
-      suggestions.push("Comfortable walking shoes");
+      suggestions.push("🧥 Light jacket or cardigan (if going out)");
     }
     
     if (condition === 'rainy') {
-      suggestions.push("Umbrella or rain jacket");
+      suggestions.push("☂️ Umbrella or rain jacket");
     }
   }
   
