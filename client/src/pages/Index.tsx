@@ -111,30 +111,27 @@ const Index = () => {
     return [];
   }, [weatherData, tripData?.startDate, tripData?.endDate]);
 
-  // Daily clothing data state - initialize once and only update when needed
-  const [dailyClothingData, setDailyClothingData] = useState(generateDailyClothingData);
-
-  // Update the data when trip data changes
-  useEffect(() => {
-    setDailyClothingData(generateDailyClothingData);
-  }, [weatherData, tripData?.startDate, tripData?.endDate]);
-
-  // Update clothing data with activities from navigation state
-  useEffect(() => {
-    if (dailyActivities && Array.isArray(dailyActivities) && dailyClothingData.length > 0) {
-      setDailyClothingData(prevData => {
-        return prevData.map(day => {
-          const dayActivities = dailyActivities.find(a => a.date === day.date);
-          return {
-            ...day,
-            uvIndex: day.uvIndex || 0,
-            precipitation: day.precipitation || 0,
-            activities: dayActivities ? dayActivities.activities : []
-          };
-        });
+  // Combine weather data with activities in a single useMemo to avoid state conflicts
+  const dailyClothingData = useMemo(() => {
+    const baseData = generateDailyClothingData;
+    
+    if (!baseData || baseData.length === 0) return baseData;
+    
+    // Merge with activities if available
+    if (dailyActivities && Array.isArray(dailyActivities)) {
+      return baseData.map(day => {
+        const dayActivities = dailyActivities.find(a => a.date === day.date);
+        return {
+          ...day,
+          uvIndex: day.uvIndex || 0,
+          precipitation: day.precipitation || 0,
+          activities: dayActivities ? dayActivities.activities : []
+        };
       });
     }
-  }, [dailyActivities]);
+    
+    return baseData;
+  }, [generateDailyClothingData, dailyActivities]);
 
   // Extract all unique activities from daily activities for the header
   const allUserActivities = useMemo(() => {
