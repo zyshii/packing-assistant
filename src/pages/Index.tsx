@@ -1,10 +1,10 @@
+import { useState } from "react";
 import { ArrowLeft, Sparkles, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TripHeader from "@/components/TripHeader";
-
 import OnboardingHint from "@/components/OnboardingHint";
-
 import DailyClothingSuggestions from "@/components/DailyClothingSuggestions";
+import DailyActivityInput from "@/components/DailyActivityInput";
 import { useNavigate } from "react-router-dom";
 
 const Index = () => {
@@ -20,11 +20,24 @@ const Index = () => {
   };
 
   // Daily clothing data for the new component
-  const dailyClothingData = [
-    { date: "May 30", condition: 'sunny' as const, temp: { high: 74, low: 60 }, timeOfDay: [] },
-    { date: "May 31", condition: 'mixed' as const, temp: { high: 70, low: 58 }, timeOfDay: [] },
-    { date: "Jun 1", condition: 'rainy' as const, temp: { high: 68, low: 55 }, timeOfDay: [] },
-  ];
+  const [dailyClothingData, setDailyClothingData] = useState([
+    { date: "May 30", condition: 'sunny' as const, temp: { high: 74, low: 60 }, timeOfDay: [], activities: [] },
+    { date: "May 31", condition: 'mixed' as const, temp: { high: 70, low: 58 }, timeOfDay: [], activities: [] },
+    { date: "Jun 1", condition: 'rainy' as const, temp: { high: 68, low: 55 }, timeOfDay: [], activities: [] },
+  ]);
+
+  const dates = ["May 30", "May 31", "Jun 1"];
+
+  const handleActivitiesChange = (activities: Array<{ date: string; activities: string[] }>) => {
+    const updatedData = dailyClothingData.map(day => {
+      const dayActivities = activities.find(a => a.date === day.date);
+      return {
+        ...day,
+        activities: dayActivities ? dayActivities.activities : []
+      };
+    });
+    setDailyClothingData(updatedData);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-background">
@@ -56,6 +69,14 @@ const Index = () => {
             dates={tripData.dates}
             tripType={tripData.tripType}
             activities={tripData.activities}
+          />
+        </div>
+
+        {/* Daily Activity Input */}
+        <div className="animate-scale-in">
+          <DailyActivityInput 
+            dates={dates}
+            onActivitiesChange={handleActivitiesChange}
           />
         </div>
 

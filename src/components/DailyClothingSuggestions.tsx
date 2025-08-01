@@ -8,6 +8,7 @@ interface DailyClothingData {
   condition: 'sunny' | 'cloudy' | 'rainy' | 'snowy' | 'mixed';
   temp: { high: number; low: number };
   timeOfDay: any[];
+  activities?: string[];
 }
 
 interface DailyClothingSuggestionsProps {
@@ -59,9 +60,10 @@ const getWeatherIcon = (condition: string) => {
   }
 };
 
-const getDetailedClothingSuggestions = (condition: string, temp: { high: number; low: number }, period: string) => {
+const getDetailedClothingSuggestions = (condition: string, temp: { high: number; low: number }, period: string, activities: string[] = []) => {
   const suggestions: string[] = [];
   
+  // Base clothing suggestions
   if (period === 'morning') {
     if (temp.low < 60) {
       suggestions.push("👕 Light long-sleeve shirt or T-shirt");
@@ -100,6 +102,65 @@ const getDetailedClothingSuggestions = (condition: string, temp: { high: number;
       suggestions.push("☂️ Umbrella or rain jacket");
     }
   }
+
+  // Activity-specific additions
+  activities.forEach(activity => {
+    const activityLower = activity.toLowerCase();
+    
+    if (activityLower.includes('swimming') || activityLower.includes('beach')) {
+      suggestions.push("👙 Swimwear");
+      suggestions.push("🩴 Flip-flops or beach sandals");
+      suggestions.push("🧴 Waterproof sunscreen (SPF 50+)");
+      suggestions.push("🏖️ Beach towel");
+    }
+    
+    if (activityLower.includes('hiking') || activityLower.includes('nature') || activityLower.includes('outdoor')) {
+      suggestions.push("👟 Sturdy hiking shoes/boots");
+      suggestions.push("🧢 Sun hat with UV protection");
+      suggestions.push("🎒 Small backpack for water/snacks");
+      suggestions.push("🧤 Light gloves (if cold)");
+    }
+    
+    if (activityLower.includes('business') || activityLower.includes('meeting') || activityLower.includes('conference')) {
+      suggestions.push("👔 Business attire - dress shirt/blouse");
+      suggestions.push("👞 Formal shoes");
+      suggestions.push("🧥 Blazer or suit jacket");
+    }
+    
+    if (activityLower.includes('running') || activityLower.includes('cycling') || activityLower.includes('sport')) {
+      suggestions.push("🏃 Athletic wear - moisture-wicking fabric");
+      suggestions.push("👟 Athletic shoes");
+      suggestions.push("🧢 Sports cap/headband");
+    }
+    
+    if (activityLower.includes('dining') || activityLower.includes('nightlife') || activityLower.includes('restaurant')) {
+      suggestions.push("👕 Smart casual attire");
+      suggestions.push("👞 Nice shoes (no sneakers)");
+      if (period === 'evening') {
+        suggestions.push("🧥 Light jacket or blazer");
+      }
+    }
+    
+    if (activityLower.includes('spa') || activityLower.includes('yoga') || activityLower.includes('meditation')) {
+      suggestions.push("🧘 Comfortable, loose-fitting clothes");
+      suggestions.push("🩴 Sandals or slip-on shoes");
+      suggestions.push("🧘‍♀️ Yoga mat (if needed)");
+    }
+    
+    if (activityLower.includes('skiing') || activityLower.includes('snowboard') || activityLower.includes('snow')) {
+      suggestions.push("🎿 Thermal base layers");
+      suggestions.push("🧥 Insulated ski jacket");
+      suggestions.push("🧤 Waterproof gloves");
+      suggestions.push("🥽 Ski goggles");
+    }
+    
+    if (activityLower.includes('water sport') || activityLower.includes('sailing') || activityLower.includes('fishing')) {
+      suggestions.push("🌊 Quick-dry clothing");
+      suggestions.push("👟 Water shoes");
+      suggestions.push("🧥 Waterproof jacket");
+      suggestions.push("🧢 Hat with chin strap");
+    }
+  });
   
   return suggestions;
 };
@@ -283,6 +344,11 @@ export default function DailyClothingSuggestions({ dailyData }: DailyClothingSug
                   <Badge variant="outline" className="text-xs capitalize">
                     {day.condition}
                   </Badge>
+                  {day.activities && day.activities.length > 0 && (
+                    <Badge variant="outline" className="text-xs bg-travel-blue/20 text-travel-blue">
+                      {day.activities.length} activit{day.activities.length === 1 ? 'y' : 'ies'}
+                    </Badge>
+                  )}
                   <Badge variant="secondary" className="text-xs bg-travel-green/20 text-travel-green ml-auto">
                     {getHighLevelClothingInfo(day.condition, day.temp)}
                   </Badge>
@@ -304,11 +370,11 @@ export default function DailyClothingSuggestions({ dailyData }: DailyClothingSug
                       <p className="text-sm font-medium text-foreground">
                         ~{getTimeTemperature('morning', day.temp).fahrenheit} / ~{getTimeTemperature('morning', day.temp).celsius}
                       </p>
-                      <div className="space-y-1">
-                        {getDetailedClothingSuggestions(day.condition, day.temp, 'morning').map((suggestion, index) => (
-                          <p key={index} className="text-xs text-foreground">• {suggestion}</p>
-                        ))}
-                      </div>
+                       <div className="space-y-1">
+                         {getDetailedClothingSuggestions(day.condition, day.temp, 'morning', day.activities).map((suggestion, index) => (
+                           <p key={index} className="text-xs text-foreground">• {suggestion}</p>
+                         ))}
+                       </div>
                     </div>
                   </Card>
 
@@ -326,11 +392,11 @@ export default function DailyClothingSuggestions({ dailyData }: DailyClothingSug
                       <p className="text-sm font-medium text-foreground">
                         ~{getTimeTemperature('daytime', day.temp).fahrenheit} / ~{getTimeTemperature('daytime', day.temp).celsius}
                       </p>
-                      <div className="space-y-1">
-                        {getDetailedClothingSuggestions(day.condition, day.temp, 'daytime').map((suggestion, index) => (
-                          <p key={index} className="text-xs text-foreground">• {suggestion}</p>
-                        ))}
-                      </div>
+                       <div className="space-y-1">
+                         {getDetailedClothingSuggestions(day.condition, day.temp, 'daytime', day.activities).map((suggestion, index) => (
+                           <p key={index} className="text-xs text-foreground">• {suggestion}</p>
+                         ))}
+                       </div>
                     </div>
                   </Card>
 
@@ -348,11 +414,11 @@ export default function DailyClothingSuggestions({ dailyData }: DailyClothingSug
                       <p className="text-sm font-medium text-foreground">
                         ~{getTimeTemperature('evening', day.temp).fahrenheit} / ~{getTimeTemperature('evening', day.temp).celsius}
                       </p>
-                      <div className="space-y-1">
-                        {getDetailedClothingSuggestions(day.condition, day.temp, 'evening').map((suggestion, index) => (
-                          <p key={index} className="text-xs text-foreground">• {suggestion}</p>
-                        ))}
-                      </div>
+                       <div className="space-y-1">
+                         {getDetailedClothingSuggestions(day.condition, day.temp, 'evening', day.activities).map((suggestion, index) => (
+                           <p key={index} className="text-xs text-foreground">• {suggestion}</p>
+                         ))}
+                       </div>
                     </div>
                   </Card>
                 </div>
