@@ -38,12 +38,12 @@ The server implements a clean separation between routing logic and storage opera
 The application uses a flexible storage architecture:
 
 - **Database ORM**: Drizzle ORM configured for PostgreSQL with schema definitions
-- **Current Implementation**: In-memory storage for development (MemStorage class)
+- **Current Implementation**: PostgreSQL database with DatabaseStorage class (updated from in-memory storage)
 - **Schema Management**: Centralized schema definitions in `/shared/schema.ts`
 - **Migration Support**: Drizzle Kit for database schema migrations
-- **Data Persistence**: Client-side localStorage for trip data and user preferences
+- **Data Persistence**: PostgreSQL database for server data, client-side localStorage for trip data and user preferences
 
-The storage interface allows easy switching between in-memory and database implementations without code changes.
+The storage interface allows easy switching between in-memory and database implementations without code changes. Database was integrated on August 1, 2025.
 
 ## External Dependencies
 
