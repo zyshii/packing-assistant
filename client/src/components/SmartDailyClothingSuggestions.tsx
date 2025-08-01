@@ -34,16 +34,7 @@ interface SmartDailyClothingSuggestionsProps {
   isWeatherDataReal?: boolean;
 }
 
-const getPriorityEmoji = (priority: "essential" | "recommended" | "optional") => {
-  switch (priority) {
-    case "essential":
-      return "⭐";
-    case "recommended":
-      return "✅";
-    case "optional":
-      return "💡";
-  }
-};
+
 
 const getWeatherIcon = (condition: string) => {
   switch (condition.toLowerCase()) {
@@ -160,8 +151,7 @@ export default function SmartDailyClothingSuggestions({
               </div>
               <div className="p-4 space-y-3">
                 {category.items.map((item: any, index: number) => (
-                  <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <span className="text-lg mt-0.5 flex-shrink-0">{getPriorityEmoji(item.priority)}</span>
+                  <div key={index} className="flex items-start justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <h5 className="font-medium text-gray-900 text-sm leading-snug">{item.item}</h5>
@@ -437,9 +427,18 @@ export default function SmartDailyClothingSuggestions({
                       {smartDay && !hasError ? (
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                            <h6 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                              <span className="text-lg">🌅</span> Morning
-                            </h6>
+                            <div className="mb-3">
+                              <h6 className="font-semibold text-gray-900 flex items-center gap-2 mb-2">
+                                <span className="text-lg">🌅</span> Morning
+                              </h6>
+                              {smartDay.weatherDetails && (
+                                <div className="text-xs text-gray-600 mb-2">
+                                  <div>{Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F</div>
+                                  <div className="capitalize">{day.condition}</div>
+                                  {day.precipitation > 0 && <div>{day.precipitation}mm rain</div>}
+                                </div>
+                              )}
+                            </div>
                             <ul className="space-y-2">
                               {smartDay.recommendations.morning.map((item: string, index: number) => (
                                 <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
@@ -448,11 +447,23 @@ export default function SmartDailyClothingSuggestions({
                                 </li>
                               ))}
                             </ul>
+                            <div className="mt-3 pt-2 border-t border-gray-200">
+                              <p className="text-xs text-gray-600">Base layer for the day - can add/remove items later</p>
+                            </div>
                           </div>
                           <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                            <h6 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                              <span className="text-lg">☀️</span> Daytime
-                            </h6>
+                            <div className="mb-3">
+                              <h6 className="font-semibold text-gray-900 flex items-center gap-2 mb-2">
+                                <span className="text-lg">☀️</span> Daytime
+                              </h6>
+                              {smartDay.weatherDetails && (
+                                <div className="text-xs text-gray-600 mb-2">
+                                  <div>{day.temp.high}°F (peak)</div>
+                                  <div className="capitalize">{day.condition}</div>
+                                  {day.uvIndex && <div>UV {day.uvIndex}</div>}
+                                </div>
+                              )}
+                            </div>
                             <ul className="space-y-2">
                               {smartDay.recommendations.daytime.map((item: string, index: number) => (
                                 <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
@@ -461,11 +472,23 @@ export default function SmartDailyClothingSuggestions({
                                 </li>
                               ))}
                             </ul>
+                            <div className="mt-3 pt-2 border-t border-gray-200">
+                              <p className="text-xs text-gray-600">Adjust from morning outfit as temperature rises</p>
+                            </div>
                           </div>
                           <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                            <h6 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                              <span className="text-lg">🌙</span> Evening
-                            </h6>
+                            <div className="mb-3">
+                              <h6 className="font-semibold text-gray-900 flex items-center gap-2 mb-2">
+                                <span className="text-lg">🌙</span> Evening
+                              </h6>
+                              {smartDay.weatherDetails && (
+                                <div className="text-xs text-gray-600 mb-2">
+                                  <div>{Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.7)}°F</div>
+                                  <div className="capitalize">{day.condition}</div>
+                                  {day.precipitation > 0 && <div>Possible rain</div>}
+                                </div>
+                              )}
+                            </div>
                             <ul className="space-y-2">
                               {smartDay.recommendations.evening.map((item: string, index: number) => (
                                 <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
@@ -474,6 +497,9 @@ export default function SmartDailyClothingSuggestions({
                                 </li>
                               ))}
                             </ul>
+                            <div className="mt-3 pt-2 border-t border-gray-200">
+                              <p className="text-xs text-gray-600">Layer over daytime outfit as temperature drops</p>
+                            </div>
                           </div>
                         </div>
                       ) : (
