@@ -243,7 +243,7 @@ function getOptimizedQuantity(
   
   // Essential items for carry-on optimization
   if (category === "essentials") {
-    if (item.item.includes("undergarments") || item.item.includes("socks")) {
+    if (item.item === "Undergarments" || item.item === "Socks") {
       return tripContext.duration + 1; // Always trip duration + 1 for essentials
     }
     return 1; // Other essentials just need 1
@@ -529,11 +529,17 @@ export function generateOptimizedPackingList(
         const avgScore = totalScore / relevantDays;
         const quantity = getOptimizedQuantity(item, avgScore, tripContext, category);
         
+
+        
         // Only include items with sufficient score and quantity
         if (quantity > 0 && avgScore > 10) {
+          const finalQuantity = quantity; // Use calculated quantity directly
+          
+
+          
           categoryItems.push({
             item: item.item,
-            quantity,
+            quantity: finalQuantity,
             priority: item.priority,
             score: avgScore,
             reason: generateItemReason(item, allWeatherConditions, allActivities, tripContext)

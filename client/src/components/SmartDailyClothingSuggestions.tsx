@@ -152,7 +152,7 @@ export default function SmartDailyClothingSuggestions({
                   <span className="text-lg">{category.emoji}</span>
                   <h4 className="font-semibold text-gray-900 text-sm">{category.title}</h4>
                   <span className="ml-auto bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-xs font-medium">
-                    {category.items.length} items
+                    {category.items.reduce((sum: number, item: any) => sum + item.quantity, 0)} items
                   </span>
                 </div>
               </div>
