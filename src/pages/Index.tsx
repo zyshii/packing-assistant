@@ -178,7 +178,15 @@ const Index = () => {
 
         {/* Daily Clothing Suggestions */}
         <div className="animate-scale-in">
-          <DailyClothingSuggestions dailyData={dailyClothingData} />
+          <DailyClothingSuggestions 
+            dailyData={dailyClothingData}
+            tripDetails={{
+              destination: finalTripData.destination,
+              luggageSize: 'luggageSize' in finalTripData ? finalTripData.luggageSize : undefined,
+              tripTypes: 'tripTypes' in finalTripData ? finalTripData.tripTypes : [finalTripData.tripType],
+              duration: dailyClothingData.length
+            }}
+          />
         </div>
 
       </div>

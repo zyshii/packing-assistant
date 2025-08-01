@@ -13,6 +13,12 @@ interface DailyClothingData {
 
 interface DailyClothingSuggestionsProps {
   dailyData: DailyClothingData[];
+  tripDetails?: {
+    destination?: string;
+    luggageSize?: string;
+    tripTypes?: string[];
+    duration?: number;
+  };
 }
 
 const getTimeTemperature = (period: string, temp: { high: number; low: number }) => {
@@ -213,63 +219,133 @@ const getPackingTips = (condition: string, temp: { high: number; low: number }) 
   return tips;
 };
 
-const getConsolidatedPackingList = (dailyData: DailyClothingData[]) => {
+const getConsolidatedPackingList = (
+  dailyData: DailyClothingData[], 
+  tripDetails?: {
+    destination?: string;
+    luggageSize?: string;
+    tripTypes?: string[];
+    duration?: number;
+  }
+) => {
   const allConditions = dailyData.map(day => day.condition);
   const allTemps = dailyData.map(day => day.temp);
+  const allActivities = dailyData.flatMap(day => day.activities || []);
   const maxTemp = Math.max(...allTemps.map(t => t.high));
   const minTemp = Math.min(...allTemps.map(t => t.low));
   const hasRain = allConditions.includes('rainy') || allConditions.includes('mixed');
   const hasHotWeather = maxTemp >= 75;
   const hasColdMornings = minTemp < 60;
+  const hasSwimming = allActivities.some(activity => 
+    activity.toLowerCase().includes('swimming') || 
+    activity.toLowerCase().includes('beach') ||
+    activity.toLowerCase().includes('water sport')
+  );
+  const hasBusiness = allActivities.some(activity => 
+    activity.toLowerCase().includes('business') || 
+    activity.toLowerCase().includes('meeting') ||
+    activity.toLowerCase().includes('conference')
+  );
+  const hasHiking = allActivities.some(activity => 
+    activity.toLowerCase().includes('hiking') || 
+    activity.toLowerCase().includes('outdoor') ||
+    activity.toLowerCase().includes('nature')
+  );
+  const hasRunning = allActivities.some(activity => 
+    activity.toLowerCase().includes('running') || 
+    activity.toLowerCase().includes('cycling') ||
+    activity.toLowerCase().includes('sport')
+  );
+
+  // Adjust quantities based on luggage size
+  const getLuggageMultiplier = () => {
+    switch (tripDetails?.luggageSize) {
+      case 'carry-on': return { shirts: 2, pants: 1, extras: 0.5 };
+      case 'backpack': return { shirts: 2.5, pants: 1.5, extras: 0.7 };
+      case 'medium-suitcase': return { shirts: 3, pants: 2, extras: 1 };
+      case 'large-suitcase': return { shirts: 4, pants: 2.5, extras: 1.5 };
+      default: return { shirts: 3, pants: 2, extras: 1 };
+    }
+  };
+
+  const multiplier = getLuggageMultiplier();
+  const duration = tripDetails?.duration || dailyData.length;
 
   const packingList = {
     tops: [
-      "👕 Short-sleeve T-shirts (2-3)",
-      "👕 Long-sleeve shirts (1-2)",
-      ...(hasColdMornings ? ["🧥 Light sweater or hoodie"] : []),
-      ...(hasHotWeather ? ["👕 Breathable/moisture-wicking shirts"] : [])
+      `👕 Short-sleeve T-shirts (${Math.max(2, Math.ceil(multiplier.shirts * Math.min(duration * 0.7, 5)))})`,
+      `👕 Long-sleeve shirts (${Math.max(1, Math.ceil(multiplier.shirts * 0.5))})`,
+      ...(hasColdMornings ? [`🧥 Light sweater or hoodie (${Math.ceil(multiplier.extras)})`] : []),
+      ...(hasHotWeather ? [`👕 Breathable/moisture-wicking shirts (${Math.ceil(multiplier.shirts * 0.6)})`] : []),
+      ...(hasBusiness ? [`👔 Business shirts/blouses (${Math.ceil(multiplier.shirts * 0.8)})`] : [])
     ],
     bottoms: [
-      "👖 Comfortable pants or jeans (1-2 pairs)",
-      ...(hasHotWeather ? ["🩳 Shorts or lightweight trousers"] : []),
-      "🧦 Light socks (sufficient pairs)",
-      "👙 Undergarments (sufficient for trip duration)"
+      `👖 Comfortable pants or jeans (${Math.max(1, Math.ceil(multiplier.pants))})`,
+      ...(hasHotWeather ? [`🩳 Shorts or lightweight trousers (${Math.ceil(multiplier.pants * 0.8)})`] : []),
+      `🧦 Socks (${Math.max(duration, Math.ceil(duration * 1.2))} pairs)`,
+      `👙 Undergarments (${Math.max(duration, Math.ceil(duration * 1.2))} sets)`,
+      ...(hasBusiness ? [`👔 Dress pants/skirts (${Math.ceil(multiplier.pants * 0.7)})`] : []),
+      ...(hasSwimming ? ["👙 Swimwear (1-2 sets)"] : [])
     ],
     outerwear: [
       "🧥 Light jacket or cardigan",
-      ...(hasRain ? ["☂️ Rain jacket or umbrella", "👟 Waterproof shoes"] : []),
-      ...(minTemp < 50 ? ["🧤 Gloves (if very cold)"] : [])
+      ...(hasRain ? ["☂️ Rain jacket or compact umbrella", "👟 Waterproof shoes"] : []),
+      ...(minTemp < 50 ? ["🧤 Gloves and warm hat"] : []),
+      ...(hasBusiness ? ["🧥 Blazer or suit jacket"] : [])
     ],
     footwear: [
       "👟 Comfortable walking shoes",
-      "👟 Lightweight sneakers",
-      ...(hasHotWeather ? ["🩴 Sandals (optional)"] : [])
+      "👟 Lightweight sneakers or casual shoes",
+      ...(hasHotWeather ? ["🩴 Sandals (optional)"] : []),
+      ...(hasBusiness ? ["👞 Formal shoes"] : []),
+      ...(hasHiking ? ["🥾 Hiking boots or sturdy shoes"] : []),
+      ...(hasRunning ? ["👟 Athletic shoes"] : []),
+      ...(hasSwimming ? ["🩴 Beach sandals or flip-flops"] : [])
     ],
     accessories: [
       "🕶️ Sunglasses",
       "🧢 Hat or cap",
       "🧴 Sunscreen (SPF 30+)",
-      ...(hasColdMornings ? ["🧣 Small scarf or shawl"] : [])
+      ...(hasColdMornings ? ["🧣 Small scarf or shawl"] : []),
+      ...(hasSwimming ? ["🏖️ Beach towel", "🧴 Waterproof sunscreen"] : []),
+      ...(hasHiking ? ["🎒 Small backpack", "💧 Water bottle"] : []),
+      ...(hasRunning ? ["💧 Water bottle", "🧢 Sports cap"] : [])
+    ],
+    essentials: [
+      "📱 Phone charger",
+      "🆔 Travel documents",
+      "💳 Wallet/cards",
+      "🧴 Toiletries",
+      `💊 Medications (${duration}-day supply)`,
+      ...(tripDetails?.luggageSize === 'carry-on' ? ["🧴 Travel-size toiletries (TSA compliant)"] : []),
+      ...(tripDetails?.destination?.toLowerCase().includes('international') ? ["🛂 Passport", "🔌 Power adapter"] : [])
     ]
   };
 
   return packingList;
 };
 
-export default function DailyClothingSuggestions({ dailyData }: DailyClothingSuggestionsProps) {
-  const packingList = getConsolidatedPackingList(dailyData);
+export default function DailyClothingSuggestions({ dailyData, tripDetails }: DailyClothingSuggestionsProps) {
+  const packingList = getConsolidatedPackingList(dailyData, tripDetails);
   
   return (
     <div className="space-y-6">
       {/* Recommended Packing List */}
       <Card className="p-6 shadow-card border-0 bg-card">
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 mb-4">
-            <Shirt className="h-5 w-5 text-primary" />
-            <h3 className="text-lg font-semibold text-foreground">Recommended Packing List</h3>
-          </div>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 mb-4">
+              <Shirt className="h-5 w-5 text-primary" />
+              <h3 className="text-lg font-semibold text-foreground">
+                Personalized Packing List
+                {tripDetails?.luggageSize && (
+                  <span className="text-sm font-normal text-muted-foreground ml-2">
+                    (Optimized for {tripDetails.luggageSize.replace('-', ' ')})
+                  </span>
+                )}
+              </h3>
+            </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div>
               <h4 className="font-medium text-foreground mb-3 text-sm">👕 Tops</h4>
               <div className="space-y-1">
@@ -314,13 +390,23 @@ export default function DailyClothingSuggestions({ dailyData }: DailyClothingSug
                 ))}
               </div>
             </div>
-          </div>
-          
-          <div className="mt-4 p-3 bg-travel-green/10 rounded-lg border border-travel-green/20">
-            <p className="text-sm text-travel-green">
-              📋 This comprehensive list covers all weather conditions during your trip. Use it as a reference for packing preparation.
-            </p>
-          </div>
+              <div>
+                <h4 className="font-medium text-foreground mb-3 text-sm">🎯 Essentials</h4>
+                <div className="space-y-1">
+                  {packingList.essentials.map((item, index) => (
+                    <p key={index} className="text-sm text-muted-foreground">{item}</p>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-4 p-3 bg-travel-green/10 rounded-lg border border-travel-green/20">
+              <p className="text-sm text-travel-green">
+                📋 This personalized list is optimized for your {tripDetails?.luggageSize?.replace('-', ' ') || 'luggage'}, 
+                {tripDetails?.tripTypes?.join(' & ') || 'trip type'}, and planned activities. 
+                Quantities are calculated based on your {dailyData.length}-day trip duration.
+              </p>
+            </div>
         </div>
       </Card>
 
