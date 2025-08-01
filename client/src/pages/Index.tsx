@@ -76,10 +76,15 @@ const Index = () => {
     }
   });
 
-  // Transform weather data for the components
-  const generateDailyClothingData = useMemo(() => {
-    if (weatherData) {
-      return weatherData.daily.map(day => {
+  // Single comprehensive data transformation to avoid multiple renders
+  const dailyClothingData = useMemo(() => {
+    console.log('Generating daily clothing data...', { hasWeatherData: !!weatherData, tripDataExists: !!tripData });
+    
+    let baseData = [];
+    
+    // Use weather data if available
+    if (weatherData && weatherData.daily) {
+      baseData = weatherData.daily.map(day => {
         // Parse date as local timezone to avoid UTC offset issues
         const [year, month, dayOfMonth] = day.date.split('-').map(Number);
         const localDate = new Date(year, month - 1, dayOfMonth);
@@ -97,29 +102,22 @@ const Index = () => {
         };
       });
     }
-
     // Fallback data when no real trip data exists
-    if (!tripData?.startDate || !tripData?.endDate) {
-      return [
+    else if (!tripData?.startDate || !tripData?.endDate) {
+      baseData = [
         { date: "May 30", condition: 'sunny' as const, temp: { high: 74, low: 60 }, uvIndex: 7, precipitation: 0, timeOfDay: [], activities: [] },
         { date: "May 31", condition: 'mixed' as const, temp: { high: 70, low: 58 }, uvIndex: 5, precipitation: 0.2, timeOfDay: [], activities: [] },
         { date: "Jun 1", condition: 'rainy' as const, temp: { high: 68, low: 55 }, uvIndex: 3, precipitation: 5.5, timeOfDay: [], activities: [] },
       ];
     }
-
-    // Show loading state while waiting for weather data
-    return [];
-  }, [weatherData, tripData?.startDate, tripData?.endDate]);
-
-  // Combine weather data with activities in a single useMemo to avoid state conflicts
-  const dailyClothingData = useMemo(() => {
-    const baseData = generateDailyClothingData;
-    
-    if (!baseData || baseData.length === 0) return baseData;
+    // Return empty if loading
+    else {
+      return [];
+    }
     
     // Merge with activities if available
-    if (dailyActivities && Array.isArray(dailyActivities)) {
-      return baseData.map(day => {
+    if (dailyActivities && Array.isArray(dailyActivities) && baseData.length > 0) {
+      baseData = baseData.map(day => {
         const dayActivities = dailyActivities.find(a => a.date === day.date);
         return {
           ...day,
@@ -130,8 +128,9 @@ const Index = () => {
       });
     }
     
+    console.log('Final daily clothing data:', baseData.length, 'days');
     return baseData;
-  }, [generateDailyClothingData, dailyActivities]);
+  }, [weatherData, tripData?.startDate, tripData?.endDate, dailyActivities]);
 
   // Extract all unique activities from daily activities for the header
   const allUserActivities = useMemo(() => {
