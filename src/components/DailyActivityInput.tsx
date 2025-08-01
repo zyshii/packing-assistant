@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -47,13 +47,16 @@ const getActivitiesByTripType = (tripType?: string) => {
 };
 
 export default function DailyActivityInput({ dates, tripType, onActivitiesChange }: DailyActivityInputProps) {
-  const [dailyActivities, setDailyActivities] = useState<DailyActivity[]>(
-    dates.map(date => ({ date, activities: [] }))
-  );
+  const [dailyActivities, setDailyActivities] = useState<DailyActivity[]>([]);
+
+  // Sync dailyActivities with dates prop changes
+  useEffect(() => {
+    setDailyActivities(dates.map(date => ({ date, activities: [] })));
+  }, [dates]);
 
   const addActivity = (dateIndex: number, activity: string) => {
     const updated = [...dailyActivities];
-    if (!updated[dateIndex].activities.includes(activity)) {
+    if (updated[dateIndex] && !updated[dateIndex].activities.includes(activity)) {
       updated[dateIndex].activities.push(activity);
       setDailyActivities(updated);
       onActivitiesChange(updated);
@@ -62,9 +65,11 @@ export default function DailyActivityInput({ dates, tripType, onActivitiesChange
 
   const removeActivity = (dateIndex: number, activityIndex: number) => {
     const updated = [...dailyActivities];
-    updated[dateIndex].activities.splice(activityIndex, 1);
-    setDailyActivities(updated);
-    onActivitiesChange(updated);
+    if (updated[dateIndex]) {
+      updated[dateIndex].activities.splice(activityIndex, 1);
+      setDailyActivities(updated);
+      onActivitiesChange(updated);
+    }
   };
 
   const predefinedActivities = getActivitiesByTripType(tripType);
@@ -93,7 +98,7 @@ export default function DailyActivityInput({ dates, tripType, onActivitiesChange
 
               {/* Selected Activities */}
               <div className="flex flex-wrap gap-2 min-h-[2rem]">
-                {dailyActivities[dateIndex].activities.map((activity, activityIndex) => (
+                {dailyActivities[dateIndex]?.activities.map((activity, activityIndex) => (
                   <Badge key={activityIndex} variant="secondary" className="flex items-center gap-1">
                     {activity}
                     <Button
@@ -105,7 +110,7 @@ export default function DailyActivityInput({ dates, tripType, onActivitiesChange
                       <X className="h-3 w-3" />
                     </Button>
                   </Badge>
-                ))}
+                )) || []}
               </div>
 
               {/* Add Activities */}
@@ -120,7 +125,7 @@ export default function DailyActivityInput({ dates, tripType, onActivitiesChange
                   </SelectTrigger>
                   <SelectContent className="max-h-[200px]">
                     {predefinedActivities
-                      .filter(activity => !dailyActivities[dateIndex].activities.includes(activity))
+                      .filter(activity => !dailyActivities[dateIndex]?.activities.includes(activity))
                       .map(activity => (
                         <SelectItem key={activity} value={activity}>
                           {activity}
