@@ -41,54 +41,30 @@ export default function SimpleDailyClothingSuggestions({ dailyData, tripDetails,
   }
 
   return (
-    <div className="space-y-6">
-      <Card className="p-6 shadow-card border-0 bg-card">
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 mb-4">
-            <Shirt className="h-5 w-5 text-primary" />
-            <h3 className="text-lg font-semibold text-foreground">
-              Simple Daily Clothing Test
-            </h3>
-            {isWeatherDataReal !== undefined && (
-              <Badge 
-                variant={isWeatherDataReal ? "default" : "secondary"} 
-                className={`text-xs ${
-                  isWeatherDataReal 
-                    ? "bg-success text-success-foreground" 
-                    : "bg-muted text-muted-foreground"
-                }`}
-              >
-                {isWeatherDataReal ? "🌡️ Real-time weather" : "📊 Estimated weather"}
-              </Badge>
-            )}
-          </div>
-          
-          <div className="space-y-4">
-            {dailyData.map((day, index) => (
-              <div key={index} className="border border-border rounded-lg p-4">
-                <div className="flex items-center gap-3">
-                  <h4 className="text-lg font-medium text-foreground">{day.date}</h4>
-                  <Badge variant="secondary" className="text-xs">
-                    {day.temp.high}°F / {day.temp.low}°F
-                  </Badge>
-                  <Badge variant="outline" className="text-xs capitalize">
-                    {day.condition}
-                  </Badge>
-                  {day.activities && day.activities.length > 0 && (
-                    <Badge variant="outline" className="text-xs bg-success-light text-success border-success/30">
-                      {day.activities.length} activities
-                    </Badge>
-                  )}
-                </div>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Weather: {day.condition}, UV: {day.uvIndex?.toFixed(1) || 'N/A'}, 
-                  Rain: {day.precipitation?.toFixed(1) || '0'}mm
-                </p>
-              </div>
-            ))}
-          </div>
+    <div style={{ border: '3px solid red', margin: '20px', padding: '20px', backgroundColor: 'yellow' }}>
+      <h1 style={{ fontSize: '24px', color: 'black', fontWeight: 'bold' }}>
+        TEST COMPONENT - SHOULD APPEAR ONLY ONCE
+      </h1>
+      <p style={{ fontSize: '16px', color: 'black', margin: '10px 0' }}>
+        Component ID: {Math.random().toString(36).substring(7)}
+      </p>
+      <p style={{ fontSize: '16px', color: 'black', margin: '10px 0' }}>
+        Render Time: {new Date().toISOString()}
+      </p>
+      <p style={{ fontSize: '16px', color: 'black', margin: '10px 0' }}>
+        Daily Data Length: {dailyData.length}
+      </p>
+      <p style={{ fontSize: '16px', color: 'black', margin: '10px 0' }}>
+        First Date: {dailyData[0]?.date || 'No date'}
+      </p>
+      <p style={{ fontSize: '16px', color: 'black', margin: '10px 0' }}>
+        Weather Data Real: {isWeatherDataReal ? 'YES' : 'NO'}
+      </p>
+      {dailyData.map((day, index) => (
+        <div key={index} style={{ border: '1px solid black', margin: '5px', padding: '10px', backgroundColor: 'white' }}>
+          <strong>{day.date}</strong> - {day.condition} - {day.temp.high}°F/{day.temp.low}°F
         </div>
-      </Card>
+      ))}
     </div>
   );
 }
