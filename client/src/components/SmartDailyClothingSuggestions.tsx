@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Progress } from "@/components/ui/progress";
-import { Shirt, Sun, Moon, Activity, Sparkles, AlertCircle, Lightbulb, Package, Star, CheckCircle2, Thermometer, Umbrella, Eye } from "lucide-react";
+import { Shirt, Sun, Moon, Activity, Sparkles, AlertCircle, Lightbulb, Package, Star, CheckCircle2, Thermometer, Umbrella, Eye, Cloud, CloudSun, Snowflake } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchDailyRecommendations, fetchPackingOptimization, AiRecommendationApiError } from "@/lib/aiRecommendationApi";
 import type { DailyClothingRecommendation, PackingListOptimization } from "@/lib/aiRecommendationApi";
@@ -39,15 +39,22 @@ interface SmartDailyClothingSuggestionsProps {
 const getWeatherIcon = (condition: string) => {
   switch (condition.toLowerCase()) {
     case 'sunny':
-      return <Sun className="h-4 w-4 text-orange-500" />;
+    case 'clear':
+      return <Sun className="h-6 w-6 text-yellow-500" />;
     case 'rainy':
-      return <Umbrella className="h-4 w-4 text-blue-500" />;
+    case 'rain':
+      return <Umbrella className="h-6 w-6 text-blue-500" />;
     case 'cloudy':
-      return <div className="h-4 w-4 rounded-full bg-gray-400" />;
+    case 'overcast':
+      return <Cloud className="h-6 w-6 text-gray-500" />;
     case 'mixed':
-      return <div className="flex"><Sun className="h-3 w-3 text-orange-400" /><Umbrella className="h-3 w-3 text-blue-400" /></div>;
+    case 'partly cloudy':
+      return <CloudSun className="h-6 w-6 text-blue-400" />;
+    case 'snowy':
+    case 'snow':
+      return <Snowflake className="h-6 w-6 text-blue-200" />;
     default:
-      return <Thermometer className="h-4 w-4 text-gray-500" />;
+      return <Thermometer className="h-6 w-6 text-gray-500" />;
   }
 };
 
@@ -367,82 +374,87 @@ export default function SmartDailyClothingSuggestions({
 
 
 
-                      {/* Smart recommendations or fallback */}
+                      {/* Smart layering recommendations */}
                       {smartDay && !hasError ? (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                            <div className="mb-3">
-                              <h6 className="font-semibold text-gray-900 flex items-center gap-2 mb-2">
-                                <span className="text-lg">🌅</span> Morning
-                              </h6>
-                              {smartDay.weatherDetails && (
-                                <div className="text-xs text-gray-600 mb-2">
-                                  <div>{Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F</div>
-                                  <div className="capitalize">{day.condition}</div>
-                                  {day.precipitation > 0 && <div>{day.precipitation}mm rain</div>}
-                                </div>
-                              )}
+                        <div className="space-y-4">
+                          {/* Base Layer Card */}
+                          <div className="bg-blue-50 rounded-lg p-5 border border-blue-200">
+                            <div className="flex items-center gap-3 mb-4">
+                              <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg">
+                                <Shirt className="h-5 w-5 text-blue-600" />
+                              </div>
+                              <div>
+                                <h6 className="font-semibold text-blue-900">Base Layer (All Day)</h6>
+                                <p className="text-xs text-blue-700">Start with these essentials</p>
+                              </div>
                             </div>
-                            <ul className="space-y-2">
-                              {smartDay.recommendations.morning.map((item: string, index: number) => (
-                                <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
-                                  <span className="text-gray-500 mt-0.5 flex-shrink-0">•</span>
-                                  <span>{item}</span>
-                                </li>
-                              ))}
-                            </ul>
-                            <div className="mt-3 pt-2 border-t border-gray-200">
-                              <p className="text-xs text-gray-600">Base layer for the day - can add/remove items later</p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                              <div>
+                                <div className="font-medium text-blue-800 text-sm mb-2">Core Items</div>
+                                <ul className="space-y-1">
+                                  {smartDay.recommendations.morning.slice(0, 3).map((item: string, index: number) => (
+                                    <li key={index} className="text-sm text-blue-700 flex items-start gap-2">
+                                      <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
+                                      <span>{item}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                              <div>
+                                <div className="font-medium text-blue-800 text-sm mb-2">Temperature</div>
+                                <div className="bg-white rounded-lg p-3 border border-blue-200">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    {getWeatherIcon(day.condition)}
+                                    <span className="font-semibold text-blue-900">{Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F</span>
+                                  </div>
+                                  <div className="text-xs text-blue-600 capitalize">{day.condition} morning</div>
+                                </div>
+                              </div>
                             </div>
                           </div>
-                          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                            <div className="mb-3">
-                              <h6 className="font-semibold text-gray-900 flex items-center gap-2 mb-2">
-                                <span className="text-lg">☀️</span> Daytime
-                              </h6>
-                              {smartDay.weatherDetails && (
-                                <div className="text-xs text-gray-600 mb-2">
-                                  <div>{day.temp.high}°F (peak)</div>
-                                  <div className="capitalize">{day.condition}</div>
-                                  {day.uvIndex && <div>UV {day.uvIndex}</div>}
+
+                          {/* Layering Options */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Add Layers */}
+                            <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
+                              <div className="flex items-center gap-2 mb-3">
+                                <Sun className="h-5 w-5 text-orange-600" />
+                                <h6 className="font-semibold text-orange-900">Add When Needed</h6>
+                              </div>
+                              <div className="space-y-2">
+                                <div className="bg-white rounded-lg p-3 border border-orange-200">
+                                  <div className="text-xs font-medium text-orange-800 mb-1">Daytime ({Math.round(day.temp.high)}°F)</div>
+                                  <ul className="space-y-1">
+                                    {smartDay.recommendations.daytime.slice(0, 2).map((item: string, index: number) => (
+                                      <li key={index} className="text-sm text-orange-700 flex items-start gap-2">
+                                        <span className="text-orange-500 mt-0.5 flex-shrink-0">+</span>
+                                        <span>{item}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
                                 </div>
-                              )}
+                              </div>
                             </div>
-                            <ul className="space-y-2">
-                              {smartDay.recommendations.daytime.map((item: string, index: number) => (
-                                <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
-                                  <span className="text-gray-500 mt-0.5 flex-shrink-0">•</span>
-                                  <span>{item}</span>
-                                </li>
-                              ))}
-                            </ul>
-                            <div className="mt-3 pt-2 border-t border-gray-200">
-                              <p className="text-xs text-gray-600">Adjust from morning outfit as temperature rises</p>
-                            </div>
-                          </div>
-                          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                            <div className="mb-3">
-                              <h6 className="font-semibold text-gray-900 flex items-center gap-2 mb-2">
-                                <span className="text-lg">🌙</span> Evening
-                              </h6>
-                              {smartDay.weatherDetails && (
-                                <div className="text-xs text-gray-600 mb-2">
-                                  <div>{Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.7)}°F</div>
-                                  <div className="capitalize">{day.condition}</div>
-                                  {day.precipitation > 0 && <div>Possible rain</div>}
+
+                            {/* Remove Layers */}
+                            <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                              <div className="flex items-center gap-2 mb-3">
+                                <Moon className="h-5 w-5 text-purple-600" />
+                                <h6 className="font-semibold text-purple-900">Evening Adjustments</h6>
+                              </div>
+                              <div className="space-y-2">
+                                <div className="bg-white rounded-lg p-3 border border-purple-200">
+                                  <div className="text-xs font-medium text-purple-800 mb-1">Evening ({Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.7)}°F)</div>
+                                  <ul className="space-y-1">
+                                    {smartDay.recommendations.evening.slice(0, 2).map((item: string, index: number) => (
+                                      <li key={index} className="text-sm text-purple-700 flex items-start gap-2">
+                                        <span className="text-purple-500 mt-0.5 flex-shrink-0">±</span>
+                                        <span>{item}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
                                 </div>
-                              )}
-                            </div>
-                            <ul className="space-y-2">
-                              {smartDay.recommendations.evening.map((item: string, index: number) => (
-                                <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
-                                  <span className="text-gray-500 mt-0.5 flex-shrink-0">•</span>
-                                  <span>{item}</span>
-                                </li>
-                              ))}
-                            </ul>
-                            <div className="mt-3 pt-2 border-t border-gray-200">
-                              <p className="text-xs text-gray-600">Layer over daytime outfit as temperature drops</p>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -452,12 +464,42 @@ export default function SmartDailyClothingSuggestions({
                             <span className="text-lg">📋</span> Basic Recommendations
                           </h6>
                           <ul className="space-y-2">
-                            {day.temp.low < 60 && <li className="text-sm text-gray-700 flex items-start gap-2"><span className="text-gray-500 mt-0.5 flex-shrink-0">•</span><span>Long-sleeve shirts and light jacket for cool weather</span></li>}
-                            {day.temp.high >= 75 && <li className="text-sm text-gray-700 flex items-start gap-2"><span className="text-gray-500 mt-0.5 flex-shrink-0">•</span><span>Light, breathable clothing and sun protection</span></li>}
-                            {day.condition === 'rainy' && <li className="text-sm text-gray-700 flex items-start gap-2"><span className="text-gray-500 mt-0.5 flex-shrink-0">•</span><span>Waterproof jacket and closed shoes</span></li>}
-                            {day.activities.some(a => a.toLowerCase().includes('swimming')) && <li className="text-sm text-gray-700 flex items-start gap-2"><span className="text-gray-500 mt-0.5 flex-shrink-0">•</span><span>Swimwear and quick-dry clothing</span></li>}
-                            {day.activities.some(a => a.toLowerCase().includes('business')) && <li className="text-sm text-gray-700 flex items-start gap-2"><span className="text-gray-500 mt-0.5 flex-shrink-0">•</span><span>Business attire and formal shoes</span></li>}
-                            {day.activities.some(a => a.toLowerCase().includes('hiking')) && <li className="text-sm text-gray-700 flex items-start gap-2"><span className="text-gray-500 mt-0.5 flex-shrink-0">•</span><span>Sturdy hiking boots and moisture-wicking clothing</span></li>}
+                            {day.temp.low < 60 && (
+                              <li className="text-sm text-gray-700 flex items-start gap-2">
+                                <span className="text-gray-500 mt-0.5 flex-shrink-0">•</span>
+                                <span>Long-sleeve shirts and light jacket for cool weather</span>
+                              </li>
+                            )}
+                            {day.temp.high >= 75 && (
+                              <li className="text-sm text-gray-700 flex items-start gap-2">
+                                <span className="text-gray-500 mt-0.5 flex-shrink-0">•</span>
+                                <span>Light, breathable clothing and sun protection</span>
+                              </li>
+                            )}
+                            {day.condition === 'rainy' && (
+                              <li className="text-sm text-gray-700 flex items-start gap-2">
+                                <span className="text-gray-500 mt-0.5 flex-shrink-0">•</span>
+                                <span>Waterproof jacket and closed shoes</span>
+                              </li>
+                            )}
+                            {day.activities.some(a => a.toLowerCase().includes('swimming')) && (
+                              <li className="text-sm text-gray-700 flex items-start gap-2">
+                                <span className="text-gray-500 mt-0.5 flex-shrink-0">•</span>
+                                <span>Swimwear and quick-dry clothing</span>
+                              </li>
+                            )}
+                            {day.activities.some(a => a.toLowerCase().includes('business')) && (
+                              <li className="text-sm text-gray-700 flex items-start gap-2">
+                                <span className="text-gray-500 mt-0.5 flex-shrink-0">•</span>
+                                <span>Business attire and formal shoes</span>
+                              </li>
+                            )}
+                            {day.activities.some(a => a.toLowerCase().includes('hiking')) && (
+                              <li className="text-sm text-gray-700 flex items-start gap-2">
+                                <span className="text-gray-500 mt-0.5 flex-shrink-0">•</span>
+                                <span>Sturdy hiking boots and moisture-wicking clothing</span>
+                              </li>
+                            )}
                           </ul>
                         </div>
                       )}
