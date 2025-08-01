@@ -354,6 +354,71 @@ function TripDetails() {
                     </div>
                   )}
 
+                  {/* Luggage Size */}
+                  <FormField
+                    control={form.control}
+                    name="luggageSize"
+                    render={({ field }) => (
+                      <FormItem className="space-y-3">
+                        <FormLabel className="flex items-center gap-2 text-base font-semibold">
+                          <Luggage className="h-5 w-5 text-primary" />
+                           Luggage Size
+                        </FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <SelectTrigger className="h-12 text-base">
+                              <SelectValue placeholder="Choose your luggage size" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-background border border-border shadow-lg">
+                              <SelectItem value="carry-on" className="cursor-pointer">
+                                <div className="flex items-center gap-3 py-2">
+                                  <div className="text-2xl">🎒</div>
+                                  <div>
+                                    <div className="font-medium">Carry-on Bag</div>
+                                    <div className="text-sm text-muted-foreground">Small roller bag (22" x 14" x 9")</div>
+                                  </div>
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="backpack" className="cursor-pointer">
+                                <div className="flex items-center gap-3 py-2">
+                                  <div className="text-2xl">🎒</div>
+                                  <div>
+                                    <div className="font-medium">Backpack</div>
+                                    <div className="text-sm text-muted-foreground">Travel backpack (40-60L)</div>
+                                  </div>
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="medium-suitcase" className="cursor-pointer">
+                                <div className="flex items-center gap-3 py-2">
+                                  <div className="text-2xl">🧳</div>
+                                  <div>
+                                    <div className="font-medium">Medium Suitcase</div>
+                                    <div className="text-sm text-muted-foreground">Check-in bag (24-26 inches)</div>
+                                  </div>
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="large-suitcase" className="cursor-pointer">
+                                <div className="flex items-center gap-3 py-2">
+                                  <div className="text-2xl">🧳</div>
+                                  <div>
+                                    <div className="font-medium">Large Suitcase</div>
+                                    <div className="text-sm text-muted-foreground">Large check-in bag (28+ inches)</div>
+                                  </div>
+                                </div>
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                        {field.value && (
+                          <p className="text-sm text-travel-blue animate-fade-in">
+                            ✨ Perfect! We'll adjust clothing quantities to fit your {field.value.replace('-', ' ')}
+                          </p>
+                        )}
+                      </FormItem>
+                    )}
+                  />
+
                   {/* Trip Types */}
                   <FormField
                     control={form.control}
@@ -408,71 +473,6 @@ function TripDetails() {
                           <p className="text-sm text-travel-blue animate-fade-in">
                             ✨ Great! You've selected {watchedTripTypes.length} trip type{watchedTripTypes.length > 1 ? 's' : ''}. 
                             We'll customize your activity options accordingly.
-                          </p>
-                        )}
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Luggage Size */}
-                  <FormField
-                    control={form.control}
-                    name="luggageSize"
-                    render={({ field }) => (
-                      <FormItem className="space-y-3">
-                         <FormLabel className="flex items-center gap-2 text-base font-semibold">
-                           <Luggage className="h-5 w-5 text-primary" />
-                            Luggage Size
-                         </FormLabel>
-                        <FormControl>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <SelectTrigger className="h-12 text-base">
-                              <SelectValue placeholder="Choose your luggage size" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-background border border-border shadow-lg">
-                              <SelectItem value="carry-on" className="cursor-pointer">
-                                <div className="flex items-center gap-3 py-2">
-                                  <div className="text-2xl">🎒</div>
-                                  <div>
-                                    <div className="font-medium">Carry-on Bag</div>
-                                    <div className="text-sm text-muted-foreground">Small roller bag (22" x 14" x 9")</div>
-                                  </div>
-                                </div>
-                              </SelectItem>
-                              <SelectItem value="backpack" className="cursor-pointer">
-                                <div className="flex items-center gap-3 py-2">
-                                  <div className="text-2xl">🎒</div>
-                                  <div>
-                                    <div className="font-medium">Backpack</div>
-                                    <div className="text-sm text-muted-foreground">Travel backpack (40-60L)</div>
-                                  </div>
-                                </div>
-                              </SelectItem>
-                              <SelectItem value="medium-suitcase" className="cursor-pointer">
-                                <div className="flex items-center gap-3 py-2">
-                                  <div className="text-2xl">🧳</div>
-                                  <div>
-                                    <div className="font-medium">Medium Suitcase</div>
-                                    <div className="text-sm text-muted-foreground">Check-in bag (24-26 inches)</div>
-                                  </div>
-                                </div>
-                              </SelectItem>
-                              <SelectItem value="large-suitcase" className="cursor-pointer">
-                                <div className="flex items-center gap-3 py-2">
-                                  <div className="text-2xl">🧳</div>
-                                  <div>
-                                    <div className="font-medium">Large Suitcase</div>
-                                    <div className="text-sm text-muted-foreground">Large check-in bag (28+ inches)</div>
-                                  </div>
-                                </div>
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                        {field.value && (
-                          <p className="text-sm text-travel-blue animate-fade-in">
-                            ✨ Perfect! We'll adjust clothing quantities to fit your {field.value.replace('-', ' ')}
                           </p>
                         )}
                       </FormItem>
