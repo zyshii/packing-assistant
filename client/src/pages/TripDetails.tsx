@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { CalendarIcon, MapPin, Clock, Users, Activity, Sparkles, ArrowRight, Plane, Luggage } from "lucide-react";
-import { format } from "date-fns";
+import { format, addDays, differenceInDays } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -228,12 +228,11 @@ function TripDetails() {
   const dates = useMemo(() => {
     if (!watchedStartDate || !watchedEndDate) return [];
     const dateArray = [];
-    const currentDate = new Date(watchedStartDate);
-    const endDate = new Date(watchedEndDate);
+    const daysDiff = differenceInDays(watchedEndDate, watchedStartDate);
     
-    while (currentDate <= endDate) {
+    for (let i = 0; i <= daysDiff; i++) {
+      const currentDate = addDays(watchedStartDate, i);
       dateArray.push(format(currentDate, "MMM d"));
-      currentDate.setDate(currentDate.getDate() + 1);
     }
     return dateArray;
   }, [watchedStartDate, watchedEndDate]);
