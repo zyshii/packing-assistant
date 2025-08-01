@@ -33,7 +33,7 @@ const Index = () => {
     destination: "Paris, France",
     dates: "May 30 - Jun 1",
     tripType: "leisure",
-    travelers: 1,
+    travelers: 1, // Default to 1 traveler
     activities: ["Sightseeing", "Museums", "Dining", "Photography"]
   };
 

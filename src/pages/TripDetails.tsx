@@ -31,11 +31,6 @@ const formSchema = z.object({
     required_error: "Please select a trip type.",
   }),
   activities: z.string().optional(),
-  travelers: z.number().min(1, {
-    message: "At least 1 traveler is required.",
-  }).max(20, {
-    message: "Maximum 20 travelers allowed.",
-  }),
 }).refine((data) => data.endDate >= data.startDate, {
   message: "End date must be after start date.",
   path: ["endDate"],
@@ -52,7 +47,6 @@ export default function TripDetails() {
     defaultValues: {
       destination: "",
       activities: "",
-      travelers: 1,
     },
   });
 
@@ -142,8 +136,8 @@ export default function TripDetails() {
                     )}
                   />
 
-                  {/* Dates and Travelers */}
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* Dates */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <FormField
                       control={form.control}
                       name="startDate"
@@ -235,35 +229,6 @@ export default function TripDetails() {
                               />
                             </PopoverContent>
                           </Popover>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="travelers"
-                      render={({ field }) => (
-                        <FormItem className="space-y-3">
-                          <FormLabel className="flex items-center gap-2 text-base font-semibold">
-                            <Users className="h-5 w-5 text-primary" />
-                            Travelers
-                            <HelpTooltip content="How many people are traveling? This affects our quantity recommendations." />
-                          </FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Input
-                                type="number"
-                                min="1"
-                                max="20"
-                                placeholder="1"
-                                {...field}
-                                onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
-                                className="pl-10 h-12 text-base"
-                              />
-                              <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            </div>
-                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
