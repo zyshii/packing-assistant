@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { X, Calendar, Activity } from "lucide-react";
 
 interface DailyActivity {
@@ -55,10 +57,21 @@ const getActivitiesByTripTypes = (tripTypes?: string[]) => {
 
 export default function DailyActivityInput({ dates, tripTypes, onActivitiesChange }: DailyActivityInputProps) {
   const [dailyActivities, setDailyActivities] = useState<DailyActivity[]>([]);
+  const [activityInputs, setActivityInputs] = useState<{ [key: number]: string }>({});
+  const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>({});
 
   // Sync dailyActivities with dates prop changes
   useEffect(() => {
     setDailyActivities(dates.map(date => ({ date, activities: [] })));
+    // Initialize input states for each date
+    const initialInputs: { [key: number]: string } = {};
+    const initialPopovers: { [key: number]: boolean } = {};
+    dates.forEach((_, index) => {
+      initialInputs[index] = '';
+      initialPopovers[index] = false;
+    });
+    setActivityInputs(initialInputs);
+    setOpenPopovers(initialPopovers);
   }, [dates]);
 
   const addActivity = (dateIndex: number, activity: string) => {
@@ -67,6 +80,9 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
       updated[dateIndex].activities.push(activity);
       setDailyActivities(updated);
       onActivitiesChange(updated);
+      // Clear the input and close popover for this date
+      setActivityInputs(prev => ({ ...prev, [dateIndex]: '' }));
+      setOpenPopovers(prev => ({ ...prev, [dateIndex]: false }));
     }
   };
 
@@ -77,6 +93,25 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
       setDailyActivities(updated);
       onActivitiesChange(updated);
     }
+  };
+
+  const getFilteredActivities = (dateIndex: number) => {
+    const input = activityInputs[dateIndex] || '';
+    if (!input.trim()) return [];
+    
+    return predefinedActivities.filter(activity => 
+      activity.toLowerCase().includes(input.toLowerCase()) &&
+      !dailyActivities[dateIndex]?.activities.includes(activity)
+    );
+  };
+
+  const handleInputChange = (dateIndex: number, value: string) => {
+    setActivityInputs(prev => ({ ...prev, [dateIndex]: value }));
+    setOpenPopovers(prev => ({ ...prev, [dateIndex]: true }));
+  };
+
+  const handleInputFocus = (dateIndex: number) => {
+    setOpenPopovers(prev => ({ ...prev, [dateIndex]: true }));
   };
 
   const predefinedActivities = getActivitiesByTripTypes(tripTypes);
@@ -121,25 +156,54 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
               </div>
 
               {/* Add Activities */}
-              <div className="flex flex-col sm:flex-row gap-2">
-                <Select onValueChange={(value) => addActivity(dateIndex, value)}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder={
-                      tripTypes && tripTypes.length > 0
-                        ? `Choose ${tripTypes.join('/')} activity` 
-                        : "Choose an activity"
-                    } />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-[200px]">
-                    {predefinedActivities
-                      .filter(activity => !dailyActivities[dateIndex]?.activities.includes(activity))
-                      .map(activity => (
-                        <SelectItem key={activity} value={activity}>
-                          {activity}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
+              <div className="flex flex-col gap-2">
+                <Popover 
+                  open={openPopovers[dateIndex] && getFilteredActivities(dateIndex).length > 0} 
+                  onOpenChange={(open) => setOpenPopovers(prev => ({ ...prev, [dateIndex]: open }))}
+                >
+                  <PopoverTrigger asChild>
+                    <div className="relative">
+                      <Input
+                        placeholder={
+                          tripTypes && tripTypes.length > 0
+                            ? `Type to search ${tripTypes.join('/')} activities...`
+                            : "Type to search activities..."
+                        }
+                        value={activityInputs[dateIndex] || ''}
+                        onChange={(e) => handleInputChange(dateIndex, e.target.value)}
+                        onFocus={() => handleInputFocus(dateIndex)}
+                        className="w-full"
+                      />
+                      <Activity className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    </div>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0 z-50 bg-background border border-border shadow-lg" align="start">
+                    <Command>
+                      <CommandList className="max-h-[200px]">
+                        <CommandEmpty>No activities found.</CommandEmpty>
+                        <CommandGroup>
+                          {getFilteredActivities(dateIndex).map((activity) => (
+                            <CommandItem
+                              key={activity}
+                              value={activity}
+                              onSelect={() => addActivity(dateIndex, activity)}
+                              className="cursor-pointer hover:bg-muted"
+                            >
+                              <Activity className="mr-2 h-4 w-4" />
+                              {activity}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                
+                {activityInputs[dateIndex] && getFilteredActivities(dateIndex).length === 0 && activityInputs[dateIndex].trim() && (
+                  <p className="text-sm text-muted-foreground">
+                    💡 No matching activities found. Try a different search term.
+                  </p>
+                )}
               </div>
             </div>
           ))}
