@@ -104,6 +104,7 @@ function TripDetails() {
   const watchedDestination = form.watch("destination");
   const watchedStartDate = form.watch("startDate");
   const watchedEndDate = form.watch("endDate");
+  const watchedTripType = form.watch("tripType");
 
   // Generate dates array when start and end dates are available
   const dates = useMemo(() => {
@@ -477,6 +478,7 @@ function TripDetails() {
                     <div className="space-y-4">
                       <DailyActivityInput 
                         dates={dates}
+                        tripType={watchedTripType}
                         onActivitiesChange={handleActivitiesChange}
                       />
                     </div>

@@ -13,19 +13,41 @@ interface DailyActivity {
 
 interface DailyActivityInputProps {
   dates: string[];
+  tripType?: string;
   onActivitiesChange: (activities: DailyActivity[]) => void;
 }
 
-const predefinedActivities = [
-  "Swimming", "Hiking", "Beach", "Museums", "Sightseeing", "Dining", 
-  "Shopping", "Photography", "Cycling", "Running", "Spa", "Nightlife",
-  "Business meetings", "Conferences", "Outdoor sports", "Water sports",
-  "City walking", "Nature walks", "Cultural tours", "Adventure sports",
-  "Skiing", "Snowboarding", "Rock climbing", "Camping", "Fishing",
-  "Golf", "Tennis", "Yoga", "Meditation", "Wine tasting"
-];
+const getActivitiesByTripType = (tripType?: string) => {
+  const baseActivities = {
+    business: [
+      "Business meetings", "Conferences", "Networking events", "Client dinners", 
+      "Presentations", "Workshop attendance", "Team building", "Corporate events",
+      "Office visits", "Trade shows", "Airport transfers", "Hotel dining"
+    ],
+    leisure: [
+      "Sightseeing", "Museums", "Shopping", "Dining", "Photography", "City walking",
+      "Cultural tours", "Beach", "Swimming", "Spa", "Wine tasting", "Local markets",
+      "Art galleries", "Theater shows", "Cafes", "Parks", "Boat tours", "Food tours"
+    ],
+    adventure: [
+      "Hiking", "Rock climbing", "Cycling", "Water sports", "Skiing", "Snowboarding",
+      "Camping", "Fishing", "Adventure sports", "Nature walks", "Wildlife watching",
+      "Mountain biking", "Kayaking", "Surfing", "Paragliding", "Zip lining", "Rafting"
+    ]
+  };
 
-export default function DailyActivityInput({ dates, onActivitiesChange }: DailyActivityInputProps) {
+  if (!tripType) {
+    return [
+      ...baseActivities.business,
+      ...baseActivities.leisure,
+      ...baseActivities.adventure
+    ];
+  }
+
+  return baseActivities[tripType as keyof typeof baseActivities] || [];
+};
+
+export default function DailyActivityInput({ dates, tripType, onActivitiesChange }: DailyActivityInputProps) {
   const [dailyActivities, setDailyActivities] = useState<DailyActivity[]>(
     dates.map(date => ({ date, activities: [] }))
   );
@@ -54,15 +76,20 @@ export default function DailyActivityInput({ dates, onActivitiesChange }: DailyA
     }
   };
 
+  const predefinedActivities = getActivitiesByTripType(tripType);
+
   return (
     <Card className="p-6 shadow-card border-0 bg-card">
       <div className="space-y-6">
         <div className="flex items-center gap-2 mb-4">
           <Activity className="h-5 w-5 text-primary" />
-          <h3 className="text-lg font-semibold text-foreground">Daily Activities</h3>
+          <h3 className="text-lg font-semibold text-foreground">Plan Your Daily Activities</h3>
         </div>
         <p className="text-muted-foreground text-sm">
-          Specify your planned activities for each day to get more personalized packing recommendations.
+          {tripType 
+            ? `Based on your ${tripType} trip, here are some relevant activities. Specify what you plan to do each day for personalized packing recommendations.`
+            : "Specify your planned activities for each day to get more personalized packing recommendations."
+          }
         </p>
 
         <div className="space-y-6">
@@ -94,9 +121,13 @@ export default function DailyActivityInput({ dates, onActivitiesChange }: DailyA
               <div className="flex flex-col sm:flex-row gap-2">
                 <Select onValueChange={(value) => addActivity(dateIndex, value)}>
                   <SelectTrigger className="flex-1">
-                    <SelectValue placeholder="Choose an activity" />
+                    <SelectValue placeholder={
+                      tripType 
+                        ? `Choose ${tripType} activity` 
+                        : "Choose an activity"
+                    } />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-h-[200px]">
                     {predefinedActivities
                       .filter(activity => !dailyActivities[dateIndex].activities.includes(activity))
                       .map(activity => (
@@ -131,7 +162,10 @@ export default function DailyActivityInput({ dates, onActivitiesChange }: DailyA
 
         <div className="mt-4 p-3 bg-travel-green/10 rounded-lg border border-travel-green/20">
           <p className="text-sm text-travel-green">
-            💡 Adding specific activities helps us suggest the right gear, footwear, and clothing for each day.
+            💡 {tripType 
+              ? `These ${tripType}-focused activities will help us recommend the perfect gear and clothing for your trip.`
+              : "Adding specific activities helps us suggest the right gear, footwear, and clothing for each day."
+            }
           </p>
         </div>
       </div>
