@@ -122,54 +122,32 @@ const getHighLevelClothingInfo = (condition: string, temp: { high: number; low: 
 const getPackingTips = (condition: string, temp: { high: number; low: number }) => {
   const tips: string[] = [];
   
-  // Temperature-based tips
-  if (temp.high >= 80) {
-    tips.push("Stick to lightweight, breathable fabrics like cotton or linen");
-    tips.push("Sun protection is essential even if skies are only partly cloudy");
-    tips.push("Consider moisture-wicking materials for comfort");
-  } else if (temp.high >= 70) {
-    if (temp.low < 60) {
-      tips.push("Small scarf or shawl if you're sensitive to temperature shifts");
-      tips.push("Layer-friendly pieces that can be easily added or removed");
-    }
-    tips.push("Comfortable walking shoes are crucial for extended sightseeing");
-  } else if (temp.high >= 60) {
-    tips.push("Light layers work better than one heavy piece");
-    tips.push("A versatile cardigan or light jacket is your best friend");
-  } else {
-    tips.push("Thermal layers underneath regular clothes for warmth without bulk");
-    tips.push("Don't forget warm accessories like gloves and a hat");
-  }
-  
-  // Weather condition-based tips
+  // Essential weather-based items only
   switch (condition) {
     case 'sunny':
-      tips.push("UV protection is crucial - sunglasses, hat, and SPF 30+ sunscreen");
-      tips.push("Light colors reflect heat better than dark ones");
+      tips.push("UV protection - sunglasses, hat, and SPF 30+ sunscreen");
       break;
     case 'rainy':
-      tips.push("Waterproof footwear and a compact umbrella are essential");
-      tips.push("Quick-dry fabrics will be your lifesaver");
-      tips.push("Keep electronics in waterproof pouches");
+      tips.push("Waterproof items - umbrella, rain jacket, and waterproof footwear");
       break;
     case 'mixed':
-      tips.push("Check weather updates frequently as conditions can change quickly");
-      tips.push("Pack both sun protection and rain gear to be prepared");
-      tips.push("Layers are especially important for variable conditions");
+      tips.push("Sun protection - sunglasses, hat, and SPF 30+ sunscreen");
+      tips.push("Rain protection - compact umbrella and light rain jacket");
       break;
     case 'cloudy':
-      tips.push("Don't skip the sunscreen - UV rays penetrate clouds");
-      tips.push("Light jacket recommended as clouds can make it feel cooler");
+      tips.push("UV protection - sunglasses and SPF 30+ sunscreen (UV rays penetrate clouds)");
       break;
     case 'snowy':
-      tips.push("Waterproof boots with good traction are essential");
-      tips.push("Multiple thin layers trap heat better than one thick layer");
-      tips.push("Keep extremities warm - hands, feet, and head lose heat quickly");
+      tips.push("Cold protection - waterproof boots, gloves, and warm hat");
       break;
   }
   
-  // General travel tips
-  tips.push("Roll clothes instead of folding to save space and prevent wrinkles");
+  // Essential temperature-based items
+  if (temp.high >= 80) {
+    tips.push("Heat protection - lightweight hat and SPF 30+ sunscreen");
+  } else if (temp.low <= 40) {
+    tips.push("Cold protection - gloves, warm hat, and thermal layers");
+  }
   
   return tips;
 };
