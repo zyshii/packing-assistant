@@ -514,13 +514,13 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                    </Card>
 
                    {/* Daytime */}
-                   <Card className="p-5 bg-info-light border border-info/30 hover:shadow-card transition-shadow duration-200">
+                   <Card className="p-5 bg-success-light border border-success/30 hover:shadow-card transition-shadow duration-200">
                      <div className="space-y-4">
                        {/* Header with Time Period */}
                        <div className="flex items-center justify-between">
                          <div className="flex items-center gap-2">
-                           <div className="p-2 bg-info/15 rounded-full">
-                             <Sun className="h-4 w-4 text-info" />
+                           <div className="p-2 bg-success/15 rounded-full">
+                             <Sun className="h-4 w-4 text-success" />
                            </div>
                            <div>
                              <h5 className="font-semibold text-foreground">Daytime</h5>
@@ -530,7 +530,7 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                        </div>
                        
                        {/* Weather & Temperature Highlight */}
-                       <div className="bg-white/80 rounded-lg p-3 border border-info/30">
+                       <div className="bg-white/80 rounded-lg p-3 border border-success/30">
                          <div className="flex items-center justify-between mb-2">
                            <div className="flex items-center gap-2">
                              {getWeatherIcon(day.condition)}
@@ -550,7 +550,7 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                          <div className="space-y-1">
                            {getDetailedClothingSuggestions(day.condition, day.temp, 'daytime', day.activities).map((suggestion, index) => (
                              <p key={index} className="text-xs text-foreground flex items-start gap-1">
-                               <span className="text-info mt-0.5">•</span>
+                               <span className="text-success mt-0.5">•</span>
                                <span>{suggestion}</span>
                              </p>
                            ))}
@@ -560,13 +560,13 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                    </Card>
 
                    {/* Evening */}
-                   <Card className="p-5 bg-accent-light border border-primary/30 hover:shadow-card transition-shadow duration-200">
+                   <Card className="p-5 bg-neutral-light border border-neutral/30 hover:shadow-card transition-shadow duration-200">
                      <div className="space-y-4">
                        {/* Header with Time Period */}
                        <div className="flex items-center justify-between">
                          <div className="flex items-center gap-2">
-                           <div className="p-2 bg-primary/15 rounded-full">
-                             <Moon className="h-4 w-4 text-primary" />
+                           <div className="p-2 bg-neutral/15 rounded-full">
+                             <Moon className="h-4 w-4 text-neutral" />
                            </div>
                            <div>
                              <h5 className="font-semibold text-foreground">Evening</h5>
@@ -576,7 +576,7 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                        </div>
                        
                        {/* Weather & Temperature Highlight */}
-                       <div className="bg-white/80 rounded-lg p-3 border border-primary/30">
+                       <div className="bg-white/80 rounded-lg p-3 border border-neutral/30">
                          <div className="flex items-center justify-between mb-2">
                            <div className="flex items-center gap-2">
                              {getWeatherIcon(day.condition)}
@@ -596,7 +596,7 @@ export default function DailyClothingSuggestions({ dailyData, tripDetails }: Dai
                          <div className="space-y-1">
                            {getDetailedClothingSuggestions(day.condition, day.temp, 'evening', day.activities).map((suggestion, index) => (
                              <p key={index} className="text-xs text-foreground flex items-start gap-1">
-                               <span className="text-primary mt-0.5">•</span>
+                               <span className="text-neutral mt-0.5">•</span>
                                <span>{suggestion}</span>
                              </p>
                            ))}
