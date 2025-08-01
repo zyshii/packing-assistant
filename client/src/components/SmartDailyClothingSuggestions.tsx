@@ -425,7 +425,7 @@ export default function SmartDailyClothingSuggestions({
                                             {item.startsWith('- Remove') || item.startsWith('-') ? '−' : 
                                              item.startsWith('+ Add') || item.startsWith('+') ? '+' : '•'}
                                           </span>
-                                          <span>{item}</span>
+                                          <span>{item.replace(/^[+-]\s*(Remove|Add)\s*/, '')}</span>
                                         </li>
                                       ))
                                     ) : (
@@ -455,7 +455,7 @@ export default function SmartDailyClothingSuggestions({
                                             {item.startsWith('- Remove') || item.startsWith('-') ? '−' : 
                                              item.startsWith('+ Add') || item.startsWith('+') ? '+' : '•'}
                                           </span>
-                                          <span>{item}</span>
+                                          <span>{item.replace(/^[+-]\s*(Remove|Add)\s*/, '')}</span>
                                         </li>
                                       ))
                                     ) : (
