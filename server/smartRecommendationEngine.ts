@@ -29,7 +29,12 @@ const clothingDatabase = {
     { item: "Breathable/moisture-wicking shirts", baseWeight: 7, weather: { hot: 3, mild: 2, cold: 1 }, activities: { sports: 4, hiking: 4, running: 4 }, priority: "recommended" },
     { item: "Business shirts/blouses", baseWeight: 5, weather: { hot: 1, mild: 2, cold: 2 }, activities: { business: 4, formal: 4, dining: 2 }, priority: "conditional" },
     { item: "Light sweater/hoodie", baseWeight: 6, weather: { hot: 0, mild: 2, cold: 3 }, activities: { casual: 2, evening: 3 }, priority: "recommended" },
-    { item: "Thermal base layers", baseWeight: 4, weather: { hot: 0, mild: 0, cold: 4 }, activities: { skiing: 4, winter: 4, outdoor: 3 }, priority: "conditional" }
+    { item: "Thermal base layers", baseWeight: 4, weather: { hot: 0, mild: 0, cold: 4 }, activities: { skiing: 4, winter: 4, outdoor: 3 }, priority: "conditional" },
+    { item: "Polo shirts", baseWeight: 7, weather: { hot: 2, mild: 3, cold: 1 }, activities: { casual: 3, business: 2, sports: 2 }, priority: "recommended" },
+    { item: "Dress shirts", baseWeight: 5, weather: { hot: 1, mild: 2, cold: 2 }, activities: { business: 4, formal: 4, dining: 3 }, priority: "conditional" },
+    { item: "Graphic/printed T-shirts", baseWeight: 6, weather: { hot: 3, mild: 2, cold: 0 }, activities: { casual: 4, travel: 2 }, priority: "optional" },
+    { item: "Button-up shirts", baseWeight: 6, weather: { hot: 1, mild: 3, cold: 2 }, activities: { business: 3, casual: 2, dining: 2 }, priority: "recommended" },
+    { item: "Henley shirts", baseWeight: 6, weather: { hot: 2, mild: 3, cold: 1 }, activities: { casual: 3, sports: 2 }, priority: "optional" }
   ],
   bottoms: [
     { item: "Comfortable jeans/pants", baseWeight: 8, weather: { hot: 1, mild: 3, cold: 3 }, activities: { casual: 3, business: 2, travel: 3 }, priority: "essential" },
@@ -37,14 +42,31 @@ const clothingDatabase = {
     { item: "Dress pants/skirts", baseWeight: 5, weather: { hot: 1, mild: 2, cold: 2 }, activities: { business: 4, formal: 4, dining: 3 }, priority: "conditional" },
     { item: "Athletic/yoga pants", baseWeight: 6, weather: { hot: 2, mild: 3, cold: 2 }, activities: { sports: 4, yoga: 4, running: 4, hiking: 3 }, priority: "conditional" },
     { item: "Swimwear", baseWeight: 3, weather: { hot: 3, mild: 1, cold: 0 }, activities: { swimming: 4, beach: 4, "water sports": 4, spa: 2 }, priority: "conditional" },
-    { item: "Thermal leggings/long underwear", baseWeight: 3, weather: { hot: 0, mild: 0, cold: 4 }, activities: { skiing: 4, winter: 4, cold: 4 }, priority: "conditional" }
+    { item: "Thermal leggings/long underwear", baseWeight: 3, weather: { hot: 0, mild: 0, cold: 4 }, activities: { skiing: 4, winter: 4, cold: 4 }, priority: "conditional" },
+    { item: "Chinos/khakis", baseWeight: 6, weather: { hot: 2, mild: 3, cold: 2 }, activities: { business: 3, casual: 3, dining: 2 }, priority: "recommended" },
+    { item: "Cargo pants", baseWeight: 5, weather: { hot: 1, mild: 2, cold: 2 }, activities: { outdoor: 3, hiking: 3, casual: 2 }, priority: "optional" },
+    { item: "Leggings/tights", baseWeight: 6, weather: { hot: 1, mild: 3, cold: 3 }, activities: { sports: 3, yoga: 4, casual: 2 }, priority: "conditional" },
+    { item: "Linen pants", baseWeight: 5, weather: { hot: 4, mild: 2, cold: 0 }, activities: { casual: 3, dining: 2, travel: 2 }, priority: "conditional" },
+    { item: "Dresses", baseWeight: 6, weather: { hot: 3, mild: 3, cold: 1 }, activities: { casual: 3, dining: 3, formal: 2 }, priority: "optional" },
+    { item: "Skirts", baseWeight: 5, weather: { hot: 3, mild: 2, cold: 1 }, activities: { casual: 2, business: 3, formal: 3 }, priority: "conditional" }
   ],
   outerwear: [
     { item: "Light jacket/cardigan", baseWeight: 7, weather: { hot: 0, mild: 3, cold: 2 }, activities: { casual: 2, evening: 3, travel: 2 }, priority: "recommended" },
     { item: "Rain jacket", baseWeight: 5, weather: { rainy: 4, mixed: 3 }, activities: { outdoor: 3, hiking: 3, travel: 2 }, priority: "conditional" },
     { item: "Winter coat/parka", baseWeight: 4, weather: { hot: 0, mild: 0, cold: 4 }, activities: { winter: 4, skiing: 3, cold: 4 }, priority: "conditional" },
     { item: "Blazer/suit jacket", baseWeight: 4, weather: { hot: 1, mild: 2, cold: 2 }, activities: { business: 4, formal: 4, dining: 2 }, priority: "conditional" },
-    { item: "Windbreaker", baseWeight: 5, weather: { windy: 3, mild: 2 }, activities: { hiking: 3, outdoor: 3, sports: 2 }, priority: "optional" }
+    { item: "Windbreaker", baseWeight: 5, weather: { windy: 3, mild: 2 }, activities: { hiking: 3, outdoor: 3, sports: 2 }, priority: "optional" },
+    { item: "Denim jacket", baseWeight: 6, weather: { hot: 0, mild: 3, cold: 2 }, activities: { casual: 4, travel: 3, evening: 2 }, priority: "optional" },
+    { item: "Bomber jacket", baseWeight: 5, weather: { hot: 0, mild: 3, cold: 2 }, activities: { casual: 3, travel: 2, sports: 2 }, priority: "optional" },
+    { item: "Leather jacket", baseWeight: 4, weather: { hot: 0, mild: 3, cold: 2 }, activities: { casual: 3, evening: 3, dining: 2 }, priority: "conditional" },
+    { item: "Wool coat", baseWeight: 5, weather: { hot: 0, mild: 2, cold: 4 }, activities: { formal: 3, business: 3, evening: 3 }, priority: "conditional" },
+    { item: "Trench coat", baseWeight: 5, weather: { hot: 0, mild: 3, cold: 2, rainy: 3 }, activities: { business: 3, travel: 3, formal: 2 }, priority: "conditional" },
+    { item: "Puffer jacket", baseWeight: 6, weather: { hot: 0, mild: 1, cold: 4 }, activities: { outdoor: 4, hiking: 3, casual: 2 }, priority: "conditional" },
+    { item: "Vest/gilet", baseWeight: 6, weather: { hot: 1, mild: 3, cold: 2 }, activities: { outdoor: 3, casual: 3, sports: 2 }, priority: "optional" },
+    { item: "Hoodie/zip-up", baseWeight: 7, weather: { hot: 0, mild: 3, cold: 2 }, activities: { casual: 4, sports: 3, travel: 2 }, priority: "recommended" },
+    { item: "Track jacket", baseWeight: 5, weather: { hot: 1, mild: 2, cold: 2 }, activities: { sports: 4, running: 3, casual: 2 }, priority: "conditional" },
+    { item: "Fleece jacket", baseWeight: 6, weather: { hot: 0, mild: 2, cold: 3 }, activities: { outdoor: 4, hiking: 3, casual: 2 }, priority: "recommended" },
+    { item: "Softshell jacket", baseWeight: 5, weather: { hot: 0, mild: 2, cold: 3, windy: 3 }, activities: { outdoor: 4, hiking: 4, sports: 3 }, priority: "conditional" }
   ],
   footwear: [
     { item: "Comfortable walking shoes", baseWeight: 9, weather: { all: 2 }, activities: { casual: 3, travel: 4, sightseeing: 4 }, priority: "essential" },
@@ -572,16 +594,16 @@ function generateVariedPackingListRecommendations(
       }
       
       // Multiple warm layer options for cold weather - with broader search terms
-      const warmTerms = outfitStyle === 0 ? ["sweater", "pullover", "wool", "hoodie", "jacket"] : 
-                       outfitStyle === 1 ? ["fleece", "hoodie", "warm", "zip", "cardigan"] : ["jacket", "cardigan", "insulated", "coat", "layer"];
+      const warmTerms = outfitStyle === 0 ? ["sweater", "pullover", "wool", "hoodie", "fleece", "jacket"] : 
+                       outfitStyle === 1 ? ["fleece", "hoodie", "warm", "zip", "cardigan", "track"] : ["jacket", "cardigan", "insulated", "coat", "layer", "bomber"];
       const warmLayer = findFreshItem(warmTerms, todaysUsedItems);
       if (warmLayer) {
         recommendations.push(`Warm layer: ${warmLayer}`);
         todaysUsedItems.push(warmLayer.toLowerCase());
       }
       
-      // Enhanced outerwear options for cold weather
-      const coldOuterwear = findFreshItem(["windbreaker", "wind jacket", "rain jacket", "shell", "outer layer", "puffer jacket", "winter coat", "wool coat"], todaysUsedItems);
+      // Enhanced outerwear options for cold weather with more variety
+      const coldOuterwear = findFreshItem(["windbreaker", "jacket", "coat", "parka", "puffer", "wool", "winter", "shell", "trench", "leather"], todaysUsedItems);
       if (coldOuterwear) {
         recommendations.push(`Outerwear: ${coldOuterwear}`);
         todaysUsedItems.push(coldOuterwear.toLowerCase());
@@ -611,9 +633,9 @@ function generateVariedPackingListRecommendations(
         todaysUsedItems.push(shirt.toLowerCase());
       }
       
-      // Enhanced outerwear options with broader search terms
-      const outerwearTerms = outfitStyle === 0 ? ["jacket", "windbreaker", "denim", "bomber", "light", "outer"] :
-                            outfitStyle === 1 ? ["cardigan", "sweater", "hoodie", "blazer", "layer"] : ["zip", "pullover", "shell", "vest", "wrap"];
+      // Enhanced outerwear options with more jacket and coat varieties
+      const outerwearTerms = outfitStyle === 0 ? ["jacket", "windbreaker", "denim", "bomber", "light", "trench", "coat"] :
+                            outfitStyle === 1 ? ["cardigan", "sweater", "hoodie", "blazer", "layer", "fleece", "track"] : ["zip", "pullover", "shell", "vest", "wrap", "leather", "puffer"];
       const outerwear = findFreshItem(outerwearTerms, todaysUsedItems);
       if (outerwear) {
         recommendations.push(`Outerwear: ${outerwear} (for temperature changes)`);
@@ -662,8 +684,8 @@ function generateVariedPackingListRecommendations(
         }
       }
       
-      // Enhanced outerwear options with broader search terms
-      const lightOuterwear = findFreshItem(["cardigan", "jacket", "windbreaker", "kimono", "blazer", "light", "layer"], todaysUsedItems);
+      // Enhanced light outerwear options with more variety
+      const lightOuterwear = findFreshItem(["cardigan", "jacket", "windbreaker", "kimono", "blazer", "light", "layer", "vest", "denim", "bomber"], todaysUsedItems);
       if (lightOuterwear) {
         recommendations.push(`Optional outerwear: ${lightOuterwear} (for A/C or evening)`);
         todaysUsedItems.push(lightOuterwear.toLowerCase());
@@ -752,7 +774,7 @@ function generateVariedPackingListRecommendations(
       if (warmAccessories) recommendations.push(`Add ${warmAccessories} for extra warmth`);
       
     } else if (weather.temp.low < 65) {
-      const eveningOuterwear = findFreshItem(["light jacket", "windbreaker", "cardigan", "sweater", "blazer", "denim jacket"], todaysUsedItems);
+      const eveningOuterwear = findFreshItem(["jacket", "windbreaker", "cardigan", "sweater", "blazer", "denim", "bomber", "hoodie", "fleece"], todaysUsedItems);
       if (eveningOuterwear) recommendations.push(`Add ${eveningOuterwear} for cooling evening`);
       
       // Suggest pants change if wearing shorts during the day
@@ -760,7 +782,7 @@ function generateVariedPackingListRecommendations(
       if (longPants) recommendations.push(`Consider changing to ${longPants} if wearing shorts`);
       
     } else if (weather.temp.low < 75) {
-      const lightEveningLayer = findFreshItem(["light cardigan", "thin jacket", "hoodie", "kimono", "light wrap"], todaysUsedItems);
+      const lightEveningLayer = findFreshItem(["cardigan", "jacket", "hoodie", "kimono", "wrap", "vest", "light", "blazer"], todaysUsedItems);
       if (lightEveningLayer) recommendations.push(`Optional: ${lightEveningLayer} for mild evening cool-down`);
     }
     
