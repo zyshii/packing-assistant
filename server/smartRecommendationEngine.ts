@@ -376,7 +376,10 @@ export function generateDetailedDailyRecommendations(
     ...packingList.optimizedList.accessories.map((item: any) => item.item),
     ...packingList.optimizedList.essentials.map((item: any) => item.item)
   ];
-  return dailyData.map(day => {
+  // Track used items across days to create variety
+  const usedItems: Set<string> = new Set();
+  
+  return dailyData.map((day, dayIndex) => {
     const weather: WeatherCondition = {
       condition: day.condition,
       temp: day.temp,
@@ -385,13 +388,20 @@ export function generateDetailedDailyRecommendations(
     };
     
     const timeSpecificRecommendations = {
-      morning: deduplicateRecommendations(generatePackingListBasedRecommendations("morning", weather, day.activities, availableItems)),
-      daytime: deduplicateRecommendations(generatePackingListBasedRecommendations("daytime", weather, day.activities, availableItems)),
-      evening: deduplicateRecommendations(generatePackingListBasedRecommendations("evening", weather, day.activities, availableItems))
+      morning: deduplicateRecommendations(generateVariedPackingListRecommendations("morning", weather, day.activities, availableItems, usedItems, dayIndex)),
+      daytime: deduplicateRecommendations(generateVariedPackingListRecommendations("daytime", weather, day.activities, availableItems, usedItems, dayIndex)),
+      evening: deduplicateRecommendations(generateVariedPackingListRecommendations("evening", weather, day.activities, availableItems, usedItems, dayIndex))
     };
     
     const activitySpecific = deduplicateRecommendations(generateActivitySpecificFromPackingList(day.activities, weather, availableItems));
     const priorities = deduplicateRecommendations(generatePriorities(weather, day.activities));
+    
+    // Add used items to tracking set for next day's variety
+    [...timeSpecificRecommendations.morning, ...timeSpecificRecommendations.daytime, ...timeSpecificRecommendations.evening]
+      .forEach(item => {
+        const cleanItem = item.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase();
+        usedItems.add(cleanItem);
+      });
     
     // Apply global deduplication across all recommendation types for this day
     const allRecommendations = [
@@ -456,6 +466,187 @@ export function generateDetailedDailyRecommendations(
       }
     };
   });
+}
+
+// Generate varied recommendations using only items from the packing list, avoiding repetition
+function generateVariedPackingListRecommendations(
+  timeOfDay: string,
+  weather: WeatherCondition,
+  activities: string[],
+  availableItems: string[],
+  usedItems: Set<string>,
+  dayIndex: number
+): string[] {
+  const recommendations = [];
+  
+  // Helper function to check if an item is available and not overused
+  const hasItem = (searchTerm: string) => 
+    availableItems.some(item => 
+      item.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      searchTerm.toLowerCase().includes(item.toLowerCase())
+    );
+  
+  // Helper function to find fresh or different item, avoiding recent use
+  const findFreshItem = (searchTerms: string[], categoryUsed: string[] = []) => {
+    // First try to find items not used recently
+    const freshItems = availableItems.filter(item => 
+      searchTerms.some(term => 
+        item.toLowerCase().includes(term.toLowerCase()) || 
+        term.toLowerCase().includes(item.toLowerCase())
+      ) && !usedItems.has(item.toLowerCase()) && !categoryUsed.includes(item.toLowerCase())
+    );
+    
+    if (freshItems.length > 0) {
+      // Rotate through available fresh items by day
+      return freshItems[dayIndex % freshItems.length];
+    }
+    
+    // If all items have been used, find any matching item
+    const allMatching = availableItems.filter(item => 
+      searchTerms.some(term => 
+        item.toLowerCase().includes(term.toLowerCase()) || 
+        term.toLowerCase().includes(item.toLowerCase())
+      )
+    );
+    
+    return allMatching.length > 0 ? allMatching[dayIndex % allMatching.length] : null;
+  };
+  
+  // Track items used in this day's outfit to avoid duplication within the same day
+  const todaysUsedItems: string[] = [];
+  
+  // Morning layer recommendations with variety
+  if (timeOfDay === "morning") {
+    // Create different outfit combinations based on day index
+    const outfitStyle = dayIndex % 3; // Rotate between 3 outfit styles
+    
+    // Essential base items (vary the description)
+    if (hasItem("undergarments") || hasItem("underwear")) {
+      const baseItems = ["Fresh underwear and socks", "Clean undergarments", "Fresh socks and underwear"];
+      recommendations.push(baseItems[dayIndex % baseItems.length]);
+    }
+    
+    // Core clothing based on temperature with variety
+    if (weather.temp.low < 50) {
+      const longSleeveItem = findFreshItem(["long-sleeve", "thermal", "base layer"], todaysUsedItems);
+      if (longSleeveItem) {
+        recommendations.push(longSleeveItem);
+        todaysUsedItems.push(longSleeveItem.toLowerCase());
+      }
+      
+      // Vary the warm layer based on day
+      const warmTerms = outfitStyle === 0 ? ["sweater", "pullover"] : 
+                       outfitStyle === 1 ? ["fleece", "hoodie"] : ["warm jacket", "cardigan"];
+      const warmLayer = findFreshItem(warmTerms, todaysUsedItems);
+      if (warmLayer) {
+        recommendations.push(warmLayer);
+        todaysUsedItems.push(warmLayer.toLowerCase());
+      }
+      
+      const pants = findFreshItem(["pants", "trousers", "jeans"], todaysUsedItems);
+      if (pants) {
+        recommendations.push(pants);
+        todaysUsedItems.push(pants.toLowerCase());
+      }
+    } else if (weather.temp.low < 65) {
+      // Vary shirt selection by day
+      const shirtTerms = outfitStyle === 0 ? ["t-shirt", "casual shirt"] :
+                        outfitStyle === 1 ? ["polo", "shirt"] : ["lightweight top", "breathable shirt"];
+      const shirt = findFreshItem(shirtTerms, todaysUsedItems);
+      if (shirt) {
+        recommendations.push(shirt);
+        todaysUsedItems.push(shirt.toLowerCase());
+      }
+      
+      // Vary light layers
+      const lightTerms = outfitStyle === 0 ? ["light jacket", "windbreaker"] :
+                        outfitStyle === 1 ? ["cardigan", "light sweater"] : ["zip-up", "hoodie"];
+      const lightLayer = findFreshItem(lightTerms, todaysUsedItems);
+      if (lightLayer) {
+        recommendations.push(lightLayer);
+        todaysUsedItems.push(lightLayer.toLowerCase());
+      }
+      
+      // Vary pants/bottoms
+      const bottomTerms = outfitStyle === 0 ? ["jeans", "denim"] :
+                         outfitStyle === 1 ? ["chinos", "pants"] : ["trousers", "casual pants"];
+      const pants = findFreshItem(bottomTerms, todaysUsedItems);
+      if (pants) {
+        recommendations.push(pants);
+        todaysUsedItems.push(pants.toLowerCase());
+      }
+    } else {
+      // Hot weather - vary lightweight options
+      const lightTerms = outfitStyle === 0 ? ["t-shirt", "tee"] :
+                        outfitStyle === 1 ? ["tank top", "sleeveless"] : ["lightweight shirt", "breathable top"];
+      const lightShirt = findFreshItem(lightTerms, todaysUsedItems);
+      if (lightShirt) {
+        recommendations.push(lightShirt);
+        todaysUsedItems.push(lightShirt.toLowerCase());
+      }
+      
+      const shortTerms = outfitStyle === 0 ? ["shorts", "casual shorts"] :
+                        outfitStyle === 1 ? ["light pants", "linen pants"] : ["summer pants", "breathable bottoms"];
+      const shorts = findFreshItem(shortTerms, todaysUsedItems);
+      if (shorts) {
+        recommendations.push(shorts);
+        todaysUsedItems.push(shorts.toLowerCase());
+      }
+    }
+    
+    // Vary footwear recommendations
+    const shoeTerms = outfitStyle === 0 ? ["walking shoes", "comfortable shoes"] :
+                     outfitStyle === 1 ? ["sneakers", "casual shoes"] : ["athletic shoes", "versatile shoes"];
+    const shoes = findFreshItem(shoeTerms, todaysUsedItems);
+    if (shoes) {
+      recommendations.push(shoes);
+      todaysUsedItems.push(shoes.toLowerCase());
+    }
+  }
+  
+  // Rest of the function remains similar but with variety considerations
+  if (timeOfDay === "daytime") {
+    if (weather.temp.high > 85) {
+      const coolDownTips = ["- Remove heavy layers", "- Switch to lighter clothing", "- Consider lighter options"];
+      recommendations.push(coolDownTips[dayIndex % coolDownTips.length]);
+      
+      const hat = findFreshItem(["hat", "cap", "sun hat"], todaysUsedItems);
+      if (hat) recommendations.push(`+ Add ${hat} for UV protection`);
+    } else if (weather.temp.high > 75 && weather.temp.low < 65) {
+      recommendations.push("- Remove heavy jacket if worn");
+      if (weather.uvIndex && weather.uvIndex > 6) {
+        const sunglasses = findFreshItem(["sunglasses"], todaysUsedItems);
+        const hat = findFreshItem(["hat", "cap"], todaysUsedItems);
+        if (sunglasses) recommendations.push(`+ Add ${sunglasses}`);
+        if (hat) recommendations.push(`+ Add ${hat}`);
+      }
+    }
+    
+    if (weather.uvIndex && weather.uvIndex > 6) {
+      const sunscreen = findFreshItem(["sunscreen", "SPF"], todaysUsedItems);
+      if (sunscreen) recommendations.push(`+ Add ${sunscreen}`);
+    }
+  }
+  
+  if (timeOfDay === "evening") {
+    if (weather.temp.low < 65) {
+      const lightJacket = findFreshItem(["light jacket", "cardigan", "sweater"], todaysUsedItems);
+      if (lightJacket) recommendations.push(`+ Add ${lightJacket} for cooling evening`);
+    }
+    
+    const hasEveningDining = activities.some(a => a.toLowerCase().includes("din"));
+    if (hasEveningDining) {
+      const smartCasual = findFreshItem(["business", "formal", "smart casual", "dress"], todaysUsedItems);
+      if (smartCasual) recommendations.push(`+ Add ${smartCasual} for dining`);
+    }
+  }
+  
+  if (weather.precipitation > 0) {
+    const rainGear = findFreshItem(["rain jacket", "waterproof", "umbrella"], todaysUsedItems);
+    if (rainGear) recommendations.push(rainGear);
+  }
+  
+  return recommendations;
 }
 
 // Generate recommendations using only items from the packing list
