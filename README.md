@@ -10,21 +10,26 @@ Packing Assistant is an AI-integrated website designed to help users pack effici
 ### 1. Creating a Packing List
 
 **Start New Trip**
+
 User selects “Create New Trip” on mobile or web.
 
 **Enter Trip Details**
+
 Input destination, dates, trip type (business, leisure, adventure), luggage size, and planned activities.
 
 **Review AI-Generated List**
+
 Packing Assistant generates a tailored packing list, including recommended quantities for clothing and essentials.
 
 
 ### 2. Receiving Recommendations
 
 **AI Analysis**
+
 Based on trip details, Packing Assistant analyzes weather, duration, and activities.
 
 **Clothing Calculator**
+
 Suggests how many shirts, pants, undergarments, etc., are needed.
 
 
