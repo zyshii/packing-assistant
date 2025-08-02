@@ -11,7 +11,7 @@ function runCommand(command, args) {
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, {
       stdio: 'inherit',
-      shell: true
+      shell: false
     });
 
     child.on('close', (code) => {
