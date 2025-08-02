@@ -2,6 +2,10 @@
 
 Packing Assistant is an AI-integrated website designed to help users pack efficiently and confidently for any trip. By leveraging automation and personalization, it ensures users know exactly how many clothes and essentials to bring—eliminating the stress of forgetting items or overpacking. The core value is to provide peace of mind and a streamlined packing experience, tailored to each user’s trip details and preferences.
 
+## Website
+
+[https://packing-assistant.replit.app](https://packing-assistant.replit.app)
+
 
 # Key Features
 
@@ -38,6 +42,7 @@ Suggests how many shirts, pants, undergarments, etc., are needed.
 ### Smart Packing List Generator
 
 User inputs trip details; Packing Assistant uses AI to generate a comprehensive list, factoring in trip length, destination, and activities.
+
 
 ### AI-Driven Clothing Calculator
 
