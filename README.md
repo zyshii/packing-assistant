@@ -1,6 +1,6 @@
 # Overview
 
-Packing Assistant is an AI-integrated website designed to help users pack efficiently and confidently for any trip. By leveraging automation and personalization, it ensures users know exactly how many clothes and essentials to bring—eliminating the stress of forgetting items or overpacking. The core value is to provide peace of mind and a streamlined packing experience, tailored to each user’s trip details and preferences.
+Packing Assistant is a website designed to help users pack efficiently and confidently for any trip. By leveraging automation and personalization, it ensures users know exactly how many clothes and essentials to bring—eliminating the stress of forgetting items or overpacking. The core value is to provide peace of mind and a streamlined packing experience, tailored to each user’s trip details and preferences.
 
 
 ## Tools Used
@@ -24,12 +24,12 @@ This is a vibe-coded product that leverages various AI tools. I used ChatGPT and
 
 - **Enter Trip Details:** Input destination, dates, trip type (business, leisure, adventure), luggage size, and planned activities.
 
-- **Review AI-Generated List:** Packing Assistant generates a tailored packing list, including recommended quantities for clothing and essentials.
+- **Review Generated List:** Packing Assistant generates a tailored packing list, including recommended quantities for clothing and essentials.
 
 
 ### Step 2: Receiving Recommendations
 
-- **AI Analysis:** Based on trip details, Packing Assistant analyzes weather, duration, and activities.
+- **Intelligent Analysis:** Based on trip details, Packing Assistant analyzes weather, duration, and activities.
 
 - **Clothing Calculator:** Suggests how many shirts, pants, undergarments, etc., are needed.
 
@@ -40,12 +40,12 @@ This is a vibe-coded product that leverages various AI tools. I used ChatGPT and
 
 ### Smart Packing List Generator
 
-User inputs trip details; Packing Assistant uses AI to generate a comprehensive list, factoring in trip length, destination, and activities.
+User inputs trip details; Packing Assistant uses self-contained, dataset-based engine to generate a comprehensive list, factoring in trip length, destination, and activities. This system replaces external API dependencies for recommendations, ensuring reliability and cost-effectiveness.
 
 
-### AI-Driven Clothing Calculator
+### Clothing Calculator
 
-AI calculates the optimal number of clothing items based on trip duration, weather forecasts, and planned activities.
+Packing Assistant calculates the optimal number of clothing items based on trip duration, weather forecasts, and planned activities.
 
 
 ### Weather & Activity Integration
@@ -55,7 +55,7 @@ Pulls real-time weather data and considers planned activities to adjust packing 
 
 ## User Experience Considerations
 
-- **Stress Reduction:** Automated, AI-driven lists eliminate last-minute packing anxiety and the fear of forgetting essentials.
+- **Stress Reduction:** Automated lists eliminate last-minute packing anxiety and the fear of forgetting essentials.
 - **Confidence Boost:** Visual progress tracking and personalized recommendations ensure users feel prepared for their trip.
 - **Simplicity:** Clean, intuitive interface makes the process straightforward for all user types.
 - **Personal Touch:** Remembered preferences and custom items make each packing experience feel tailored and relevant.
