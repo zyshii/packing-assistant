@@ -1,6 +1,8 @@
+import OpenAI from "openai";
 import { z } from "zod";
 
-// Mock AI service - no external API keys required
+// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // Schemas for agent responses
 const dailyClothingRecommendationSchema = z.object({
@@ -91,29 +93,59 @@ export async function generateDailyClothingRecommendations(
   tripContext: TripContext
 ): Promise<DailyClothingRecommendation[]> {
   try {
-    // Generate smart recommendations based on weather and activities
-    return tripContext.dailyData.map(day => {
-      const recommendations = generateRecommendationsForDay(day, tripContext);
-      
-      const dailyRec: DailyClothingRecommendation = {
-        date: day.date,
-        activities: day.activities,
-        weather: {
-          condition: day.condition,
-          temperatureHigh: day.temp.high,
-          temperatureLow: day.temp.low,
-          uvIndex: day.uvIndex,
-          precipitation: day.precipitation
+    const prompt = `Analyze this travel itinerary and provide detailed daily clothing recommendations:
+
+Trip Details:
+- Destination: ${tripContext.destination}
+- Duration: ${tripContext.duration} days
+- Trip Types: ${tripContext.tripTypes.join(', ')}
+- Luggage Size: ${tripContext.luggageSize}
+
+Daily Weather & Activities:
+${tripContext.dailyData.map(day => `
+Date: ${day.date}
+Weather: ${day.condition}, High: ${day.temp.high}°F, Low: ${day.temp.low}°F${day.uvIndex ? `, UV: ${day.uvIndex}` : ''}, Precipitation: ${day.precipitation}mm
+Activities: ${day.activities.length > 0 ? day.activities.join(', ') : 'No specific activities planned'}
+`).join('')}
+
+For each day, provide:
+1. Morning clothing recommendations (consider temperature and planned activities)
+2. Daytime clothing recommendations (peak temperature and main activities)
+3. Evening clothing recommendations (temperature drop and evening activities)
+4. Activity-specific gear (swimming gear for beach days, formal wear for business, hiking gear for outdoor activities)
+5. Priority items that are absolutely essential for that day
+
+Focus on practical, weather-appropriate clothing that matches the specific activities planned for each day. Be specific about items (e.g., "waterproof hiking boots" not just "shoes").
+
+Respond with a JSON array containing one object per day.`;
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "You are a professional travel packing consultant with expertise in weather-appropriate clothing and activity-specific gear. Provide practical, detailed recommendations in JSON format."
         },
-        recommendations,
-        priorities: generatePriorities(day, tripContext)
-      };
-      
-      return dailyClothingRecommendationSchema.parse(dailyRec);
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
     });
+
+    const result = JSON.parse(response.choices[0].message.content || '{"days": []}');
+    
+    // Validate and return the recommendations
+    if (result.days && Array.isArray(result.days)) {
+      return result.days.map((day: any) => dailyClothingRecommendationSchema.parse(day));
+    }
+    
+    return [];
   } catch (error) {
     console.error("Error generating daily clothing recommendations:", error);
-    throw new Error("Failed to generate clothing recommendations");
+    throw new Error("Failed to generate agent-powered clothing recommendations");
   }
 }
 
@@ -122,21 +154,61 @@ export async function optimizePackingList(
   dailyRecommendations: DailyClothingRecommendation[]
 ): Promise<PackingListOptimization> {
   try {
-    // Generate optimized packing list based on trip context and daily recommendations
-    const optimizedList = generateOptimizedPackingList(tripContext, dailyRecommendations);
-    const luggageOptimization = generateLuggageOptimization(tripContext);
-    const summary = generatePackingSummary(tripContext, dailyRecommendations);
-    
-    const result = {
-      optimizedList,
-      luggageOptimization,
-      summary
-    };
-    
+    const prompt = `Optimize a packing list for this trip based on daily clothing recommendations:
+
+Trip Context:
+- Destination: ${tripContext.destination}
+- Duration: ${tripContext.duration} days
+- Trip Types: ${tripContext.tripTypes.join(', ')}
+- Luggage Size: ${tripContext.luggageSize}
+
+Daily Recommendations Summary:
+${dailyRecommendations.map(day => `
+${day.date}: Activities: ${day.activities.join(', ')}
+Weather: ${day.weather.condition} (${day.weather.temperatureLow}-${day.weather.temperatureHigh}°F)
+Key Items: ${day.priorities.join(', ')}
+`).join('')}
+
+Create an optimized packing list that:
+1. Consolidates similar items across days to minimize redundancy
+2. Prioritizes items based on weather conditions and activities
+3. Considers luggage size constraints (${tripContext.luggageSize})
+4. Includes quantity recommendations based on trip duration
+5. Provides space-saving alternatives where applicable
+
+For each category (tops, bottoms, outerwear, footwear, accessories, essentials):
+- List specific items with quantities
+- Mark priority level (essential, recommended, optional)
+- Explain why each item is needed
+
+Also provide:
+- Estimated luggage space utilization (0-100%)
+- Packing tips for the specific luggage size
+- Alternative items to save space if needed
+
+Focus on versatile items that work for multiple activities and weather conditions.`;
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "You are a professional travel packing optimization expert. Create efficient, luggage-size-appropriate packing lists with detailed reasoning for each recommendation."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.2
+    });
+
+    const result = JSON.parse(response.choices[0].message.content || '{}');
     return packingListOptimizationSchema.parse(result);
   } catch (error) {
     console.error("Error optimizing packing list:", error);
-    throw new Error("Failed to generate optimized packing list");
+    throw new Error("Failed to generate agent-optimized packing list");
   }
 }
 
@@ -150,258 +222,42 @@ export async function getActivitySpecificRecommendations(
       return [];
     }
 
-    // Generate activity-specific recommendations based on activities and weather
-    const recommendations: string[] = [];
-    
-    activities.forEach(activity => {
-      const activityRecs = getRecommendationsForActivity(activity, weather, destination);
-      recommendations.push(...activityRecs);
+    const prompt = `Provide specific clothing and gear recommendations for these activities:
+
+Activities: ${activities.join(', ')}
+Weather: ${weather.condition}, ${weather.temperatureLow}-${weather.temperatureHigh}°F${weather.uvIndex ? `, UV: ${weather.uvIndex}` : ''}, ${weather.precipitation}mm precipitation
+Location: ${destination}
+
+For each activity, consider:
+1. Safety requirements (UV protection, waterproofing, etc.)
+2. Performance needs (breathability, flexibility, durability)
+3. Weather conditions
+4. Local customs or dress codes
+
+Provide a list of specific items needed for optimal comfort and performance. Be practical and specific (e.g., "quick-dry swim shorts" not just "swimwear").
+
+Respond with a JSON object containing an array of recommended items.`;
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: "You are a sports and activity gear specialist. Provide specific, practical recommendations for activity-appropriate clothing and equipment."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.3
     });
-    
-    // Remove duplicates
-    return Array.from(new Set(recommendations));
+
+    const result = JSON.parse(response.choices[0].message.content || '{"recommendations": []}');
+    return Array.isArray(result.recommendations) ? result.recommendations : [];
   } catch (error) {
     console.error("Error getting activity-specific recommendations:", error);
     return [];
   }
-}
-
-// Helper functions to replace OpenAI functionality with smart logic
-function generateRecommendationsForDay(day: any, tripContext: TripContext) {
-  const { temp, condition, precipitation, uvIndex } = day;
-  const isCold = temp.high < 50;
-  const isWarm = temp.high > 75;
-  const isRainy = precipitation > 0;
-  const isSunny = condition.toLowerCase().includes('sunny') || condition.toLowerCase().includes('clear');
-  
-  const morning = [];
-  const daytime = [];
-  const evening = [];
-  const activitySpecific = [];
-  
-  // Base layer recommendations
-  if (isCold) {
-    morning.push("Thermal base layer", "Warm jacket or coat");
-    daytime.push("Insulated jacket", "Warm pants or jeans");
-    evening.push("Heavy sweater or hoodie", "Warm outerwear");
-  } else if (isWarm) {
-    morning.push("Light t-shirt or tank top", "Shorts or light pants");
-    daytime.push("Breathable shirt", "Comfortable shorts");
-    evening.push("Light cardigan or light jacket");
-  } else {
-    morning.push("Long-sleeve shirt", "Light jacket");
-    daytime.push("Comfortable shirt", "Jeans or chinos");
-    evening.push("Sweater or light jacket");
-  }
-  
-  // Weather-specific additions
-  if (isRainy) {
-    morning.push("Waterproof jacket", "Umbrella");
-    daytime.push("Rain-resistant footwear");
-    evening.push("Water-resistant outerwear");
-  }
-  
-  if (isSunny && (uvIndex || 0) > 6) {
-    daytime.push("Sunglasses", "Sun hat", "Sunscreen");
-    activitySpecific.push("UV-protective clothing");
-  }
-  
-  // Activity-specific recommendations
-  day.activities.forEach((activity: string) => {
-    const activityRecs = getRecommendationsForActivity(activity, { 
-      condition, 
-      temperatureHigh: temp.high, 
-      temperatureLow: temp.low, 
-      uvIndex,
-      precipitation 
-    }, tripContext.destination);
-    activitySpecific.push(...activityRecs);
-  });
-  
-  return { morning, daytime, evening, activitySpecific };
-}
-
-function generatePriorities(day: any, tripContext: TripContext): string[] {
-  const priorities = [];
-  const { temp, condition, precipitation } = day;
-  
-  if (temp.high < 40) {
-    priorities.push("Warm coat", "Insulated boots", "Gloves");
-  } else if (temp.high > 85) {
-    priorities.push("Sun protection", "Light breathable clothing", "Hat");
-  }
-  
-  if (precipitation > 5) {
-    priorities.push("Waterproof jacket", "Umbrella", "Water-resistant shoes");
-  }
-  
-  if (day.activities.includes('business')) {
-    priorities.push("Business attire", "Dress shoes");
-  }
-  
-  if (day.activities.includes('hiking')) {
-    priorities.push("Hiking boots", "Moisture-wicking clothes", "Backpack");
-  }
-  
-  if (day.activities.includes('swimming')) {
-    priorities.push("Swimwear", "Towel", "Flip-flops");
-  }
-  
-  return priorities;
-}
-
-function getRecommendationsForActivity(activity: string, weather: any, destination: string): string[] {
-  const recommendations: string[] = [];
-  const activityLower = activity.toLowerCase();
-  
-  if (activityLower.includes('hiking')) {
-    recommendations.push("Hiking boots", "Moisture-wicking shirt", "Hiking pants", "Day pack", "Water bottle");
-    if (weather.precipitation > 0) {
-      recommendations.push("Waterproof hiking jacket");
-    }
-  }
-  
-  if (activityLower.includes('swimming') || activityLower.includes('beach')) {
-    recommendations.push("Swimwear", "Beach towel", "Flip-flops", "Waterproof bag");
-    if (weather.uvIndex && weather.uvIndex > 6) {
-      recommendations.push("Rash guard", "Wide-brim hat");
-    }
-  }
-  
-  if (activityLower.includes('business') || activityLower.includes('meeting')) {
-    recommendations.push("Business suit or dress", "Dress shoes", "Professional accessories");
-  }
-  
-  if (activityLower.includes('dinner') || activityLower.includes('restaurant')) {
-    recommendations.push("Nice casual or semi-formal outfit", "Comfortable dress shoes");
-  }
-  
-  if (activityLower.includes('outdoor') || activityLower.includes('adventure')) {
-    recommendations.push("Quick-dry clothing", "Sturdy shoes", "Hat", "Sunglasses");
-  }
-  
-  return recommendations;
-}
-
-function generateOptimizedPackingList(tripContext: TripContext, dailyRecommendations: DailyClothingRecommendation[]) {
-  const duration = tripContext.duration;
-  const isCarryOn = tripContext.luggageSize === 'carry-on';
-  
-  // Calculate item frequencies and priorities
-  const itemCounts = new Map<string, number>();
-  const priorities = new Set<string>();
-  
-  dailyRecommendations.forEach(day => {
-    day.priorities.forEach(item => priorities.add(item));
-    [...day.recommendations.morning, ...day.recommendations.daytime, 
-     ...day.recommendations.evening, ...day.recommendations.activitySpecific]
-      .forEach(item => {
-        itemCounts.set(item, (itemCounts.get(item) || 0) + 1);
-      });
-  });
-  
-  return {
-    tops: generateCategoryItems('tops', duration, isCarryOn, itemCounts, priorities),
-    bottoms: generateCategoryItems('bottoms', duration, isCarryOn, itemCounts, priorities),
-    outerwear: generateCategoryItems('outerwear', duration, isCarryOn, itemCounts, priorities),
-    footwear: generateCategoryItems('footwear', duration, isCarryOn, itemCounts, priorities),
-    accessories: generateCategoryItems('accessories', duration, isCarryOn, itemCounts, priorities),
-    essentials: generateCategoryItems('essentials', duration, isCarryOn, itemCounts, priorities)
-  };
-}
-
-function generateCategoryItems(category: string, duration: number, isCarryOn: boolean, itemCounts: Map<string, number>, priorities: Set<string>) {
-  const items = [];
-  const maxQuantity = isCarryOn ? Math.min(duration, 7) : duration;
-  
-  switch (category) {
-    case 'tops':
-      items.push(
-        { item: "T-shirts", quantity: Math.min(maxQuantity, duration), priority: "essential" as const, reason: "Daily wear essential" },
-        { item: "Long-sleeve shirts", quantity: Math.min(2, Math.ceil(duration / 3)), priority: "recommended" as const, reason: "Versatile for weather changes" }
-      );
-      break;
-    case 'bottoms':
-      items.push(
-        { item: "Jeans or pants", quantity: Math.min(2, Math.ceil(duration / 2)), priority: "essential" as const, reason: "Versatile daily wear" },
-        { item: "Shorts", quantity: duration > 3 ? 2 : 1, priority: "recommended" as const, reason: "Warm weather option" }
-      );
-      break;
-    case 'outerwear':
-      items.push(
-        { item: "Light jacket", quantity: 1, priority: "essential" as const, reason: "Weather protection" }
-      );
-      break;
-    case 'footwear':
-      items.push(
-        { item: "Comfortable walking shoes", quantity: 1, priority: "essential" as const, reason: "Daily activities" },
-        { item: "Dress shoes", quantity: 1, priority: "optional" as const, reason: "Formal occasions" }
-      );
-      break;
-    case 'accessories':
-      items.push(
-        { item: "Sunglasses", quantity: 1, priority: "recommended" as const, reason: "Sun protection" },
-        { item: "Hat", quantity: 1, priority: "recommended" as const, reason: "Weather protection" }
-      );
-      break;
-    case 'essentials':
-      items.push(
-        { item: "Underwear", quantity: duration + 1, priority: "essential" as const, reason: "Hygiene essential" },
-        { item: "Socks", quantity: duration + 1, priority: "essential" as const, reason: "Daily comfort" }
-      );
-      break;
-  }
-  
-  return items;
-}
-
-function generateLuggageOptimization(tripContext: TripContext) {
-  const isCarryOn = tripContext.luggageSize === 'carry-on';
-  const duration = tripContext.duration;
-  
-  const spaceUtilization = isCarryOn ? Math.min(85, duration * 10 + 30) : Math.min(70, duration * 8 + 20);
-  
-  const packingTips = [];
-  const alternatives = [];
-  
-  if (isCarryOn) {
-    packingTips.push(
-      "Roll clothes instead of folding to save 30% space",
-      "Use packing cubes for organization",
-      "Wear heaviest items while traveling"
-    );
-    alternatives.push(
-      "Quick-dry fabrics instead of heavy materials",
-      "Multi-purpose items (sarong as towel/blanket)",
-      "Leave space for souvenirs by packing minimally"
-    );
-  } else {
-    packingTips.push(
-      "Use all available pockets and compartments",
-      "Pack similar items together",
-      "Keep essentials in easy-to-access areas"
-    );
-    alternatives.push(
-      "Pack one nice outfit that works for multiple occasions",
-      "Bring versatile shoes that work for multiple activities"
-    );
-  }
-  
-  return {
-    spaceUtilization,
-    packingTips,
-    alternatives
-  };
-}
-
-function generatePackingSummary(tripContext: TripContext, dailyRecommendations: DailyClothingRecommendation[]): string {
-  const destination = tripContext.destination;
-  const duration = tripContext.duration;
-  const activities = Array.from(new Set(dailyRecommendations.flatMap(day => day.activities)));
-  const weatherConditions = Array.from(new Set(dailyRecommendations.map(day => day.weather.condition)));
-  
-  return `Optimized packing list for ${duration}-day trip to ${destination}. ` +
-         `Weather conditions: ${weatherConditions.join(', ')}. ` +
-         `Activities planned: ${activities.length > 0 ? activities.join(', ') : 'leisure activities'}. ` +
-         `Pack versatile, weather-appropriate items that can be mixed and matched for different occasions.`;
 }
