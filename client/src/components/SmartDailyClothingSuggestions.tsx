@@ -405,8 +405,10 @@ export default function SmartDailyClothingSuggestions({
                                       <span>
                                         {item.startsWith('- Remove') || item.startsWith('-') ? 
                                           `Remove ${item.replace(/^[+-]\s*(Remove|Add)\s*/, '')}` :
-                                         item.startsWith('+ Add') || item.startsWith('+') ?
-                                          `Add ${item.replace(/^[+-]\s*(Remove|Add)\s*/, '')}` :
+                                         item.startsWith('+ Add') ?
+                                          item.replace(/^\+ Add /, '') :
+                                         item.startsWith('+') ?
+                                          item.replace(/^\+ /, '') :
                                           item
                                         }
                                       </span>
@@ -438,8 +440,10 @@ export default function SmartDailyClothingSuggestions({
                                       <span>
                                         {item.startsWith('- Remove') || item.startsWith('-') ? 
                                           `Remove ${item.replace(/^[+-]\s*(Remove|Add)\s*/, '')}` :
-                                         item.startsWith('+ Add') || item.startsWith('+') ?
-                                          `Add ${item.replace(/^[+-]\s*(Remove|Add)\s*/, '')}` :
+                                         item.startsWith('+ Add') ?
+                                          item.replace(/^\+ Add /, '') :
+                                         item.startsWith('+') ?
+                                          item.replace(/^\+ /, '') :
                                           item
                                         }
                                       </span>
