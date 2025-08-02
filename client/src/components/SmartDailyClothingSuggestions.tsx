@@ -275,16 +275,16 @@ export default function SmartDailyClothingSuggestions({
       </div>
 
       {/* Enhanced Daily Clothing Suggestions */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-5 border-b border-gray-200">
+      <div className="bg-card rounded-2xl border border-border shadow-card overflow-hidden">
+        <div className="bg-gradient-to-r from-success-light to-info-light px-6 py-5 border-b border-border">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-12 h-12 bg-white rounded-xl shadow-sm">
+              <div className="flex items-center justify-center w-12 h-12 bg-card rounded-xl shadow-soft">
                 <span className="text-2xl">👕</span>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900">Daily Clothing Suggestions</h3>
-                <p className="text-sm text-gray-600 mt-1">💡 Start with your complete morning outfit, then add or remove layers as temperatures change throughout the day</p>
+                <h3 className="text-xl font-bold text-foreground">Daily Clothing Suggestions</h3>
+                <p className="text-sm text-muted-foreground mt-1">💡 Start with your complete morning outfit, then add or remove layers as temperatures change throughout the day</p>
               </div>
             </div>
 
@@ -297,22 +297,22 @@ export default function SmartDailyClothingSuggestions({
               const smartDay = smartDailyRecommendations?.find((smart: any) => smart.date === day.date);
               
               return (
-                <div key={dayIndex} className="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
-                  <div className="px-6 py-4 bg-white border-b border-gray-200">
+                <div key={dayIndex} className="bg-surface rounded-xl border border-border overflow-hidden">
+                  <div className="px-6 py-4 bg-card border-b border-border">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="flex items-center justify-center w-10 h-10 bg-blue-50 rounded-lg">
+                        <div className="flex items-center justify-center w-10 h-10 bg-info-light rounded-lg">
                           {getWeatherIcon(day.condition)}
                         </div>
                         <div>
-                          <h4 className="font-semibold text-gray-900 text-lg">{day.date}</h4>
-                          <div className="flex items-center gap-3 text-sm text-gray-600 mt-1">
+                          <h4 className="font-semibold text-foreground text-lg">{day.date}</h4>
+                          <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
                             <span className="capitalize font-medium">{day.condition}</span>
-                            <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                            <span className="w-1 h-1 bg-muted-foreground rounded-full"></span>
                             <span className="font-semibold">{day.temp.low}°-{day.temp.high}°F</span>
                             {day.uvIndex && (
                               <>
-                                <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                                <span className="w-1 h-1 bg-muted-foreground rounded-full"></span>
                                 <span className="flex items-center gap-1">
                                   <span>☀️</span> UV {day.uvIndex}
                                 </span>
@@ -320,7 +320,7 @@ export default function SmartDailyClothingSuggestions({
                             )}
                             {day.precipitation > 0 && (
                               <>
-                                <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                                <span className="w-1 h-1 bg-muted-foreground rounded-full"></span>
                                 <span className="flex items-center gap-1">
                                   <span>🌧️</span> {day.precipitation}mm
                                 </span>
@@ -328,7 +328,7 @@ export default function SmartDailyClothingSuggestions({
                             )}
                           </div>
                           {smartDay?.weatherDetails && smartDay.weatherDetails.tips.length > 0 && (
-                            <p className="text-xs text-gray-600 mt-2 leading-relaxed">
+                            <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
                               {smartDay.weatherDetails.tips.join('. ')}.
                             </p>
                           )}
@@ -341,14 +341,14 @@ export default function SmartDailyClothingSuggestions({
                     <div className="space-y-6">
                       {/* Activities */}
                       {day.activities.length > 0 && (
-                        <div className="bg-white rounded-lg p-4 border border-gray-200">
+                        <div className="bg-card rounded-lg p-4 border border-border">
                           <div className="flex items-center gap-2 mb-3">
                             <span className="text-lg">🎯</span>
-                            <h6 className="font-semibold text-gray-900">Today's Activities</h6>
+                            <h6 className="font-semibold text-foreground">Today's Activities</h6>
                           </div>
                           <div className="flex flex-wrap gap-2">
                             {day.activities.map((activity, index) => (
-                              <span key={index} className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
+                              <span key={index} className="bg-info-light text-info px-3 py-1 rounded-full text-sm font-medium">
                                 {activity}
                               </span>
                             ))}
@@ -362,22 +362,22 @@ export default function SmartDailyClothingSuggestions({
                       {smartDay && !hasError ? (
                         <div className="space-y-4">
                           {/* Start Your Day With */}
-                          <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                          <div className="bg-info-light rounded-lg p-4 border border-info/20">
                             <div className="flex items-center gap-2 mb-3">
-                              <Shirt className="h-4 w-4 text-blue-600" />
-                              <h6 className="font-semibold text-blue-900 text-sm">Start Your Day With</h6>
-                              <span className="text-xs text-blue-700 ml-auto">Morning: {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F</span>
+                              <Shirt className="h-4 w-4 text-info" />
+                              <h6 className="font-semibold text-info text-sm">Start Your Day With</h6>
+                              <span className="text-xs text-info/80 ml-auto">Morning: {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F</span>
                             </div>
                             <ul className="space-y-1">
                               {smartDay.recommendations?.base?.length > 0 ? (
                                 smartDay.recommendations.base.map((item: string, index: number) => (
-                                  <li key={index} className="text-sm text-blue-700 flex items-start gap-2">
-                                    <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
+                                  <li key={index} className="text-sm text-info flex items-start gap-2">
+                                    <span className="text-info/70 mt-0.5 flex-shrink-0">•</span>
                                     <span>{item}</span>
                                   </li>
                                 ))
                               ) : (
-                                <li className="text-sm text-blue-600 italic">
+                                <li className="text-sm text-info/80 italic">
                                   Basic clothing for {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F
                                 </li>
                               )}
@@ -387,17 +387,17 @@ export default function SmartDailyClothingSuggestions({
                           {/* Layering Options */}
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {/* Daytime Adjustments */}
-                            <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
+                            <div className="bg-warning-light rounded-lg p-4 border border-warning/20">
                               <div className="flex items-center gap-2 mb-3">
-                                <Sun className="h-4 w-4 text-orange-600" />
-                                <h6 className="font-semibold text-orange-900 text-sm">As Temperature Rises</h6>
-                                <span className="text-xs text-orange-700 ml-auto">Peak: {Math.round(day.temp.high)}°F</span>
+                                <Sun className="h-4 w-4 text-warning" />
+                                <h6 className="font-semibold text-warning text-sm">As Temperature Rises</h6>
+                                <span className="text-xs text-warning/80 ml-auto">Peak: {Math.round(day.temp.high)}°F</span>
                               </div>
                               <ul className="space-y-1">
                                 {smartDay.recommendations?.daytime?.length > 0 ? (
                                   smartDay.recommendations.daytime.map((item: string, index: number) => (
-                                    <li key={index} className="text-sm text-orange-700 flex items-start gap-2">
-                                      <span className="text-orange-500 mt-0.5 flex-shrink-0 font-semibold">
+                                    <li key={index} className="text-sm text-warning flex items-start gap-2">
+                                      <span className="text-warning/70 mt-0.5 flex-shrink-0 font-semibold">
                                         {item.startsWith('- Remove') || item.startsWith('-') ? '−' : 
                                          item.startsWith('+ Add') || item.startsWith('+') ? '+' : '•'}
                                       </span>
@@ -412,7 +412,7 @@ export default function SmartDailyClothingSuggestions({
                                     </li>
                                   ))
                                 ) : (
-                                  <li className="text-sm text-orange-600 italic">
+                                  <li className="text-sm text-warning/80 italic">
                                     Stay comfortable in your base layers
                                   </li>
                                 )}
@@ -420,17 +420,17 @@ export default function SmartDailyClothingSuggestions({
                             </div>
 
                             {/* Evening Adjustments */}
-                            <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                            <div className="bg-accent-light rounded-lg p-4 border border-neutral/20">
                               <div className="flex items-center gap-2 mb-3">
-                                <Moon className="h-4 w-4 text-purple-600" />
-                                <h6 className="font-semibold text-purple-900 text-sm">As Temperature Drops</h6>
-                                <span className="text-xs text-purple-700 ml-auto">Evening: {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.7)}°F</span>
+                                <Moon className="h-4 w-4 text-neutral" />
+                                <h6 className="font-semibold text-neutral text-sm">As Temperature Drops</h6>
+                                <span className="text-xs text-neutral/80 ml-auto">Evening: {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.7)}°F</span>
                               </div>
                               <ul className="space-y-1">
                                 {smartDay.recommendations?.evening?.length > 0 ? (
                                   smartDay.recommendations.evening.map((item: string, index: number) => (
-                                    <li key={index} className="text-sm text-purple-700 flex items-start gap-2">
-                                      <span className="text-purple-500 mt-0.5 flex-shrink-0 font-semibold">
+                                    <li key={index} className="text-sm text-neutral flex items-start gap-2">
+                                      <span className="text-neutral/70 mt-0.5 flex-shrink-0 font-semibold">
                                         {item.startsWith('- Remove') || item.startsWith('-') ? '−' : 
                                          item.startsWith('+ Add') || item.startsWith('+') ? '+' : '•'}
                                       </span>
@@ -445,7 +445,7 @@ export default function SmartDailyClothingSuggestions({
                                     </li>
                                   ))
                                 ) : (
-                                  <li className="text-sm text-purple-600 italic">
+                                  <li className="text-sm text-neutral/80 italic">
                                     Your base layers should be sufficient
                                   </li>
                                 )}
@@ -454,44 +454,44 @@ export default function SmartDailyClothingSuggestions({
                           </div>
                         </div>
                       ) : (
-                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                          <h6 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                        <div className="bg-surface rounded-lg p-4 border border-border">
+                          <h6 className="font-semibold text-foreground mb-3 flex items-center gap-2">
                             <span className="text-lg">📋</span> Basic Recommendations
                           </h6>
                           <ul className="space-y-2">
                             {day.temp.low < 60 && (
-                              <li className="text-sm text-gray-700 flex items-start gap-2">
-                                <span className="text-gray-500 mt-0.5 flex-shrink-0">•</span>
+                              <li className="text-sm text-muted-foreground flex items-start gap-2">
+                                <span className="text-muted-foreground/70 mt-0.5 flex-shrink-0">•</span>
                                 <span>Long-sleeve shirts and light jacket for cool weather</span>
                               </li>
                             )}
                             {day.temp.high >= 75 && (
-                              <li className="text-sm text-gray-700 flex items-start gap-2">
-                                <span className="text-gray-500 mt-0.5 flex-shrink-0">•</span>
+                              <li className="text-sm text-muted-foreground flex items-start gap-2">
+                                <span className="text-muted-foreground/70 mt-0.5 flex-shrink-0">•</span>
                                 <span>Light, breathable clothing and sun protection</span>
                               </li>
                             )}
                             {day.condition === 'rainy' && (
-                              <li className="text-sm text-gray-700 flex items-start gap-2">
-                                <span className="text-gray-500 mt-0.5 flex-shrink-0">•</span>
+                              <li className="text-sm text-muted-foreground flex items-start gap-2">
+                                <span className="text-muted-foreground/70 mt-0.5 flex-shrink-0">•</span>
                                 <span>Waterproof jacket and closed shoes</span>
                               </li>
                             )}
                             {day.activities.some(a => a.toLowerCase().includes('swimming')) && (
-                              <li className="text-sm text-gray-700 flex items-start gap-2">
-                                <span className="text-gray-500 mt-0.5 flex-shrink-0">•</span>
+                              <li className="text-sm text-muted-foreground flex items-start gap-2">
+                                <span className="text-muted-foreground/70 mt-0.5 flex-shrink-0">•</span>
                                 <span>Swimwear and quick-dry clothing</span>
                               </li>
                             )}
                             {day.activities.some(a => a.toLowerCase().includes('business')) && (
-                              <li className="text-sm text-gray-700 flex items-start gap-2">
-                                <span className="text-gray-500 mt-0.5 flex-shrink-0">•</span>
+                              <li className="text-sm text-muted-foreground flex items-start gap-2">
+                                <span className="text-muted-foreground/70 mt-0.5 flex-shrink-0">•</span>
                                 <span>Business attire and formal shoes</span>
                               </li>
                             )}
                             {day.activities.some(a => a.toLowerCase().includes('hiking')) && (
-                              <li className="text-sm text-gray-700 flex items-start gap-2">
-                                <span className="text-gray-500 mt-0.5 flex-shrink-0">•</span>
+                              <li className="text-sm text-muted-foreground flex items-start gap-2">
+                                <span className="text-muted-foreground/70 mt-0.5 flex-shrink-0">•</span>
                                 <span>Sturdy hiking boots and moisture-wicking clothing</span>
                               </li>
                             )}
@@ -502,20 +502,20 @@ export default function SmartDailyClothingSuggestions({
                       {/* Essential Items and Activity Gear */}
                       {((smartDay?.recommendations?.activitySpecific && smartDay.recommendations.activitySpecific.length > 0) || 
                         (smartDay?.priorities && smartDay.priorities.length > 0)) && (
-                        <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                          <h6 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+                        <div className="bg-success-light rounded-lg p-4 border border-success/20">
+                          <h6 className="font-semibold text-success mb-3 flex items-center gap-2">
                             <span className="text-lg">⭐</span> Essential Items & Activity Gear
                           </h6>
                           <ul className="space-y-2">
                             {smartDay?.priorities && smartDay.priorities.map((priority: string, index: number) => (
-                              <li key={`priority-${index}`} className="text-sm text-blue-800 flex items-start gap-2">
-                                <span className="text-blue-600 mt-0.5 flex-shrink-0">•</span>
+                              <li key={`priority-${index}`} className="text-sm text-success flex items-start gap-2">
+                                <span className="text-success/70 mt-0.5 flex-shrink-0">•</span>
                                 <span>{priority}</span>
                               </li>
                             ))}
                             {smartDay?.recommendations?.activitySpecific && smartDay.recommendations.activitySpecific.map((item: string, index: number) => (
-                              <li key={`activity-${index}`} className="text-sm text-blue-800 flex items-start gap-2">
-                                <span className="text-blue-600 mt-0.5 flex-shrink-0">•</span>
+                              <li key={`activity-${index}`} className="text-sm text-success flex items-start gap-2">
+                                <span className="text-success/70 mt-0.5 flex-shrink-0">•</span>
                                 <span>{item}</span>
                               </li>
                             ))}
