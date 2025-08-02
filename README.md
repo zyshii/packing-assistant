@@ -11,30 +11,20 @@ Packing Assistant is an AI-integrated website designed to help users pack effici
 
 ## Primary User Flows
 
-### 1. Creating a Packing List
+### Step 1: Creating a Packing List
 
-**Start New Trip**
+- **Start New Trip:** User selects “Create New Trip” on mobile or web.
 
-User selects “Create New Trip” on mobile or web.
+- **Enter Trip Details:** Input destination, dates, trip type (business, leisure, adventure), luggage size, and planned activities.
 
-**Enter Trip Details**
-
-Input destination, dates, trip type (business, leisure, adventure), luggage size, and planned activities.
-
-**Review AI-Generated List**
-
-Packing Assistant generates a tailored packing list, including recommended quantities for clothing and essentials.
+- **Review AI-Generated List:** Packing Assistant generates a tailored packing list, including recommended quantities for clothing and essentials.
 
 
-### 2. Receiving Recommendations
+### Step 2: Receiving Recommendations
 
-**AI Analysis**
+- **AI Analysis:** Based on trip details, Packing Assistant analyzes weather, duration, and activities.
 
-Based on trip details, Packing Assistant analyzes weather, duration, and activities.
-
-**Clothing Calculator**
-
-Suggests how many shirts, pants, undergarments, etc., are needed.
+- **Clothing Calculator:** Suggests how many shirts, pants, undergarments, etc., are needed.
 
 
 ## Feature Details and Interactions
@@ -48,6 +38,7 @@ User inputs trip details; Packing Assistant uses AI to generate a comprehensive 
 
 AI calculates the optimal number of clothing items based on trip duration, weather forecasts, and planned activities.
 
+
 ### Weather & Activity Integration
 
 Pulls real-time weather data and considers planned activities to adjust packing suggestions (e.g., rain jacket for rainy forecasts). Users can specify activities (e.g., hiking, swimming) for more accurate recommendations.
@@ -59,4 +50,11 @@ Pulls real-time weather data and considers planned activities to adjust packing 
 - **Confidence Boost:** Visual progress tracking and personalized recommendations ensure users feel prepared for their trip.
 - **Simplicity:** Clean, intuitive interface makes the process straightforward for all user types.
 - **Personal Touch:** Remembered preferences and custom items make each packing experience feel tailored and relevant.
+
+
+# Next Steps
+- **Clothing Calculation Improvement:** Enhance dataset weighting to ensure users can pack an appropriate amount of clothing.
+- **Save & Export Functionality:** Ensures users can access their lists anytime, anywhere.
+- **Packing Reminders & Notifications:** Push/email notifications to remind users to start packing and finalize their list before departure.
+- **Multi-trip & Group Management:** Allow users to plan for multiple destinations and their group members.
 
