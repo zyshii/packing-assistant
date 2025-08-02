@@ -314,6 +314,30 @@ function deduplicateRecommendations(recommendations: string[]): string[] {
         break;
       }
       
+      // Check for similar rain gear items
+      if ((normalized.includes('rain') || normalized.includes('waterproof')) && 
+          (seenItem.includes('rain') || seenItem.includes('waterproof'))) {
+        isDuplicate = true;
+        break;
+      }
+      
+      // Check for similar sun protection items
+      if ((normalized.includes('sunscreen') || normalized.includes('spf')) && 
+          (seenItem.includes('sunscreen') || seenItem.includes('spf'))) {
+        isDuplicate = true;
+        break;
+      }
+      
+      // Check for similar footwear items
+      if ((normalized.includes('shoes') || normalized.includes('boots')) && 
+          (seenItem.includes('shoes') || seenItem.includes('boots'))) {
+        // Allow different types of footwear but prevent exact duplicates
+        if (normalized.split(' ').some(word => seenItem.split(' ').includes(word) && word.length > 3)) {
+          isDuplicate = true;
+          break;
+        }
+      }
+      
       // Check for similar moisture-wicking items
       if (normalized.includes('moisture-wicking') && seenItem.includes('moisture-wicking')) {
         isDuplicate = true;
@@ -705,9 +729,10 @@ function generateVariedPackingListRecommendations(
     }
   }
   
-  if (weather.precipitation > 0) {
+  // Only recommend rain gear if there's significant precipitation (> 1mm)
+  if (weather.precipitation > 1.0) {
     const rainGear = findFreshItem(["rain jacket", "waterproof", "umbrella"], todaysUsedItems);
-    if (rainGear) recommendations.push(rainGear);
+    if (rainGear) recommendations.push(`Rain protection: ${rainGear}`);
   }
   
   return recommendations;
@@ -919,46 +944,52 @@ function generateActivitySpecificFromPackingList(
     
     if (activityLower.includes("swim") || activityLower.includes("beach")) {
       const swimwear = findItem(["swimwear", "bathing suit", "bikini", "trunks"]);
-      if (swimwear) recommendations.push(swimwear);
+      if (swimwear) recommendations.push(`Swimming: ${swimwear}`);
       
       const beachTowel = findItem(["beach towel", "towel"]);
-      if (beachTowel) recommendations.push(beachTowel);
+      if (beachTowel) recommendations.push(`Beach: ${beachTowel}`);
       
       const sunscreen = findItem(["sunscreen", "SPF"]);
-      if (sunscreen) recommendations.push(sunscreen);
+      if (sunscreen) recommendations.push(`Protection: ${sunscreen}`);
       
       const sandals = findItem(["sandals", "flip-flops", "water shoes"]);
-      if (sandals) recommendations.push(sandals);
+      if (sandals) recommendations.push(`Footwear: ${sandals}`);
     }
     
     if (activityLower.includes("business") || activityLower.includes("meeting")) {
       const businessAttire = findItem(["business", "formal", "dress shirt", "blazer", "suit"]);
-      if (businessAttire) recommendations.push(businessAttire);
+      if (businessAttire) recommendations.push(`Business: ${businessAttire}`);
       
       const formalShoes = findItem(["formal shoes", "dress shoes", "business shoes"]);
-      if (formalShoes) recommendations.push(formalShoes);
+      if (formalShoes) recommendations.push(`Formal footwear: ${formalShoes}`);
       
       const belt = findItem(["belt"]);
-      if (belt) recommendations.push(belt);
+      if (belt) recommendations.push(`Accessory: ${belt}`);
     }
     
-    if (activityLower.includes("hik") || activityLower.includes("outdoor")) {
+    if (activityLower.includes("hik") || activityLower.includes("outdoor") || activityLower.includes("adventure")) {
       const hikingBoots = findItem(["hiking boots", "hiking shoes", "sturdy shoes"]);
-      if (hikingBoots) recommendations.push(hikingBoots);
+      if (hikingBoots) recommendations.push(`Hiking: ${hikingBoots}`);
       
       const moistureWicking = findItem(["moisture-wicking", "breathable", "athletic"]);
-      if (moistureWicking) recommendations.push(moistureWicking);
+      if (moistureWicking) recommendations.push(`Active wear: ${moistureWicking}`);
       
       const backpack = findItem(["backpack", "day pack"]);
-      if (backpack) recommendations.push(backpack);
+      if (backpack) recommendations.push(`Gear: ${backpack}`);
+      
+      // For outdoor activities, suggest rain protection as backup gear
+      if (weather.precipitation <= 1.0) { // Only if not already suggested in daily recommendations
+        const rainGear = findItem(["rain jacket", "waterproof", "poncho"]);
+        if (rainGear) recommendations.push(`Weather protection: ${rainGear} (backup for outdoor activities)`);
+      }
     }
     
     if (activityLower.includes("run") || activityLower.includes("gym")) {
       const athleticWear = findItem(["athletic", "sports", "gym", "running"]);
-      if (athleticWear) recommendations.push(athleticWear);
+      if (athleticWear) recommendations.push(`Exercise: ${athleticWear}`);
       
       const sportsShoes = findItem(["athletic shoes", "running shoes", "sneakers"]);
-      if (sportsShoes) recommendations.push(sportsShoes);
+      if (sportsShoes) recommendations.push(`Athletic footwear: ${sportsShoes}`);
     }
   }
   
