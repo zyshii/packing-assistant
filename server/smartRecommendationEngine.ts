@@ -568,11 +568,11 @@ function generateVariedPackingListRecommendations(
         todaysUsedItems.push(warmLayer.toLowerCase());
       }
       
-      // Always ensure windbreaker/jacket for cold weather
-      const windbreaker = findFreshItem(["windbreaker", "wind jacket", "rain jacket", "shell", "outer layer"], todaysUsedItems);
-      if (windbreaker) {
-        recommendations.push(`Outer layer: ${windbreaker}`);
-        todaysUsedItems.push(windbreaker.toLowerCase());
+      // Enhanced outerwear options for cold weather
+      const coldOuterwear = findFreshItem(["windbreaker", "wind jacket", "rain jacket", "shell", "outer layer", "puffer jacket", "winter coat", "wool coat"], todaysUsedItems);
+      if (coldOuterwear) {
+        recommendations.push(`Outerwear: ${coldOuterwear}`);
+        todaysUsedItems.push(coldOuterwear.toLowerCase());
       }
       
       // Comprehensive pants options for cold weather
@@ -599,22 +599,29 @@ function generateVariedPackingListRecommendations(
         todaysUsedItems.push(shirt.toLowerCase());
       }
       
-      // Enhanced light layer options including windbreakers
-      const lightTerms = outfitStyle === 0 ? ["light jacket", "windbreaker", "rain jacket"] :
-                        outfitStyle === 1 ? ["cardigan", "light sweater", "hoodie"] : ["zip-up", "pullover", "shell"];
-      const lightLayer = findFreshItem(lightTerms, todaysUsedItems);
-      if (lightLayer) {
-        recommendations.push(`Layer: ${lightLayer} (for temperature changes)`);
-        todaysUsedItems.push(lightLayer.toLowerCase());
+      // Enhanced outerwear options with more variety
+      const outerwearTerms = outfitStyle === 0 ? ["light jacket", "windbreaker", "denim jacket", "bomber jacket"] :
+                            outfitStyle === 1 ? ["cardigan", "light sweater", "hoodie", "blazer"] : ["zip-up", "pullover", "shell", "vest"];
+      const outerwear = findFreshItem(outerwearTerms, todaysUsedItems);
+      if (outerwear) {
+        recommendations.push(`Outerwear: ${outerwear} (for temperature changes)`);
+        todaysUsedItems.push(outerwear.toLowerCase());
       }
       
-      // Comprehensive pants options for moderate weather
-      const bottomTerms = outfitStyle === 0 ? ["jeans", "denim", "casual pants"] :
-                         outfitStyle === 1 ? ["chinos", "pants", "khakis"] : ["trousers", "casual trousers", "lightweight pants"];
-      const pants = findFreshItem(bottomTerms, todaysUsedItems);
-      if (pants) {
-        recommendations.push(`Bottoms: ${pants}`);
-        todaysUsedItems.push(pants.toLowerCase());
+      // Include dress options for moderate weather
+      const dressOption = findFreshItem(["dress", "sundress", "casual dress", "midi dress"], todaysUsedItems);
+      if (dressOption && outfitStyle === 1) {
+        recommendations.push(`Dress option: ${dressOption} (comfortable for the weather)`);
+        todaysUsedItems.push(dressOption.toLowerCase());
+      } else {
+        // Comprehensive pants options for moderate weather
+        const bottomTerms = outfitStyle === 0 ? ["jeans", "denim", "casual pants"] :
+                           outfitStyle === 2 ? ["chinos", "pants", "khakis"] : ["trousers", "casual trousers", "lightweight pants"];
+        const pants = findFreshItem(bottomTerms, todaysUsedItems);
+        if (pants) {
+          recommendations.push(`Bottoms: ${pants}`);
+          todaysUsedItems.push(pants.toLowerCase());
+        }
       }
       
     } else {
@@ -627,29 +634,36 @@ function generateVariedPackingListRecommendations(
         todaysUsedItems.push(lightShirt.toLowerCase());
       }
       
-      // Enhanced bottom options for hot weather
-      const shortTerms = outfitStyle === 0 ? ["shorts", "casual shorts", "athletic shorts"] :
-                        outfitStyle === 1 ? ["light pants", "linen pants", "lightweight trousers"] : ["summer pants", "breathable bottoms", "quick-dry pants"];
-      const shorts = findFreshItem(shortTerms, todaysUsedItems);
-      if (shorts) {
-        recommendations.push(`Bottoms: ${shorts}`);
-        todaysUsedItems.push(shorts.toLowerCase());
+      // Include dress options for hot weather
+      const summerDress = findFreshItem(["summer dress", "sundress", "maxi dress", "light dress", "cotton dress"], todaysUsedItems);
+      if (summerDress && outfitStyle === 1) {
+        recommendations.push(`Dress option: ${summerDress} (perfect for hot weather)`);
+        todaysUsedItems.push(summerDress.toLowerCase());
+      } else {
+        // Enhanced bottom options for hot weather
+        const shortTerms = outfitStyle === 0 ? ["shorts", "casual shorts", "athletic shorts"] :
+                          outfitStyle === 2 ? ["light pants", "linen pants", "lightweight trousers"] : ["summer pants", "breathable bottoms", "quick-dry pants"];
+        const shorts = findFreshItem(shortTerms, todaysUsedItems);
+        if (shorts) {
+          recommendations.push(`Bottoms: ${shorts}`);
+          todaysUsedItems.push(shorts.toLowerCase());
+        }
       }
       
-      // Still include light layer for air conditioning/evening
-      const lightJacket = findFreshItem(["light cardigan", "thin jacket", "windbreaker"], todaysUsedItems);
-      if (lightJacket) {
-        recommendations.push(`Optional layer: ${lightJacket} (for A/C or evening)`);
-        todaysUsedItems.push(lightJacket.toLowerCase());
+      // Enhanced outerwear options for air conditioning/evening
+      const lightOuterwear = findFreshItem(["light cardigan", "thin jacket", "windbreaker", "kimono", "light blazer"], todaysUsedItems);
+      if (lightOuterwear) {
+        recommendations.push(`Optional outerwear: ${lightOuterwear} (for A/C or evening)`);
+        todaysUsedItems.push(lightOuterwear.toLowerCase());
       }
     }
     
-    // Vary footwear recommendations
-    const shoeTerms = outfitStyle === 0 ? ["walking shoes", "comfortable shoes"] :
-                     outfitStyle === 1 ? ["sneakers", "casual shoes"] : ["athletic shoes", "versatile shoes"];
+    // Enhanced footwear recommendations with more variety
+    const shoeTerms = outfitStyle === 0 ? ["walking shoes", "comfortable shoes", "canvas shoes", "loafers"] :
+                     outfitStyle === 1 ? ["sneakers", "casual shoes", "flats", "sandals"] : ["athletic shoes", "versatile shoes", "boots", "slip-ons"];
     const shoes = findFreshItem(shoeTerms, todaysUsedItems);
     if (shoes) {
-      recommendations.push(shoes);
+      recommendations.push(`Footwear: ${shoes}`);
       todaysUsedItems.push(shoes.toLowerCase());
     }
   }
@@ -707,16 +721,16 @@ function generateVariedPackingListRecommendations(
       if (warmAccessories) recommendations.push(`Add ${warmAccessories} for extra warmth`);
       
     } else if (weather.temp.low < 65) {
-      const lightJacket = findFreshItem(["light jacket", "windbreaker", "cardigan", "sweater"], todaysUsedItems);
-      if (lightJacket) recommendations.push(`Add ${lightJacket} for cooling evening`);
+      const eveningOuterwear = findFreshItem(["light jacket", "windbreaker", "cardigan", "sweater", "blazer", "denim jacket"], todaysUsedItems);
+      if (eveningOuterwear) recommendations.push(`Add ${eveningOuterwear} for cooling evening`);
       
       // Suggest pants change if wearing shorts during the day
       const longPants = findFreshItem(["pants", "trousers", "jeans"], todaysUsedItems);
       if (longPants) recommendations.push(`Consider changing to ${longPants} if wearing shorts`);
       
     } else if (weather.temp.low < 75) {
-      const lightLayer = findFreshItem(["light cardigan", "thin jacket", "hoodie"], todaysUsedItems);
-      if (lightLayer) recommendations.push(`Optional: ${lightLayer} for mild evening cool-down`);
+      const lightEveningLayer = findFreshItem(["light cardigan", "thin jacket", "hoodie", "kimono", "light wrap"], todaysUsedItems);
+      if (lightEveningLayer) recommendations.push(`Optional: ${lightEveningLayer} for mild evening cool-down`);
     }
     
     const hasEveningDining = activities.some(a => a.toLowerCase().includes("din"));
@@ -957,10 +971,13 @@ function generateActivitySpecificFromPackingList(
     }
     
     if (activityLower.includes("business") || activityLower.includes("meeting")) {
-      const businessAttire = findItem(["business", "formal", "dress shirt", "blazer", "suit"]);
+      const businessAttire = findItem(["business", "formal", "dress shirt", "blazer", "suit", "business dress"]);
       if (businessAttire) recommendations.push(`Business: ${businessAttire}`);
       
-      const formalShoes = findItem(["formal shoes", "dress shoes", "business shoes"]);
+      const businessOuterwear = findItem(["blazer", "suit jacket", "cardigan", "professional jacket"]);
+      if (businessOuterwear) recommendations.push(`Business outerwear: ${businessOuterwear}`);
+      
+      const formalShoes = findItem(["formal shoes", "dress shoes", "business shoes", "heels"]);
       if (formalShoes) recommendations.push(`Formal footwear: ${formalShoes}`);
       
       const belt = findItem(["belt"]);
@@ -973,6 +990,9 @@ function generateActivitySpecificFromPackingList(
       
       const moistureWicking = findItem(["moisture-wicking", "breathable", "athletic"]);
       if (moistureWicking) recommendations.push(`Active wear: ${moistureWicking}`);
+      
+      const outdoorOuterwear = findItem(["windbreaker", "fleece", "outdoor jacket", "soft shell", "vest"]);
+      if (outdoorOuterwear) recommendations.push(`Outdoor outerwear: ${outdoorOuterwear}`);
       
       const backpack = findItem(["backpack", "day pack"]);
       if (backpack) recommendations.push(`Gear: ${backpack}`);
@@ -990,6 +1010,28 @@ function generateActivitySpecificFromPackingList(
       
       const sportsShoes = findItem(["athletic shoes", "running shoes", "sneakers"]);
       if (sportsShoes) recommendations.push(`Athletic footwear: ${sportsShoes}`);
+    }
+    
+    if (activityLower.includes("din") || activityLower.includes("restaurant") || activityLower.includes("evening")) {
+      const diningAttire = findItem(["dress", "nice shirt", "blouse", "smart casual", "cocktail dress"]);
+      if (diningAttire) recommendations.push(`Dining: ${diningAttire}`);
+      
+      const diningOuterwear = findItem(["blazer", "cardigan", "light jacket", "wrap", "pashmina"]);
+      if (diningOuterwear) recommendations.push(`Dining outerwear: ${diningOuterwear}`);
+      
+      const niceShoes = findItem(["dress shoes", "heels", "nice flats", "loafers"]);
+      if (niceShoes) recommendations.push(`Evening footwear: ${niceShoes}`);
+    }
+    
+    if (activityLower.includes("sightseeing") || activityLower.includes("walking") || activityLower.includes("tour")) {
+      const casualDress = findItem(["casual dress", "sundress", "comfortable dress"]);
+      if (casualDress) recommendations.push(`Sightseeing dress: ${casualDress} (comfortable for walking)`);
+      
+      const walkingJacket = findItem(["light jacket", "cardigan", "windbreaker"]);
+      if (walkingJacket) recommendations.push(`Walking outerwear: ${walkingJacket}`);
+      
+      const comfortableShoes = findItem(["walking shoes", "comfortable sneakers", "supportive flats"]);
+      if (comfortableShoes) recommendations.push(`Comfort footwear: ${comfortableShoes}`);
     }
   }
   
