@@ -352,7 +352,7 @@ function deduplicateRecommendations(recommendations: string[]): string[] {
   return deduplicated;
 }
 
-// Generate detailed daily recommendations
+// Generate detailed daily recommendations based on actual packing list
 export function generateDetailedDailyRecommendations(
   dailyData: Array<{
     date: string;
@@ -364,6 +364,18 @@ export function generateDetailedDailyRecommendations(
   }>,
   tripContext: TripContext
 ) {
+  // First generate the packing list to know what items are available
+  const packingList = generateOptimizedPackingList(dailyData, tripContext);
+  
+  // Create a comprehensive list of all available items
+  const availableItems = [
+    ...packingList.optimizedList.tops.map((item: any) => item.item),
+    ...packingList.optimizedList.bottoms.map((item: any) => item.item),
+    ...packingList.optimizedList.outerwear.map((item: any) => item.item),
+    ...packingList.optimizedList.footwear.map((item: any) => item.item),
+    ...packingList.optimizedList.accessories.map((item: any) => item.item),
+    ...packingList.optimizedList.essentials.map((item: any) => item.item)
+  ];
   return dailyData.map(day => {
     const weather: WeatherCondition = {
       condition: day.condition,
@@ -373,12 +385,12 @@ export function generateDetailedDailyRecommendations(
     };
     
     const timeSpecificRecommendations = {
-      morning: deduplicateRecommendations(generateTimeSpecificRecommendations("morning", weather, day.activities)),
-      daytime: deduplicateRecommendations(generateTimeSpecificRecommendations("daytime", weather, day.activities)),
-      evening: deduplicateRecommendations(generateTimeSpecificRecommendations("evening", weather, day.activities))
+      morning: deduplicateRecommendations(generatePackingListBasedRecommendations("morning", weather, day.activities, availableItems)),
+      daytime: deduplicateRecommendations(generatePackingListBasedRecommendations("daytime", weather, day.activities, availableItems)),
+      evening: deduplicateRecommendations(generatePackingListBasedRecommendations("evening", weather, day.activities, availableItems))
     };
     
-    const activitySpecific = deduplicateRecommendations(generateActivitySpecificRecommendations(day.activities, weather));
+    const activitySpecific = deduplicateRecommendations(generateActivitySpecificFromPackingList(day.activities, weather, availableItems));
     const priorities = deduplicateRecommendations(generatePriorities(weather, day.activities));
     
     // Apply global deduplication across all recommendation types for this day
@@ -444,6 +456,115 @@ export function generateDetailedDailyRecommendations(
       }
     };
   });
+}
+
+// Generate recommendations using only items from the packing list
+function generatePackingListBasedRecommendations(
+  timeOfDay: string,
+  weather: WeatherCondition,
+  activities: string[],
+  availableItems: string[]
+): string[] {
+  const recommendations = [];
+  
+  // Helper function to check if an item is available (case-insensitive partial match)
+  const hasItem = (searchTerm: string) => 
+    availableItems.some(item => 
+      item.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      searchTerm.toLowerCase().includes(item.toLowerCase())
+    );
+  
+  // Helper function to find exact or similar item
+  const findItem = (searchTerms: string[]) => 
+    availableItems.find(item => 
+      searchTerms.some(term => 
+        item.toLowerCase().includes(term.toLowerCase()) || 
+        term.toLowerCase().includes(item.toLowerCase())
+      )
+    );
+  
+  // Morning layer recommendations (complete outfit with available items)
+  if (timeOfDay === "morning") {
+    // Essential base items
+    if (hasItem("undergarments") || hasItem("underwear")) {
+      recommendations.push("Underwear and socks");
+    }
+    
+    // Core clothing based on morning temperature using available items
+    if (weather.temp.low < 50) {
+      const longSleeveItem = findItem(["long-sleeve", "thermal", "base layer"]);
+      if (longSleeveItem) recommendations.push(longSleeveItem);
+      
+      const warmLayer = findItem(["sweater", "fleece", "hoodie", "warm"]);
+      if (warmLayer) recommendations.push(warmLayer);
+      
+      const pants = findItem(["pants", "trousers", "jeans"]);
+      if (pants) recommendations.push(pants);
+    } else if (weather.temp.low < 65) {
+      const shirt = findItem(["t-shirt", "shirt", "top"]);
+      if (shirt) recommendations.push(shirt);
+      
+      const lightLayer = findItem(["light jacket", "cardigan", "light sweater"]);
+      if (lightLayer) recommendations.push(lightLayer);
+      
+      const pants = findItem(["pants", "jeans", "trousers"]);
+      if (pants) recommendations.push(pants);
+    } else {
+      const lightShirt = findItem(["t-shirt", "tank top", "lightweight"]);
+      if (lightShirt) recommendations.push(lightShirt);
+      
+      const shorts = findItem(["shorts", "light pants"]);
+      if (shorts) recommendations.push(shorts);
+    }
+    
+    // Basic footwear
+    const shoes = findItem(["walking shoes", "comfortable shoes", "sneakers"]);
+    if (shoes) recommendations.push(shoes);
+  }
+  
+  if (timeOfDay === "daytime") {
+    if (weather.temp.high > 85) {
+      recommendations.push("- Remove any heavy layers");
+      const hat = findItem(["hat", "cap", "sun hat"]);
+      if (hat) recommendations.push(`+ Add ${hat} for UV protection`);
+    } else if (weather.temp.high > 75 && weather.temp.low < 65) {
+      recommendations.push("- Remove heavy jacket if worn");
+      if (weather.uvIndex && weather.uvIndex > 6) {
+        const sunglasses = findItem(["sunglasses"]);
+        const hat = findItem(["hat", "cap"]);
+        if (sunglasses) recommendations.push(`+ Add ${sunglasses}`);
+        if (hat) recommendations.push(`+ Add ${hat}`);
+      }
+    }
+    
+    // UV protection for sunny days using available items
+    if (weather.uvIndex && weather.uvIndex > 6) {
+      const sunscreen = findItem(["sunscreen", "SPF"]);
+      if (sunscreen) recommendations.push(`+ Add ${sunscreen}`);
+    }
+  }
+  
+  if (timeOfDay === "evening") {
+    if (weather.temp.low < 65) {
+      const lightJacket = findItem(["light jacket", "cardigan", "sweater"]);
+      if (lightJacket) recommendations.push(`+ Add ${lightJacket} for cooling evening`);
+    }
+    
+    // Check for evening activities using available items
+    const hasEveningDining = activities.some(a => a.toLowerCase().includes("din"));
+    if (hasEveningDining) {
+      const smartCasual = findItem(["business", "formal", "smart casual", "dress"]);
+      if (smartCasual) recommendations.push(`+ Add ${smartCasual} for dining`);
+    }
+  }
+  
+  // Weather condition specific using available items
+  if (weather.precipitation > 0) {
+    const rainGear = findItem(["rain jacket", "waterproof", "umbrella"]);
+    if (rainGear) recommendations.push(rainGear);
+  }
+  
+  return recommendations;
 }
 
 function generateTimeSpecificRecommendations(
@@ -519,6 +640,74 @@ function generateTimeSpecificRecommendations(
   }
   
   return recommendations;
+}
+
+// Generate activity-specific recommendations using only packing list items
+function generateActivitySpecificFromPackingList(
+  activities: string[], 
+  weather: WeatherCondition, 
+  availableItems: string[]
+): string[] {
+  const recommendations = [];
+  
+  // Helper function to find exact or similar item
+  const findItem = (searchTerms: string[]) => 
+    availableItems.find(item => 
+      searchTerms.some(term => 
+        item.toLowerCase().includes(term.toLowerCase()) || 
+        term.toLowerCase().includes(item.toLowerCase())
+      )
+    );
+  
+  for (const activity of activities) {
+    const activityLower = activity.toLowerCase();
+    
+    if (activityLower.includes("swim") || activityLower.includes("beach")) {
+      const swimwear = findItem(["swimwear", "bathing suit", "bikini", "trunks"]);
+      if (swimwear) recommendations.push(swimwear);
+      
+      const beachTowel = findItem(["beach towel", "towel"]);
+      if (beachTowel) recommendations.push(beachTowel);
+      
+      const sunscreen = findItem(["sunscreen", "SPF"]);
+      if (sunscreen) recommendations.push(sunscreen);
+      
+      const sandals = findItem(["sandals", "flip-flops", "water shoes"]);
+      if (sandals) recommendations.push(sandals);
+    }
+    
+    if (activityLower.includes("business") || activityLower.includes("meeting")) {
+      const businessAttire = findItem(["business", "formal", "dress shirt", "blazer", "suit"]);
+      if (businessAttire) recommendations.push(businessAttire);
+      
+      const formalShoes = findItem(["formal shoes", "dress shoes", "business shoes"]);
+      if (formalShoes) recommendations.push(formalShoes);
+      
+      const belt = findItem(["belt"]);
+      if (belt) recommendations.push(belt);
+    }
+    
+    if (activityLower.includes("hik") || activityLower.includes("outdoor")) {
+      const hikingBoots = findItem(["hiking boots", "hiking shoes", "sturdy shoes"]);
+      if (hikingBoots) recommendations.push(hikingBoots);
+      
+      const moistureWicking = findItem(["moisture-wicking", "breathable", "athletic"]);
+      if (moistureWicking) recommendations.push(moistureWicking);
+      
+      const backpack = findItem(["backpack", "day pack"]);
+      if (backpack) recommendations.push(backpack);
+    }
+    
+    if (activityLower.includes("run") || activityLower.includes("gym")) {
+      const athleticWear = findItem(["athletic", "sports", "gym", "running"]);
+      if (athleticWear) recommendations.push(athleticWear);
+      
+      const sportsShoes = findItem(["athletic shoes", "running shoes", "sneakers"]);
+      if (sportsShoes) recommendations.push(sportsShoes);
+    }
+  }
+  
+  return Array.from(new Set(recommendations)); // Remove duplicates
 }
 
 function generateActivitySpecificRecommendations(activities: string[], weather: WeatherCondition): string[] {
