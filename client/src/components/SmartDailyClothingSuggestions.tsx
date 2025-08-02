@@ -65,7 +65,7 @@ export default function SmartDailyClothingSuggestions({
 }: SmartDailyClothingSuggestionsProps) {
   const queryClient = useQueryClient();
 
-  // Convert data to smart engine format
+  // Convert data to agent service format
   const tripContext: TripContext = useMemo(() => {
     if (!tripDetails?.destination) {
       return {
@@ -262,7 +262,7 @@ export default function SmartDailyClothingSuggestions({
 
         <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
           <p className="text-sm text-gray-700 leading-relaxed">
-            This list analyzes your{" "}
+            This list considers your{" "}
             <span className="font-semibold text-gray-900">{tripDetails?.destination || "destination"}</span> weather conditions
             {tripDetails?.tripTypes && tripDetails.tripTypes.length > 0 && (
               <span>, <span className="font-semibold text-gray-900">{tripDetails.tripTypes.join(' & ')}</span> activities</span>

@@ -1,4 +1,4 @@
-// Smart recommendation engine using weighted datasets instead of AI
+// Smart recommendation engine using weighted datasets and intelligent algorithms
 import { z } from "zod";
 
 interface WeatherCondition {

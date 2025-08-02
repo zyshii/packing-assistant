@@ -255,7 +255,7 @@ function TripDetails() {
     setIsSubmitting(true);
     
     try {
-      // Simulate AI processing
+      // Simulate agent processing
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       // Save data to localStorage for access in the packing list page
@@ -308,14 +308,14 @@ function TripDetails() {
               Plan Your Perfect Trip
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Tell us about your journey and our AI will create a personalized packing list based on your destination, weather, and activities
+              Tell us about your journey and our assistant will create a personalized packing list based on your destination, weather, and activities
             </p>
           </div>
 
           {/* Onboarding Hint */}
           <OnboardingHint
             title="First time using Packing Assistant?"
-            description="We'll guide you through creating your first AI-powered packing list. Just fill out your trip details and let our smart recommendations do the rest!"
+            description="We'll guide you through creating your first personalized packing list. Just fill out your trip details and let our travel assistant do the rest!"
             storageKey="trip-details-hint-seen"
             className="animate-scale-in"
           />
@@ -756,7 +756,7 @@ function TripDetails() {
                     </Button>
                     
                     <p className="text-center text-sm text-muted-foreground mt-3">
-                      Our agent will analyze your trip details and create a smart packing list in seconds
+                      Our agent will analyze your trip details and create a customized packing list in seconds
                     </p>
                   </div>
                 </form>
