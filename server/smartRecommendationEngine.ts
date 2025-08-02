@@ -657,39 +657,39 @@ function generateVariedPackingListRecommendations(
   // Enhanced daytime and evening recommendations with comprehensive coverage
   if (timeOfDay === "daytime") {
     if (weather.temp.high > 85) {
-      const coolDownTips = ["- Remove heavy layers", "- Switch to lighter clothing", "- Consider lighter options"];
+      const coolDownTips = ["Remove heavy layers", "Switch to lighter clothing", "Consider lighter options"];
       recommendations.push(coolDownTips[dayIndex % coolDownTips.length]);
       
       const hat = findFreshItem(["hat", "cap", "sun hat"], todaysUsedItems);
-      if (hat) recommendations.push(`+ Add ${hat} for UV protection`);
+      if (hat) recommendations.push(`Add ${hat} for UV protection`);
     } else if (weather.temp.high > 75 && weather.temp.low < 65) {
-      recommendations.push("- Remove heavy jacket if worn, but keep nearby");
+      recommendations.push("Remove heavy jacket if worn, but keep nearby");
       
       // Suggest layering options for variable daytime temperatures
       const mediumLayer = findFreshItem(["light sweater", "windbreaker", "zip-up"], todaysUsedItems);
-      if (mediumLayer) recommendations.push(`+ Keep ${mediumLayer} handy for temperature changes`);
+      if (mediumLayer) recommendations.push(`Keep ${mediumLayer} handy for temperature changes`);
       
       if (weather.uvIndex && weather.uvIndex > 6) {
         const sunglasses = findFreshItem(["sunglasses"], todaysUsedItems);
         const hat = findFreshItem(["hat", "cap"], todaysUsedItems);
-        if (sunglasses) recommendations.push(`+ Add ${sunglasses}`);
-        if (hat) recommendations.push(`+ Add ${hat}`);
+        if (sunglasses) recommendations.push(`Add ${sunglasses}`);
+        if (hat) recommendations.push(`Add ${hat}`);
       }
     } else if (weather.temp.high < 75) {
       // Cooler daytime - suggest keeping layers
       const warmLayer = findFreshItem(["sweater", "hoodie", "windbreaker", "jacket"], todaysUsedItems);
-      if (warmLayer) recommendations.push(`+ Keep ${warmLayer} on for cooler daytime temperatures`);
+      if (warmLayer) recommendations.push(`Keep ${warmLayer} on for cooler daytime temperatures`);
       
       // For very cool days, suggest additional layers
       if (weather.temp.high < 60) {
         const extraLayer = findFreshItem(["warm jacket", "coat", "outer layer"], todaysUsedItems);
-        if (extraLayer) recommendations.push(`+ Consider ${extraLayer} for cool daytime`);
+        if (extraLayer) recommendations.push(`Consider ${extraLayer} for cool daytime`);
       }
     }
     
     if (weather.uvIndex && weather.uvIndex > 6) {
       const sunscreen = findFreshItem(["sunscreen", "SPF"], todaysUsedItems);
-      if (sunscreen) recommendations.push(`+ Add ${sunscreen}`);
+      if (sunscreen) recommendations.push(`Add ${sunscreen}`);
     }
   }
   
@@ -698,39 +698,39 @@ function generateVariedPackingListRecommendations(
     if (weather.temp.low < 50) {
       // Cold evening - multiple layer recommendations
       const warmJacket = findFreshItem(["warm jacket", "coat", "insulated jacket"], todaysUsedItems);
-      if (warmJacket) recommendations.push(`+ Add ${warmJacket} for cold evening`);
+      if (warmJacket) recommendations.push(`Add ${warmJacket} for cold evening`);
       
       const extraLayer = findFreshItem(["sweater", "hoodie", "fleece"], todaysUsedItems);
-      if (extraLayer) recommendations.push(`+ Layer with ${extraLayer} underneath`);
+      if (extraLayer) recommendations.push(`Layer with ${extraLayer} underneath`);
       
       const warmAccessories = findFreshItem(["scarf", "gloves", "beanie"], todaysUsedItems);
-      if (warmAccessories) recommendations.push(`+ Add ${warmAccessories} for extra warmth`);
+      if (warmAccessories) recommendations.push(`Add ${warmAccessories} for extra warmth`);
       
     } else if (weather.temp.low < 65) {
       const lightJacket = findFreshItem(["light jacket", "windbreaker", "cardigan", "sweater"], todaysUsedItems);
-      if (lightJacket) recommendations.push(`+ Add ${lightJacket} for cooling evening`);
+      if (lightJacket) recommendations.push(`Add ${lightJacket} for cooling evening`);
       
       // Suggest pants change if wearing shorts during the day
       const longPants = findFreshItem(["pants", "trousers", "jeans"], todaysUsedItems);
-      if (longPants) recommendations.push(`+ Consider changing to ${longPants} if wearing shorts`);
+      if (longPants) recommendations.push(`Consider changing to ${longPants} if wearing shorts`);
       
     } else if (weather.temp.low < 75) {
       const lightLayer = findFreshItem(["light cardigan", "thin jacket", "hoodie"], todaysUsedItems);
-      if (lightLayer) recommendations.push(`+ Optional: ${lightLayer} for mild evening cool-down`);
+      if (lightLayer) recommendations.push(`Optional: ${lightLayer} for mild evening cool-down`);
     }
     
     const hasEveningDining = activities.some(a => a.toLowerCase().includes("din"));
     if (hasEveningDining) {
       const smartCasual = findFreshItem(["business", "formal", "smart casual", "dress", "nice shirt"], todaysUsedItems);
-      if (smartCasual) recommendations.push(`+ Change to ${smartCasual} for dining`);
+      if (smartCasual) recommendations.push(`Change to ${smartCasual} for dining`);
       
       const dressShoes = findFreshItem(["dress shoes", "formal shoes", "nice shoes"], todaysUsedItems);
-      if (dressShoes) recommendations.push(`+ Switch to ${dressShoes} for dinner`);
+      if (dressShoes) recommendations.push(`Switch to ${dressShoes} for dinner`);
     }
   }
   
-  // Only recommend rain gear if there's significant precipitation (> 1mm)
-  if (weather.precipitation > 1.0) {
+  // Only recommend rain gear if there's significant precipitation (> 5mm)
+  if (weather.precipitation > 5.0) {
     const rainGear = findFreshItem(["rain jacket", "waterproof", "umbrella"], todaysUsedItems);
     if (rainGear) recommendations.push(`Rain protection: ${rainGear}`);
   }
@@ -977,8 +977,8 @@ function generateActivitySpecificFromPackingList(
       const backpack = findItem(["backpack", "day pack"]);
       if (backpack) recommendations.push(`Gear: ${backpack}`);
       
-      // For outdoor activities, suggest rain protection as backup gear
-      if (weather.precipitation <= 1.0) { // Only if not already suggested in daily recommendations
+      // For outdoor activities, suggest rain protection as backup gear only in very light precipitation scenarios
+      if (weather.precipitation > 0 && weather.precipitation <= 5.0) { // Light rain backup for outdoor activities
         const rainGear = findItem(["rain jacket", "waterproof", "poncho"]);
         if (rainGear) recommendations.push(`Weather protection: ${rainGear} (backup for outdoor activities)`);
       }
