@@ -37,23 +37,15 @@ Suggests how many shirts, pants, undergarments, etc., are needed.
 
 ### Smart Packing List Generator
 
-- **How it Works:** User inputs trip details; Packing Assistant uses AI to generate a comprehensive list, factoring in trip length, destination, and activities.
-- **Customization:** Users can add custom items or remove unnecessary ones.
+User inputs trip details; Packing Assistant uses AI to generate a comprehensive list, factoring in trip length, destination, and activities.
 
 ### AI-Driven Clothing Calculator
 
-- **How it Works:** AI calculates the optimal number of clothing items based on trip duration, weather forecasts, and planned activities.
-- **Personalization:** Learns from user’s past trips and preferences to refine future recommendations.
-
-### Personalization & Preferences
-
-- **How it Works:** Stores user preferences (e.g., always bring a yoga mat, prefers 2x socks per day) and applies them to new lists.
-- **Custom Items:** Users can create and save custom items for recurring needs.
+AI calculates the optimal number of clothing items based on trip duration, weather forecasts, and planned activities.
 
 ### Weather & Activity Integration
 
-- **How it Works:** Pulls real-time weather data and considers planned activities to adjust packing suggestions (e.g., rain jacket for rainy forecasts).
-- **User Input:** Users can specify activities (e.g., hiking, swimming) for more accurate recommendations.
+Pulls real-time weather data and considers planned activities to adjust packing suggestions (e.g., rain jacket for rainy forecasts). Users can specify activities (e.g., hiking, swimming) for more accurate recommendations.
 
 
 ## User Experience Considerations
