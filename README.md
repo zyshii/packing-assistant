@@ -2,6 +2,12 @@
 
 Packing Assistant is an AI-integrated website designed to help users pack efficiently and confidently for any trip. By leveraging automation and personalization, it ensures users know exactly how many clothes and essentials to bring—eliminating the stress of forgetting items or overpacking. The core value is to provide peace of mind and a streamlined packing experience, tailored to each user’s trip details and preferences.
 
+
+## Tools Used
+
+This is a vibe-coded product that leverages various AI tools. I used ChatGPT and ChatPRD for initial research and feature definition, Lovable for prototyping, and Replit for backend development.
+
+
 ## Website
 
 [https://packing-assistant.replit.app](https://packing-assistant.replit.app)
