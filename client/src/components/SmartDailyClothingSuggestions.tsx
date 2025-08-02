@@ -292,52 +292,57 @@ export default function SmartDailyClothingSuggestions({
         </div>
 
         <div className="p-6">
-          <div className="space-y-4">
+          <Accordion 
+            type="multiple" 
+            defaultValue={[dailyData[0]?.date]} 
+            className="space-y-4"
+          >
             {dailyData.map((day, dayIndex) => {
               const smartDay = smartDailyRecommendations?.find((smart: any) => smart.date === day.date);
               
               return (
-                <div key={dayIndex} className="bg-surface rounded-xl border border-border overflow-hidden">
-                  <div className="px-6 py-4 bg-card border-b border-border">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="flex items-center justify-center w-10 h-10 bg-info-light rounded-lg">
-                          {getWeatherIcon(day.condition)}
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-foreground text-lg">{day.date}</h4>
-                          <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
-                            <span className="capitalize font-medium">{day.condition}</span>
-                            <span className="w-1 h-1 bg-muted-foreground rounded-full"></span>
-                            <span className="font-semibold">{day.temp.low}°-{day.temp.high}°F</span>
-                            {day.uvIndex && (
-                              <>
-                                <span className="w-1 h-1 bg-muted-foreground rounded-full"></span>
-                                <span className="flex items-center gap-1">
-                                  <span>☀️</span> UV {day.uvIndex}
-                                </span>
-                              </>
-                            )}
-                            {day.precipitation > 0 && (
-                              <>
-                                <span className="w-1 h-1 bg-muted-foreground rounded-full"></span>
-                                <span className="flex items-center gap-1">
-                                  <span>🌧️</span> {day.precipitation}mm
-                                </span>
-                              </>
-                            )}
-                          </div>
-                          {smartDay?.weatherDetails && smartDay.weatherDetails.tips.length > 0 && (
-                            <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
-                              {smartDay.weatherDetails.tips.join('. ')}.
-                            </p>
+                <AccordionItem 
+                  key={dayIndex} 
+                  value={day.date}
+                  className="bg-surface rounded-xl border border-border overflow-hidden"
+                >
+                  <AccordionTrigger className="px-6 py-4 bg-card border-b border-border hover:no-underline data-[state=open]:border-b-0">
+                    <div className="flex items-center gap-4 w-full text-left">
+                      <div className="flex items-center justify-center w-10 h-10 bg-info-light rounded-lg">
+                        {getWeatherIcon(day.condition)}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-foreground text-lg">{day.date}</h4>
+                        <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
+                          <span className="capitalize font-medium">{day.condition}</span>
+                          <span className="w-1 h-1 bg-muted-foreground rounded-full"></span>
+                          <span className="font-semibold">{day.temp.low}°-{day.temp.high}°F</span>
+                          {day.uvIndex && (
+                            <>
+                              <span className="w-1 h-1 bg-muted-foreground rounded-full"></span>
+                              <span className="flex items-center gap-1">
+                                <span>☀️</span> UV {day.uvIndex}
+                              </span>
+                            </>
+                          )}
+                          {day.precipitation > 0 && (
+                            <>
+                              <span className="w-1 h-1 bg-muted-foreground rounded-full"></span>
+                              <span className="flex items-center gap-1">
+                                <span>🌧️</span> {day.precipitation}mm
+                              </span>
+                            </>
                           )}
                         </div>
+                        {smartDay?.weatherDetails && smartDay.weatherDetails.tips.length > 0 && (
+                          <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
+                            {smartDay.weatherDetails.tips.join('. ')}.
+                          </p>
+                        )}
                       </div>
-
                     </div>
-                  </div>
-                  <div className="p-6">
+                  </AccordionTrigger>
+                  <AccordionContent className="p-6">
                     <div className="space-y-6">
                       {/* Activities */}
                       {day.activities.length > 0 && (
@@ -369,8 +374,8 @@ export default function SmartDailyClothingSuggestions({
                               <span className="text-xs text-info/80 ml-auto">Morning: {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F</span>
                             </div>
                             <ul className="space-y-1">
-                              {smartDay.recommendations?.base?.length > 0 ? (
-                                smartDay.recommendations.base.map((item: string, index: number) => (
+                              {smartDay.recommendations?.morning?.length > 0 ? (
+                                smartDay.recommendations.morning.map((item: string, index: number) => (
                                   <li key={index} className="text-sm text-info flex items-start gap-2">
                                     <span className="text-info/70 mt-0.5 flex-shrink-0">•</span>
                                     <span>{item}</span>
@@ -523,11 +528,11 @@ export default function SmartDailyClothingSuggestions({
                         </div>
                       )}
                     </div>
-                  </div>
-                </div>
+                  </AccordionContent>
+                </AccordionItem>
               );
             })}
-          </div>
+          </Accordion>
         </div>
       </div>
     </div>
