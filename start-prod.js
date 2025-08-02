@@ -28,15 +28,16 @@ function runCommand(command, args) {
 
 async function startProduction() {
   try {
-    // Check if dist folder exists, if not, build first
-    if (!existsSync(distPath)) {
-      console.log('Built files not found. Building application...');
-      await runCommand('npm', ['run', 'build']);
-    }
+    // Set production environment
+    process.env.NODE_ENV = 'production';
+    
+    // Always build to ensure latest code
+    console.log('Building application for production...');
+    await runCommand('npm', ['run', 'build']);
 
     // Start the production server
     console.log('Starting production server...');
-    await runCommand('npm', ['start']);
+    await runCommand('node', ['dist/index.js']);
   } catch (error) {
     console.error('Failed to start production server:', error.message);
     process.exit(1);
