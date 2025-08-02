@@ -7,6 +7,7 @@ Packing Assistant is an AI-integrated website designed to help users pack effici
 [https://packing-assistant.replit.app](https://packing-assistant.replit.app)
 
 
+
 # Key Features
 
 ## Primary User Flows
@@ -25,6 +26,8 @@ Packing Assistant is an AI-integrated website designed to help users pack effici
 - **AI Analysis:** Based on trip details, Packing Assistant analyzes weather, duration, and activities.
 
 - **Clothing Calculator:** Suggests how many shirts, pants, undergarments, etc., are needed.
+
+- **Daily Clothing Suggestions:** Suggest outfits and layers for the day based on weather, temperature, UV index, precipitation, and planned activities.
 
 
 ## Feature Details and Interactions
@@ -50,6 +53,7 @@ Pulls real-time weather data and considers planned activities to adjust packing 
 - **Confidence Boost:** Visual progress tracking and personalized recommendations ensure users feel prepared for their trip.
 - **Simplicity:** Clean, intuitive interface makes the process straightforward for all user types.
 - **Personal Touch:** Remembered preferences and custom items make each packing experience feel tailored and relevant.
+
 
 
 # Next Steps
