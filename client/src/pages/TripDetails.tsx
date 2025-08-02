@@ -753,9 +753,7 @@ function TripDetails() {
                       )}
                     </Button>
                     
-                    <p className="text-center text-sm text-muted-foreground mt-3">
-                      Our agent will analyze your trip details and create a customized packing list in seconds
-                    </p>
+                    <p className="text-center text-sm text-muted-foreground mt-3">We will analyze your trip details and create a customized packing list in seconds</p>
                   </div>
                 </form>
               </Form>
