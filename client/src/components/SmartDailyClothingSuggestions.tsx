@@ -7,7 +7,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Progress } from "@/components/ui/progress";
 import { Shirt, Sun, Moon, Activity, Sparkles, AlertCircle, Lightbulb, Package, Star, CheckCircle2, Thermometer, Umbrella, Eye, Cloud, CloudSun, Snowflake } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchDailyRecommendations, fetchPackingOptimization, AiRecommendationApiError } from "@/lib/aiRecommendationApi";
+import { fetchDailyRecommendations, fetchPackingOptimization, AgentRecommendationApiError } from "@/lib/aiRecommendationApi";
 import type { DailyClothingRecommendation, PackingListOptimization } from "@/lib/aiRecommendationApi";
 import type { TripContext } from "@shared/schema";
 

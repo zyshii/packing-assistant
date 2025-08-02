@@ -749,14 +749,14 @@ function TripDetails() {
                       ) : (
                         <div className="flex items-center gap-2">
                           <Sparkles className="w-5 h-5" />
-                          <span>Generate AI Packing List</span>
+                          <span>Generate Agent Packing List</span>
                           <ArrowRight className="w-5 h-5" />
                         </div>
                       )}
                     </Button>
                     
                     <p className="text-center text-sm text-muted-foreground mt-3">
-                      Our AI will analyze your trip details and create a smart packing list in seconds
+                      Our agent will analyze your trip details and create a smart packing list in seconds
                     </p>
                   </div>
                 </form>

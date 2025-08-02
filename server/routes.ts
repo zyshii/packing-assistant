@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { getWeatherForecast } from "./weatherService";
 import { generateDailyClothingRecommendations, optimizePackingList, getActivitySpecificRecommendations } from "./aiRecommendationService";
 import { generateDetailedDailyRecommendations, generateOptimizedPackingList } from "./smartRecommendationEngine";
-import { aiRecommendationRequestSchema } from "@shared/schema";
+import { agentRecommendationRequestSchema } from "@shared/schema";
 import { z } from "zod";
 
 const weatherRequestSchema = z.object({
@@ -101,9 +101,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Smart Dataset-based Recommendations API routes
   app.post("/api/recommendations/daily", async (req, res) => {
     try {
-      const validatedRequest = aiRecommendationRequestSchema.parse(req.body);
+      const validatedRequest = agentRecommendationRequestSchema.parse(req.body);
       
-      // Use smart dataset-based engine instead of AI
+      // Use smart dataset-based engine instead of agent
       const recommendations = generateDetailedDailyRecommendations(
         validatedRequest.tripContext.dailyData,
         validatedRequest.tripContext

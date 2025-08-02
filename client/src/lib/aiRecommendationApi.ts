@@ -50,14 +50,14 @@ export interface PackingItem {
   reason: string;
 }
 
-class AiRecommendationApiError extends Error {
+class AgentRecommendationApiError extends Error {
   constructor(
     message: string,
     public statusCode?: number,
     public details?: any
   ) {
     super(message);
-    this.name = 'AiRecommendationApiError';
+    this.name = 'AgentRecommendationApiError';
   }
 }
 
@@ -73,7 +73,7 @@ async function makeApiRequest<T>(endpoint: string, data: any): Promise<T> {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new AiRecommendationApiError(
+      throw new AgentRecommendationApiError(
         errorData.error || `HTTP ${response.status}: ${response.statusText}`,
         response.status,
         errorData.details
@@ -82,12 +82,12 @@ async function makeApiRequest<T>(endpoint: string, data: any): Promise<T> {
 
     return await response.json();
   } catch (error) {
-    if (error instanceof AiRecommendationApiError) {
+    if (error instanceof AgentRecommendationApiError) {
       throw error;
     }
     
     // Network or parsing errors
-    throw new AiRecommendationApiError(
+    throw new AgentRecommendationApiError(
       error instanceof Error ? error.message : 'Network error occurred'
     );
   }
@@ -145,4 +145,4 @@ export async function fetchActivityRecommendations(
   return response.activityRecommendations;
 }
 
-export { AiRecommendationApiError };
+export { AgentRecommendationApiError };

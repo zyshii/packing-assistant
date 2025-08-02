@@ -7,7 +7,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Progress } from "@/components/ui/progress";
 import { Shirt, Sun, Moon, Activity, Sparkles, AlertCircle, Lightbulb, Package, Star, CheckCircle2 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchDailyRecommendations, fetchPackingOptimization, AiRecommendationApiError } from "@/lib/aiRecommendationApi";
+import { fetchDailyRecommendations, fetchPackingOptimization, AgentRecommendationApiError } from "@/lib/aiRecommendationApi";
 import type { DailyClothingRecommendation, PackingListOptimization } from "@/lib/aiRecommendationApi";
 import type { TripContext } from "@shared/schema";
 
@@ -32,7 +32,7 @@ interface EnhancedDailyClothingSuggestionsProps {
   dailyData: DailyClothingData[];
   tripDetails?: TripDetails;
   isWeatherDataReal?: boolean;
-  enableAI?: boolean;
+  enableAgent?: boolean;
 }
 
 const getPriorityIcon = (priority: "essential" | "recommended" | "optional") => {
@@ -61,12 +61,12 @@ export default function EnhancedDailyClothingSuggestions({
   dailyData, 
   tripDetails, 
   isWeatherDataReal,
-  enableAI = true 
+  enableAgent = true 
 }: EnhancedDailyClothingSuggestionsProps) {
-  const [useAIRecommendations, setUseAIRecommendations] = useState(enableAI);
+  const [useAgentRecommendations, setUseAgentRecommendations] = useState(enableAgent);
   const queryClient = useQueryClient();
 
-  // Convert data to AI service format
+  // Convert data to agent service format
   const tripContext: TripContext = useMemo(() => {
     if (!tripDetails?.destination) {
       return {
@@ -101,38 +101,38 @@ export default function EnhancedDailyClothingSuggestions({
     };
   }, [dailyData, tripDetails]);
 
-  // Query for AI daily recommendations
+  // Query for agent daily recommendations
   const {
-    data: aiDailyRecommendations,
+    data: agentDailyRecommendations,
     isLoading: isLoadingDaily,
     error: dailyError,
     refetch: refetchDaily
   } = useQuery({
-    queryKey: ['ai-daily-recommendations', tripContext],
+    queryKey: ['agent-daily-recommendations', tripContext],
     queryFn: () => fetchDailyRecommendations(tripContext),
-    enabled: useAIRecommendations && dailyData.length > 0 && !!tripDetails?.destination,
+    enabled: useAgentRecommendations && dailyData.length > 0 && !!tripDetails?.destination,
     staleTime: 10 * 60 * 1000, // 10 minutes
     retry: (failureCount, error) => {
-      if (error instanceof AiRecommendationApiError && error.statusCode && error.statusCode >= 400 && error.statusCode < 500) {
+      if (error instanceof AgentRecommendationApiError && error.statusCode && error.statusCode >= 400 && error.statusCode < 500) {
         return false;
       }
       return failureCount < 2;
     }
   });
 
-  // Query for AI packing optimization
+  // Query for agent packing optimization
   const {
-    data: aiPackingOptimization,
+    data: agentPackingOptimization,
     isLoading: isLoadingPacking,
     error: packingError
   } = useQuery({
-    queryKey: ['ai-packing-optimization', tripContext, aiDailyRecommendations],
-    queryFn: () => fetchPackingOptimization(tripContext, aiDailyRecommendations!),
-    enabled: useAIRecommendations && !!aiDailyRecommendations && aiDailyRecommendations.length > 0,
+    queryKey: ['agent-packing-optimization', tripContext, agentDailyRecommendations],
+    queryFn: () => fetchPackingOptimization(tripContext, agentDailyRecommendations!),
+    enabled: useAgentRecommendations && !!agentDailyRecommendations && agentDailyRecommendations.length > 0,
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
 
-  // Fallback to original logic if AI is disabled or fails
+  // Fallback to original logic if agent is disabled or fails
   const fallbackPackingList = useMemo(() => {
     // This is the original logic from DailyClothingSuggestions.tsx
     const allConditions = dailyData.map(day => day.condition);
@@ -205,7 +205,7 @@ export default function EnhancedDailyClothingSuggestions({
     };
   }, [dailyData, tripDetails]);
 
-  const renderAIPackingList = (optimization: PackingListOptimization) => {
+  const renderAgentPackingList = (optimization: PackingListOptimization) => {
     const categories = [
       { key: 'tops', title: '👕 Tops', items: optimization.optimizedList.tops },
       { key: 'bottoms', title: '👖 Bottoms', items: optimization.optimizedList.bottoms },
@@ -306,42 +306,42 @@ export default function EnhancedDailyClothingSuggestions({
     return <div>Loading daily suggestions...</div>;
   }
 
-  const hasAIError = dailyError || packingError;
-  const isLoadingAI = isLoadingDaily || isLoadingPacking;
+  const hasAgentError = dailyError || packingError;
+  const isLoadingAgent = isLoadingDaily || isLoadingPacking;
 
   return (
     <div className="space-y-6">
-      {/* AI Toggle and Status */}
-      {enableAI && (
+      {/* Agent Toggle and Status */}
+      {enableAgent && (
         <div className="flex items-center justify-between bg-muted/50 rounded-lg p-3">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium">AI-Powered Recommendations</span>
-            {isLoadingAI && <span className="text-xs text-muted-foreground">(Generating...)</span>}
+            <span className="text-sm font-medium">Agent-Powered Recommendations</span>
+            {isLoadingAgent && <span className="text-xs text-muted-foreground">(Generating...)</span>}
           </div>
           <Button
             variant="outline"
             size="sm"
             onClick={() => {
-              setUseAIRecommendations(!useAIRecommendations);
-              if (!useAIRecommendations) {
+              setUseAgentRecommendations(!useAgentRecommendations);
+              if (!useAgentRecommendations) {
                 refetchDaily();
               }
             }}
             className="text-xs"
           >
-            {useAIRecommendations ? "Use Standard" : "Use AI"}
+            {useAgentRecommendations ? "Use Standard" : "Use Agent"}
           </Button>
         </div>
       )}
 
       {/* Error Alert */}
-      {hasAIError && useAIRecommendations && (
+      {hasAgentError && useAgentRecommendations && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            AI recommendations temporarily unavailable. Showing standard recommendations instead.
-            {dailyError instanceof AiRecommendationApiError && (
+            Agent recommendations temporarily unavailable. Showing standard recommendations instead.
+            {dailyError instanceof AgentRecommendationApiError && (
               <span className="block text-xs mt-1">{dailyError.message}</span>
             )}
           </AlertDescription>
@@ -362,21 +362,21 @@ export default function EnhancedDailyClothingSuggestions({
                   (Optimized for {tripDetails.luggageSize} luggage)
                 </span>
               )}
-              {useAIRecommendations && !hasAIError && (
+              {useAgentRecommendations && !hasAgentError && (
                 <Badge variant="default" className="text-xs bg-primary/10 text-primary">
-                  AI-Optimized
+                  Agent-Optimized
                 </Badge>
               )}
             </div>
           </div>
 
-          {isLoadingAI && useAIRecommendations ? (
+          {isLoadingAgent && useAgentRecommendations ? (
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-              <span className="ml-3 text-muted-foreground">AI is analyzing your trip...</span>
+              <span className="ml-3 text-muted-foreground">Agent is analyzing your trip...</span>
             </div>
-          ) : useAIRecommendations && aiPackingOptimization && !hasAIError ? (
-            renderAIPackingList(aiPackingOptimization)
+          ) : useAgentRecommendations && agentPackingOptimization && !hasAgentError ? (
+            renderAgentPackingList(agentPackingOptimization)
           ) : (
             renderFallbackPackingList()
           )}
@@ -418,7 +418,7 @@ export default function EnhancedDailyClothingSuggestions({
 
           <Accordion type="multiple" className="w-full">
             {dailyData.map((day, dayIndex) => {
-              const aiDay = aiDailyRecommendations?.find(ai => ai.date === day.date);
+              const agentDay = agentDailyRecommendations?.find(agent => agent.date === day.date);
               
               return (
                 <AccordionItem key={dayIndex} value={`day-${dayIndex}`} className="border border-border rounded-lg mb-4">
@@ -440,9 +440,9 @@ export default function EnhancedDailyClothingSuggestions({
                           </div>
                         </div>
                       </div>
-                      {useAIRecommendations && aiDay && (
+                      {useAgentRecommendations && agentDay && (
                         <Badge variant="outline" className="text-xs bg-primary/5 text-primary border-primary/20">
-                          AI Enhanced
+                          Agent Enhanced
                         </Badge>
                       )}
                     </div>
@@ -463,15 +463,15 @@ export default function EnhancedDailyClothingSuggestions({
                         </div>
                       )}
 
-                      {/* AI-powered or fallback recommendations */}
-                      {useAIRecommendations && aiDay && !hasAIError ? (
+                      {/* Agent-powered or fallback recommendations */}
+                      {useAgentRecommendations && agentDay && !hasAgentError ? (
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div>
                             <h6 className="text-sm font-medium text-foreground mb-2 flex items-center gap-1">
                               <Sun className="h-3 w-3" /> Morning
                             </h6>
                             <ul className="text-xs text-muted-foreground space-y-1">
-                              {aiDay.recommendations.morning.map((item, index) => (
+                              {agentDay.recommendations.morning.map((item, index) => (
                                 <li key={index}>• {item}</li>
                               ))}
                             </ul>
@@ -481,7 +481,7 @@ export default function EnhancedDailyClothingSuggestions({
                               <Sun className="h-3 w-3" /> Daytime
                             </h6>
                             <ul className="text-xs text-muted-foreground space-y-1">
-                              {aiDay.recommendations.daytime.map((item, index) => (
+                              {agentDay.recommendations.daytime.map((item, index) => (
                                 <li key={index}>• {item}</li>
                               ))}
                             </ul>
@@ -491,7 +491,7 @@ export default function EnhancedDailyClothingSuggestions({
                               <Moon className="h-3 w-3" /> Evening
                             </h6>
                             <ul className="text-xs text-muted-foreground space-y-1">
-                              {aiDay.recommendations.evening.map((item, index) => (
+                              {agentDay.recommendations.evening.map((item, index) => (
                                 <li key={index}>• {item}</li>
                               ))}
                             </ul>
@@ -513,13 +513,13 @@ export default function EnhancedDailyClothingSuggestions({
                       )}
 
                       {/* Activity-specific priorities */}
-                      {useAIRecommendations && aiDay && aiDay.priorities.length > 0 && (
+                      {useAgentRecommendations && agentDay && agentDay.priorities.length > 0 && (
                         <div className="bg-warning/10 rounded-lg p-3 border border-warning/20">
                           <h6 className="text-sm font-medium text-warning mb-2 flex items-center gap-1">
                             <Star className="h-3 w-3" /> Must-Have Items
                           </h6>
                           <ul className="text-xs text-warning space-y-1">
-                            {aiDay.priorities.map((priority, index) => (
+                            {agentDay.priorities.map((priority, index) => (
                               <li key={index}>• {priority}</li>
                             ))}
                           </ul>

@@ -4,7 +4,7 @@ import { z } from "zod";
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// Schemas for AI responses
+// Schemas for agent responses
 const dailyClothingRecommendationSchema = z.object({
   date: z.string(),
   activities: z.array(z.string()),
@@ -145,7 +145,7 @@ Respond with a JSON array containing one object per day.`;
     return [];
   } catch (error) {
     console.error("Error generating daily clothing recommendations:", error);
-    throw new Error("Failed to generate AI-powered clothing recommendations");
+    throw new Error("Failed to generate agent-powered clothing recommendations");
   }
 }
 
@@ -208,7 +208,7 @@ Focus on versatile items that work for multiple activities and weather condition
     return packingListOptimizationSchema.parse(result);
   } catch (error) {
     console.error("Error optimizing packing list:", error);
-    throw new Error("Failed to generate AI-optimized packing list");
+    throw new Error("Failed to generate agent-optimized packing list");
   }
 }
 
