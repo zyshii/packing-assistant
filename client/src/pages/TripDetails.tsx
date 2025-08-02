@@ -307,9 +307,7 @@ function TripDetails() {
             <h1 className="text-3xl lg:text-4xl font-bold text-foreground">
               Plan Your Perfect Trip
             </h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Tell us about your journey and our assistant will create a personalized packing list based on your destination, weather, and activities
-            </p>
+            <p className="text-muted-foreground max-w-2xl mx-auto">Tell us about your journey and we will create a personalized packing list based on your destination, weather, and activities</p>
           </div>
 
           {/* Onboarding Hint */}
