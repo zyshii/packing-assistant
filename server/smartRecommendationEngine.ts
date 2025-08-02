@@ -301,7 +301,7 @@ function deduplicateRecommendations(recommendations: string[]): string[] {
     
     // Check for similar items
     let isDuplicate = false;
-    for (const seenItem of seen) {
+    for (const seenItem of Array.from(seen)) {
       // Check for exact matches
       if (normalized === seenItem) {
         isDuplicate = true;
@@ -373,7 +373,7 @@ export function generateDetailedDailyRecommendations(
     };
     
     const timeSpecificRecommendations = {
-      base: deduplicateRecommendations(generateTimeSpecificRecommendations("base", weather, day.activities)),
+      morning: deduplicateRecommendations(generateTimeSpecificRecommendations("morning", weather, day.activities)),
       daytime: deduplicateRecommendations(generateTimeSpecificRecommendations("daytime", weather, day.activities)),
       evening: deduplicateRecommendations(generateTimeSpecificRecommendations("evening", weather, day.activities))
     };
@@ -383,7 +383,7 @@ export function generateDetailedDailyRecommendations(
     
     // Apply global deduplication across all recommendation types for this day
     const allRecommendations = [
-      ...timeSpecificRecommendations.base,
+      ...timeSpecificRecommendations.morning,
       ...timeSpecificRecommendations.daytime,
       ...timeSpecificRecommendations.evening,
       ...activitySpecific
@@ -392,7 +392,7 @@ export function generateDetailedDailyRecommendations(
     
     // Redistribute back to categories while maintaining structure
     const finalRecommendations = {
-      base: timeSpecificRecommendations.base.filter(item => 
+      morning: timeSpecificRecommendations.morning.filter(item => 
         globallyDeduplicated.includes(item) || 
         !globallyDeduplicated.some(global => 
           item.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().includes('quick-dry') &&
@@ -414,9 +414,9 @@ export function generateDetailedDailyRecommendations(
         )
       ),
       activitySpecific: activitySpecific.filter(item => 
-        !timeSpecificRecommendations.base.some(base => 
+        !timeSpecificRecommendations.morning.some(morning => 
           item.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().includes('quick-dry') &&
-          base.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().includes('quick-dry')
+          morning.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().includes('quick-dry')
         ) &&
         !timeSpecificRecommendations.daytime.some(day => 
           item.replace(/^[+-]\s*(Add|Remove)\s*/, '').toLowerCase().includes('quick-dry') &&
@@ -453,8 +453,8 @@ function generateTimeSpecificRecommendations(
 ): string[] {
   const recommendations = [];
   
-  // Base layer recommendations (complete outfit with all layers)
-  if (timeOfDay === "base") {
+  // Morning layer recommendations (complete outfit with all layers)
+  if (timeOfDay === "morning") {
     // Essential base items
     recommendations.push("Underwear and socks");
     

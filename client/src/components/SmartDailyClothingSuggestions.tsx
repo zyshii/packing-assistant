@@ -370,8 +370,8 @@ export default function SmartDailyClothingSuggestions({
                               <span className="text-xs text-info/80 ml-auto">Morning: {Math.round(day.temp.low + (day.temp.high - day.temp.low) * 0.2)}°F</span>
                             </div>
                             <ul className="space-y-1">
-                              {smartDay.recommendations?.base?.length > 0 ? (
-                                smartDay.recommendations.base.map((item: string, index: number) => (
+                              {smartDay.recommendations?.morning?.length > 0 ? (
+                                smartDay.recommendations.morning.map((item: string, index: number) => (
                                   <li key={index} className="text-sm text-info flex items-start gap-2">
                                     <span className="text-info/70 mt-0.5 flex-shrink-0">•</span>
                                     <span>{item}</span>
