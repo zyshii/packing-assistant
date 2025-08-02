@@ -202,8 +202,6 @@ export default function SmartDailyClothingSuggestions({
 
   return (
     <div className="space-y-6">
-
-
       {/* Error Alert */}
       {hasError && (
         <Alert variant="destructive">
@@ -224,7 +222,6 @@ export default function SmartDailyClothingSuggestions({
           </AlertDescription>
         </Alert>
       )}
-
       {/* Smart Packing List */}
       <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-5 border-b border-gray-200">
@@ -273,7 +270,6 @@ export default function SmartDailyClothingSuggestions({
           </p>
         </div>
       </div>
-
       {/* Enhanced Daily Clothing Suggestions */}
       <div className="bg-card rounded-2xl border border-border shadow-card overflow-hidden">
         <div className="bg-gradient-to-r from-success-light to-info-light px-6 py-5 border-b border-border">
@@ -284,7 +280,7 @@ export default function SmartDailyClothingSuggestions({
               </div>
               <div>
                 <h3 className="text-xl font-bold text-foreground">Daily Clothing Suggestions</h3>
-                <p className="text-sm text-muted-foreground mt-1">💡 Start with your complete morning outfit, then add or remove layers as temperatures change throughout the day</p>
+                <p className="text-sm text-muted-foreground mt-1">Start with your complete morning outfit, then add or remove layers as temperatures change throughout the day</p>
               </div>
             </div>
 
