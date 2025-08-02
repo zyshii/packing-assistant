@@ -122,23 +122,49 @@ const getCoordinates = async (location: string): Promise<{ latitude: number; lon
     const data = await response.json();
     
     if (!data.results || data.results.length === 0) {
-      // If first attempt fails, try with just the city name (remove state/province)
+      // If first attempt fails, try multiple fallback strategies
+      const fallbackAttempts = [];
+      
+      // Strategy 1: Try with just the city name (remove state/province)
       const cityOnly = searchTerm.split(',')[0].trim();
       if (cityOnly !== searchTerm) {
-        console.log(`Retrying with city only: "${cityOnly}"`);
+        fallbackAttempts.push(cityOnly);
+      }
+      
+      // Strategy 2: For national parks and special locations, try alternative search terms
+      const locationLower = normalizedLocation.toLowerCase();
+      if (locationLower.includes('yellowstone')) {
+        fallbackAttempts.push('Yellowstone National Park', 'West Yellowstone Montana', 'Mammoth Hot Springs Wyoming');
+      } else if (locationLower.includes('grand canyon')) {
+        fallbackAttempts.push('Grand Canyon Village', 'Grand Canyon Arizona');
+      } else if (locationLower.includes('yosemite')) {
+        fallbackAttempts.push('Yosemite National Park', 'Yosemite Valley California');
+      } else if (locationLower.includes('zion')) {
+        fallbackAttempts.push('Zion National Park', 'Springdale Utah');
+      }
+      
+      // Try each fallback attempt
+      for (const attempt of fallbackAttempts) {
+        console.log(`Retrying geocoding with: "${attempt}"`);
         
-        const retryResponse = await fetch(
-          `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityOnly)}&count=1&language=en&format=json`
-        );
-        
-        if (retryResponse.ok) {
-          const retryData = await retryResponse.json();
-          if (retryData.results && retryData.results.length > 0) {
-            return {
-              latitude: retryData.results[0].latitude,
-              longitude: retryData.results[0].longitude
-            };
+        try {
+          const retryResponse = await fetch(
+            `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(attempt)}&count=1&language=en&format=json`
+          );
+          
+          if (retryResponse.ok) {
+            const retryData = await retryResponse.json();
+            if (retryData.results && retryData.results.length > 0) {
+              console.log(`Successfully found coordinates for "${attempt}"`);
+              return {
+                latitude: retryData.results[0].latitude,
+                longitude: retryData.results[0].longitude
+              };
+            }
           }
+        } catch (retryError) {
+          console.log(`Retry attempt "${attempt}" failed:`, retryError);
+          continue;
         }
       }
       
