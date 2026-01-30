@@ -144,17 +144,17 @@ const Index = () => {
   }, [dailyActivities, finalTripData.activities]);
 
   return (
-    <div className="min-h-screen bg-gradient-background">
-      <div className="max-w-5xl mx-auto p-4 space-y-6 lg:space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-cream to-light-sand">
+      <div className="max-w-5xl mx-auto p-6 space-y-8 lg:space-y-12">
         {/* Header with Back Button */}
         <div className="flex items-center justify-between animate-fade-in">
           <Button
             variant="ghost"
             onClick={() => setLocation("/")}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+            className="flex items-center gap-2 text-warm-gray hover:text-warm-orange hover:bg-soft-peach/30 transition-all duration-300"
           >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Trip Details
+            <ArrowLeft className="h-5 w-5" />
+            <span className="font-semibold">Back to Trip Details</span>
           </Button>
         </div>
 
@@ -170,22 +170,22 @@ const Index = () => {
 
         {/* Weather Error Alert */}
         {weatherError && (
-          <div className="animate-fade-in">
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription className="flex items-center justify-between">
+          <div className="animate-bounce-in">
+            <Alert variant="destructive" className="border-2 border-terracotta/30 bg-terracotta/10">
+              <AlertCircle className="h-5 w-5 text-terracotta" />
+              <AlertDescription className="flex items-center justify-between text-charcoal">
                 <span>
                   Unable to fetch current weather data: {
-                    weatherError instanceof WeatherApiError 
-                      ? weatherError.message 
+                    weatherError instanceof WeatherApiError
+                      ? weatherError.message
                       : 'Network error'
                   }. Using fallback weather estimates.
                 </span>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => refetchWeather()}
-                  className="ml-4"
+                  className="ml-4 border-terracotta text-terracotta hover:bg-terracotta/20"
                 >
                   Retry
                 </Button>
@@ -197,9 +197,9 @@ const Index = () => {
         {/* Daily Clothing Suggestions */}
         <div className="animate-scale-in">
           {isLoadingWeather && tripData?.startDate && tripData?.endDate ? (
-            <div className="bg-white/70 dark:bg-gray-900/70 rounded-lg p-8 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-muted-foreground">
+            <div className="bg-gradient-to-br from-white to-warm-beige/30 rounded-2xl p-12 text-center shadow-floating border-2 border-warm-orange/20">
+              <div className="animate-spin rounded-full h-10 w-10 border-4 border-warm-orange/20 border-t-warm-orange mx-auto mb-6"></div>
+              <p className="text-warm-gray text-lg font-medium">
                 Fetching real-time weather data for {finalTripData.destination}...
               </p>
             </div>
@@ -216,8 +216,8 @@ const Index = () => {
               isWeatherDataReal={!!weatherData && !weatherError}
             />
           ) : (
-            <div className="bg-white/70 dark:bg-gray-900/70 rounded-lg p-8 text-center">
-              <p className="text-muted-foreground">Loading clothing suggestions...</p>
+            <div className="bg-gradient-to-br from-white to-warm-beige/30 rounded-2xl p-12 text-center shadow-floating border-2 border-warm-orange/20">
+              <p className="text-warm-gray text-lg font-medium">Loading clothing suggestions...</p>
             </div>
           )}
         </div>

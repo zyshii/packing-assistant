@@ -8,72 +8,73 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 220 13% 18%;
+    /* Claude-inspired warm color palette */
+    --background: 45 67% 93%; /* Cream */
+    --foreground: 0 0% 10%; /* Charcoal */
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 13% 18%;
+    --card: 48 43% 88%; /* Warm Beige */
+    --card-foreground: 0 0% 10%; /* Charcoal */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 13% 18%;
+    --popover: 48 43% 88%; /* Warm Beige */
+    --popover-foreground: 0 0% 10%; /* Charcoal */
 
-    --primary: 217 91% 50%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 23 67% 64%; /* Softer Warm Orange */
+    --primary-foreground: 0 0% 100%; /* White */
 
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 220 13% 18%;
+    --secondary: 38 59% 91%; /* Light Sand */
+    --secondary-foreground: 0 0% 10%; /* Charcoal */
 
-    --muted: 220 13% 95%;
-    --muted-foreground: 220 13% 40%;
+    --muted: 48 43% 88%; /* Warm Beige */
+    --muted-foreground: 0 0% 35%; /* Warm Gray */
 
-    --accent: 220 13% 95%;
-    --accent-foreground: 220 13% 18%;
+    --accent: 22 100% 75%; /* Soft Peach */
+    --accent-foreground: 0 0% 10%; /* Charcoal */
 
-    --destructive: 0 84% 50%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 357 39% 58%; /* Terracotta */
+    --destructive-foreground: 0 0% 100%; /* White */
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 217 91% 50%;
+    --border: 38 59% 91%; /* Light Sand */
+    --input: 48 43% 88%; /* Warm Beige */
+    --ring: 23 67% 64%; /* Softer Warm Orange */
 
-    /* WCAG AA compliant travel app colors (4.5:1+ contrast ratios) */
-    --success: 140 65% 28%;      /* Dark green: 5.2:1 contrast on white */
-    --success-light: 140 65% 95%; /* Very light green background */
+    /* WCAG AA compliant warm theme colors (4.5:1+ contrast ratios) */
+    --success: 97 27% 58%;       /* Softer Sage Green */
+    --success-light: 97 27% 95%; /* Very light sage green background */
     --success-foreground: 0 0% 100%; /* White text on success background */
-    
-    --info: 215 100% 35%;        /* Dark blue: 6.1:1 contrast on white */
-    --info-light: 215 100% 96%;  /* Very light blue background */
+
+    --info: 269 29% 62%;         /* Softer Violet */
+    --info-light: 269 29% 96%;   /* Very light violet background */
     --info-foreground: 0 0% 100%; /* White text on info background */
-    
-    --warning: 35 100% 30%;      /* Dark orange: 7.2:1 contrast on white */
-    --warning-light: 35 100% 95%; /* Very light orange background */
+
+    --warning: 17 55% 65%;       /* Softer Burnt Orange */
+    --warning-light: 17 55% 95%; /* Very light orange background */
     --warning-foreground: 0 0% 100%; /* White text on warning background */
-    
-    --neutral: 220 15% 25%;      /* Dark gray: 8.1:1 contrast on white */
-    --neutral-light: 220 15% 95%; /* Very light gray background */
-    --surface: 220 14% 98%;      /* Very light surface color */
-    --accent-light: 266 100% 97%; /* Very light purple accent */
-    
-    /* Enhanced focus and hover states for accessibility */
-    --focus-ring: 217 91% 50%;   /* Blue focus ring with sufficient contrast */
-    --hover-overlay: 0 0% 0%;    /* Black overlay for hover states */
-    
-    /* WCAG compliant shadows with proper contrast */
-    --shadow-soft: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-modal: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-    --shadow-floating: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-    
-    /* Accessible gradients with proper contrast endpoints */
-    --gradient-primary: linear-gradient(135deg, hsl(217 91% 50%), hsl(217 91% 40%));
-    --gradient-success: linear-gradient(135deg, hsl(142 76% 30%), hsl(217 91% 45%));
-    --gradient-background: linear-gradient(180deg, hsl(0 0% 100%), hsl(220 14% 98%));
 
-    /* Travel theme colors */
-    --travel-blue: 217 91% 50%;
-    --travel-purple: 266 100% 50%;
+    --neutral: 0 0% 35%;         /* Warm Gray: 6.1:1 contrast on cream */
+    --neutral-light: 0 0% 95%;   /* Very light gray background */
+    --surface: 45 67% 96%;       /* Very light cream surface */
+    --accent-light: 275 73% 97%; /* Very light purple accent */
 
-    --radius: 0.5rem;
+    /* Enhanced focus and hover states for warm theme */
+    --focus-ring: 23 67% 64%;    /* Softer Warm Orange focus ring */
+    --hover-overlay: 17 55% 65%; /* Softer Burnt Orange overlay for hover */
+    
+    /* Warm shadows with softer, diffused edges */
+    --shadow-soft: 0 2px 8px 0 rgb(232 151 93 / 0.06), 0 1px 3px -1px rgb(232 151 93 / 0.04);
+    --shadow-card: 0 4px 12px -2px rgb(232 151 93 / 0.08), 0 2px 6px -2px rgb(232 151 93 / 0.06);
+    --shadow-modal: 0 20px 30px -8px rgb(232 151 93 / 0.10), 0 8px 12px -6px rgb(232 151 93 / 0.06);
+    --shadow-floating: 0 25px 50px -12px rgb(232 151 93 / 0.12);
+
+    /* Warm gradients with organic color transitions */
+    --gradient-primary: linear-gradient(135deg, hsl(23 67% 64%), hsl(17 55% 65%));
+    --gradient-success: linear-gradient(135deg, hsl(97 27% 58%), hsl(269 29% 62%));
+    --gradient-background: linear-gradient(180deg, hsl(45 67% 96%), hsl(38 59% 94%));
+
+    /* Travel theme colors - Updated to warm palette */
+    --travel-blue: 23 67% 64%; /* Now softer warm orange */
+    --travel-purple: 269 29% 62%; /* Softer violet */
+
+    --radius: 1.25rem; /* Increased for more organic feel */
 
     --sidebar-background: 0 0% 98%;
 
@@ -93,55 +94,56 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222 84% 5%;
-    --foreground: 210 40% 98%;
+    /* Warm dark mode palette */
+    --background: 28 20% 8%; /* Warm dark charcoal */
+    --foreground: 45 30% 95%; /* Warm light cream */
 
-    --card: 222 84% 5%;
-    --card-foreground: 210 40% 98%;
+    --card: 28 20% 12%; /* Slightly lighter warm dark */
+    --card-foreground: 45 30% 95%; /* Warm light cream */
 
-    --popover: 222 84% 5%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 28 20% 12%; /* Slightly lighter warm dark */
+    --popover-foreground: 45 30% 95%; /* Warm light cream */
 
-    --primary: 217 91% 65%;
-    --primary-foreground: 220 13% 18%;
+    --primary: 28 100% 60%; /* Lighter warm orange for dark bg */
+    --primary-foreground: 0 0% 10%; /* Dark text */
 
-    --secondary: 217 33% 18%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 28 20% 18%; /* Warm dark secondary */
+    --secondary-foreground: 45 30% 95%; /* Warm light cream */
 
-    --muted: 217 33% 18%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 28 15% 18%; /* Warm muted dark */
+    --muted-foreground: 0 0% 65%; /* Medium gray */
 
-    --accent: 217 33% 18%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 14 100% 70%; /* Bright burnt orange for dark bg */
+    --accent-foreground: 0 0% 10%; /* Dark text */
 
-    --destructive: 0 85% 65%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 357 50% 65%; /* Lighter terracotta for dark bg */
+    --destructive-foreground: 45 30% 95%; /* Warm light cream */
 
-    --border: 217 33% 18%;
-    --input: 217 33% 18%;
-    --ring: 217 91% 65%;
+    --border: 28 20% 18%; /* Warm dark border */
+    --input: 28 20% 18%; /* Warm dark input bg */
+    --ring: 28 100% 60%; /* Lighter warm orange ring */
 
-    /* Dark mode WCAG compliant colors */
-    --success: 140 65% 55%;      /* Lighter green for dark backgrounds: 4.8:1 contrast */
-    --success-light: 140 65% 15%; /* Dark green background */
-    --success-foreground: 220 13% 18%; /* Dark text on light success backgrounds */
-    
-    --info: 215 100% 70%;        /* Lighter blue for dark backgrounds: 5.1:1 contrast */
-    --info-light: 215 100% 15%;  /* Dark blue background */
-    --info-foreground: 220 13% 18%; /* Dark text on light info backgrounds */
-    
-    --warning: 35 100% 65%;      /* Lighter orange for dark backgrounds: 4.9:1 contrast */
-    --warning-light: 35 100% 15%; /* Dark orange background */
-    --warning-foreground: 220 13% 18%; /* Dark text on light warning backgrounds */
-    
-    --neutral: 220 15% 75%;      /* Light gray for dark backgrounds: 4.6:1 contrast */
-    --neutral-light: 220 15% 15%; /* Dark gray background */
-    --surface: 220 14% 8%;       /* Dark surface color */
-    --accent-light: 266 100% 10%; /* Dark purple accent */
-    
+    /* Dark mode warm WCAG compliant colors */
+    --success: 97 33% 60%;       /* Lighter sage green for dark backgrounds */
+    --success-light: 97 33% 15%; /* Dark sage green background */
+    --success-foreground: 0 0% 10%; /* Dark text on light success */
+
+    --info: 275 64% 70%;         /* Lighter violet for dark backgrounds */
+    --info-light: 275 64% 15%;   /* Dark violet background */
+    --info-foreground: 0 0% 10%; /* Dark text on light info */
+
+    --warning: 14 100% 70%;      /* Lighter burnt orange for dark backgrounds */
+    --warning-light: 14 100% 15%; /* Dark orange background */
+    --warning-foreground: 0 0% 10%; /* Dark text on light warning */
+
+    --neutral: 0 0% 75%;         /* Light gray for dark backgrounds */
+    --neutral-light: 0 0% 15%;   /* Dark gray background */
+    --surface: 28 20% 10%;       /* Warm dark surface */
+    --accent-light: 275 73% 15%; /* Dark purple accent */
+
     /* Enhanced focus and hover states for dark mode */
-    --focus-ring: 217 91% 65%;   /* Lighter blue focus ring for dark backgrounds */
-    --hover-overlay: 0 0% 100%;  /* White overlay for hover states in dark mode */
+    --focus-ring: 28 100% 60%;   /* Lighter warm orange focus ring */
+    --hover-overlay: 14 100% 70%; /* Burnt orange overlay for hover */
 
     --sidebar-background: 240 6% 10%;
     --sidebar-foreground: 240 5% 96%;
@@ -161,5 +163,35 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    line-height: 1.7;
+    font-feature-settings: "kern" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+
+  /* Smooth transitions for interactive elements */
+  button, a, input, select, textarea {
+    transition: all 300ms ease-out;
+  }
+}
+
+/* Custom utility classes for warm design */
+@layer utilities {
+  .glow-warm {
+    box-shadow: 0 0 20px rgba(232, 151, 93, 0.2);
+  }
+
+  .glow-warm-strong {
+    box-shadow: 0 0 30px rgba(232, 151, 93, 0.3);
+  }
+
+  .text-balance {
+    text-wrap: balance;
   }
 }

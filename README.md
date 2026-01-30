@@ -77,7 +77,7 @@ A smart travel companion that helps users pack efficiently and confidently for a
    npm run dev
    ```
 
-   The app will be available at [http://localhost:5000](http://localhost:5000)
+   The app will be available at [http://localhost:3000](http://localhost:3000)
 
 ## 📝 Available Scripts
 

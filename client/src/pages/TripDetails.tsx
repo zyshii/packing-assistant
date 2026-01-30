@@ -299,19 +299,19 @@ function TripDetails() {
     );
   }, [watchedDestination]);
   return (
-    <div className="min-h-screen bg-gradient-background p-4">
-      <div className="container mx-auto py-6 lg:py-8">
-        <div className="max-w-4xl mx-auto space-y-6 lg:space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-cream to-light-sand p-4">
+      <div className="container mx-auto py-8 lg:py-12">
+        <div className="max-w-4xl mx-auto space-y-8 lg:space-y-12">
           {/* Header */}
-          <div className="text-center space-y-4 animate-fade-in">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-primary rounded-full text-white text-sm font-medium shadow-floating">
-              <Sparkles className="w-4 h-4" />
+          <div className="text-center space-y-6 animate-fade-in">
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-br from-warm-orange to-burnt-orange rounded-full text-white text-sm font-semibold shadow-floating">
+              <Sparkles className="w-5 h-5 animate-pulse" />
               Packing Assistant
             </div>
-            <h1 className="text-3xl lg:text-4xl font-bold text-foreground">
+            <h1 className="text-4xl lg:text-5xl font-bold text-charcoal tracking-tight">
               Plan Your Perfect Trip
             </h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto">Tell us about your journey and we will create a personalized packing list based on your destination, weather, luggage size, and activities</p>
+            <p className="text-warm-gray text-lg max-w-2xl mx-auto leading-relaxed">Tell us about your journey and we'll create a personalized packing list based on your destination, weather, luggage size, and activities</p>
           </div>
 
           {/* Onboarding Hint */}
@@ -323,13 +323,13 @@ function TripDetails() {
           />
 
           {/* Main Form Card */}
-          <Card className="shadow-card border-0 animate-scale-in">
-            <CardHeader className="text-center pb-6">
-              <CardTitle className="flex items-center justify-center gap-2 text-xl">
-                <Plane className="h-6 w-6 text-primary" />
+          <Card className="shadow-floating border-2 border-warm-orange/20 animate-scale-in bg-gradient-to-br from-white to-warm-beige/30 hover:shadow-floating hover:scale-100">
+            <CardHeader className="text-center pb-8">
+              <CardTitle className="flex items-center justify-center gap-3 text-2xl text-charcoal">
+                <Plane className="h-7 w-7 text-warm-orange animate-float" />
                 Trip Details
               </CardTitle>
-              <CardDescription className="text-base">
+              <CardDescription className="text-base text-warm-gray mt-2">
                 Help us understand your journey to create the perfect packing list
               </CardDescription>
             </CardHeader>
@@ -342,8 +342,8 @@ function TripDetails() {
                     name="destination"
                     render={({ field }) => (
                       <FormItem className="space-y-3">
-                        <FormLabel className="flex items-center gap-2 text-base font-semibold">
-                          <MapPin className="h-5 w-5 text-primary" />
+                        <FormLabel className="flex items-center gap-2 text-base font-semibold text-charcoal">
+                          <MapPin className="h-5 w-5 text-warm-orange" />
                            Destination
                         </FormLabel>
                         <FormControl>
@@ -434,7 +434,7 @@ function TripDetails() {
                         </FormControl>
                         <FormMessage />
                         {watchedDestination && isValidDestination && (
-                          <p className="text-sm text-success animate-fade-in">
+                          <p className="text-sm text-sage-green font-medium animate-bounce-in">
                             ✨ Great choice! We'll check the weather and local customs for {watchedDestination}
                           </p>
                         )}
@@ -457,8 +457,8 @@ function TripDetails() {
                       name="startDate"
                       render={({ field }) => (
                         <FormItem className="flex flex-col space-y-3">
-                          <FormLabel className="flex items-center gap-2 text-base font-semibold">
-                            <CalendarIcon className="h-5 w-5 text-success" />
+                          <FormLabel className="flex items-center gap-2 text-base font-semibold text-charcoal">
+                            <CalendarIcon className="h-5 w-5 text-sage-green" />
                              Start Date
                           </FormLabel>
                           <Popover>
@@ -507,8 +507,8 @@ function TripDetails() {
                       name="endDate"
                       render={({ field }) => (
                         <FormItem className="flex flex-col space-y-3">
-                          <FormLabel className="flex items-center gap-2 text-base font-semibold">
-                            <CalendarIcon className="h-5 w-5 text-success" />
+                          <FormLabel className="flex items-center gap-2 text-base font-semibold text-charcoal">
+                            <CalendarIcon className="h-5 w-5 text-sage-green" />
                              End Date
                           </FormLabel>
                           <Popover>
@@ -606,49 +606,49 @@ function TripDetails() {
                     name="luggageSize"
                     render={({ field }) => (
                       <FormItem className="space-y-3">
-                        <FormLabel className="flex items-center gap-2 text-base font-semibold">
-                          <Luggage className="h-5 w-5 text-primary" />
+                        <FormLabel className="flex items-center gap-2 text-base font-semibold text-charcoal">
+                          <Luggage className="h-5 w-5 text-warm-orange" />
                            Luggage Size
                         </FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <SelectTrigger className="h-12 text-base">
+                            <SelectTrigger>
                               <SelectValue placeholder="Choose your luggage size" />
                             </SelectTrigger>
-                            <SelectContent className="bg-background border border-border shadow-lg">
-                              <SelectItem value="carry-on" className="cursor-pointer">
+                            <SelectContent>
+                              <SelectItem value="carry-on">
                                 <div className="flex items-center gap-3 py-2">
                                   <div className="text-2xl">🎒</div>
                                   <div>
                                     <div className="font-medium">Carry-on - 22 inch</div>
-                                    <div className="text-sm text-muted-foreground">Compact roller bag, fits overhead compartments</div>
+                                    <div className="text-sm text-warm-gray">Compact roller bag, fits overhead compartments</div>
                                   </div>
                                 </div>
                               </SelectItem>
-                              <SelectItem value="backpack" className="cursor-pointer">
+                              <SelectItem value="backpack">
                                 <div className="flex items-center gap-3 py-2">
                                   <div className="text-2xl">🎒</div>
                                   <div>
                                     <div className="font-medium">Backpack - 50 L</div>
-                                    <div className="text-sm text-muted-foreground">Travel backpack, ideal for adventure trips</div>
+                                    <div className="text-sm text-warm-gray">Travel backpack, ideal for adventure trips</div>
                                   </div>
                                 </div>
                               </SelectItem>
-                              <SelectItem value="medium-suitcase" className="cursor-pointer">
+                              <SelectItem value="medium-suitcase">
                                 <div className="flex items-center gap-3 py-2">
                                   <div className="text-2xl">🧳</div>
                                   <div>
                                     <div className="font-medium">Medium Suitcase - 24 inch</div>
-                                    <div className="text-sm text-muted-foreground">Standard check-in size, perfect for week-long trips</div>
+                                    <div className="text-sm text-warm-gray">Standard check-in size, perfect for week-long trips</div>
                                   </div>
                                 </div>
                               </SelectItem>
-                              <SelectItem value="large-suitcase" className="cursor-pointer">
+                              <SelectItem value="large-suitcase">
                                 <div className="flex items-center gap-3 py-2">
                                   <div className="text-2xl">🧳</div>
                                   <div>
                                     <div className="font-medium">Large Suitcase - 28 inch</div>
-                                    <div className="text-sm text-muted-foreground">Spacious check-in bag, great for extended travel</div>
+                                    <div className="text-sm text-warm-gray">Spacious check-in bag, great for extended travel</div>
                                   </div>
                                 </div>
                               </SelectItem>
@@ -657,7 +657,7 @@ function TripDetails() {
                         </FormControl>
                         <FormMessage />
                         {field.value && (
-                          <p className="text-sm text-travel-blue animate-fade-in">
+                          <p className="text-sm text-warm-orange font-medium animate-bounce-in">
                             ✨ Perfect! We'll adjust clothing quantities to fit your {field.value.replace('-', ' ')}
                           </p>
                         )}
@@ -671,8 +671,8 @@ function TripDetails() {
                     name="tripTypes"
                     render={() => (
                       <FormItem className="space-y-4">
-                        <FormLabel className="flex items-center gap-2 text-base font-semibold">
-                          <Activity className="h-5 w-5 text-primary" />
+                        <FormLabel className="flex items-center gap-2 text-base font-semibold text-charcoal">
+                          <Activity className="h-5 w-5 text-burnt-orange" />
                            Trip Types
                         </FormLabel>
                         <FormControl>
@@ -684,8 +684,8 @@ function TripDetails() {
                                 name="tripTypes"
                                 render={({ field }) => (
                                   <FormItem className={cn(
-                                    "flex items-center space-x-3 p-6 border-2 rounded-xl hover:bg-muted/50 transition-all duration-200 cursor-pointer",
-                                    field.value?.includes(tripType) && "border-primary bg-primary/5"
+                                    "flex items-center space-x-3 p-6 border-2 rounded-2xl transition-all duration-300 cursor-pointer shadow-soft",
+                                    field.value?.includes(tripType) && "border-warm-orange bg-soft-peach/50 shadow-card"
                                   )}>
                                     <FormControl>
                                       <Checkbox
@@ -716,8 +716,8 @@ function TripDetails() {
                         </FormControl>
                         <FormMessage />
                         {watchedTripTypes && watchedTripTypes.length > 0 && (
-                          <p className="text-sm text-travel-blue animate-fade-in">
-                            ✨ Great! You've selected {watchedTripTypes.length} trip type{watchedTripTypes.length > 1 ? 's' : ''}. 
+                          <p className="text-sm text-warm-orange font-medium animate-bounce-in">
+                            ✨ Great! You've selected {watchedTripTypes.length} trip type{watchedTripTypes.length > 1 ? 's' : ''}.
                             We'll customize your activity options accordingly.
                           </p>
                         )}
@@ -737,10 +737,11 @@ function TripDetails() {
                   />
 
                   {/* Submit Button */}
-                  <div className="pt-4">
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-gradient-primary hover:opacity-90 text-white font-semibold py-4 h-auto text-base shadow-floating transition-all duration-300 hover:shadow-modal hover:scale-[1.02]"
+                  <div className="pt-6">
+                    <Button
+                      type="submit"
+                      size="lg"
+                      className="w-full bg-gradient-to-br from-warm-orange to-burnt-orange hover:from-burnt-orange hover:to-warm-orange text-white font-bold py-6 h-auto text-lg shadow-floating transition-all duration-300 hover:shadow-modal hover:scale-[1.03] hover:glow-warm-strong"
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? (
