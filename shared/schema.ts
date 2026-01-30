@@ -1,15 +1,16 @@
-import { pgTable, text, serial, integer, boolean, real, timestamp, unique } from "drizzle-orm/pg-core";
+import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { sql } from "drizzle-orm";
 
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
+export const users = sqliteTable("users", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
 });
 
-export const weatherData = pgTable("weather_data", {
-  id: serial("id").primaryKey(),
+export const weatherData = sqliteTable("weather_data", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   location: text("location").notNull(),
   latitude: real("latitude").notNull(),
   longitude: real("longitude").notNull(),
@@ -20,10 +21,8 @@ export const weatherData = pgTable("weather_data", {
   precipitationSum: real("precipitation_sum").notNull(),
   weatherCode: integer("weather_code").notNull(),
   condition: text("condition").notNull(), // sunny, cloudy, rainy, etc.
-  cached_at: timestamp("cached_at").defaultNow(),
-}, (table) => ({
-  uniqueLocationDate: unique().on(table.location, table.date),
-}));
+  cached_at: integer("cached_at", { mode: "timestamp" }).default(sql`(unixepoch())`),
+});
 
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,

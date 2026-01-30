@@ -2,7 +2,20 @@ import OpenAI from "openai";
 import { z } from "zod";
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Lazy initialize OpenAI client to allow server to start without API key
+let openai: OpenAI | null = null;
+
+function getOpenAIClient(): OpenAI {
+  if (!openai) {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error(
+        "OPENAI_API_KEY is required to use AI-powered recommendations. Please set it in your environment variables."
+      );
+    }
+    openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  }
+  return openai;
+}
 
 // Schemas for agent responses
 const dailyClothingRecommendationSchema = z.object({
@@ -119,7 +132,7 @@ Focus on practical, weather-appropriate clothing that matches the specific activ
 
 Respond with a JSON array containing one object per day.`;
 
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAIClient().chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
@@ -188,7 +201,7 @@ Also provide:
 
 Focus on versatile items that work for multiple activities and weather conditions.`;
 
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAIClient().chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
@@ -238,7 +251,7 @@ Provide a list of specific items needed for optimal comfort and performance. Be 
 
 Respond with a JSON object containing an array of recommended items.`;
 
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAIClient().chat.completions.create({
       model: "gpt-4o",
       messages: [
         {

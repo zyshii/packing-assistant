@@ -20,7 +20,11 @@ import OnboardingHint from "@/components/OnboardingHint";
 import DailyActivityInput from "@/components/DailyActivityInput";
 
 // Weather API date constraints
-const MAX_WEATHER_DATE = new Date('2025-08-16'); // Open-Meteo API limit
+// Open-Meteo forecast API supports up to ~16 days into the future
+const today = new Date();
+today.setHours(0, 0, 0, 0); // Reset to midnight for consistent comparisons
+const MAX_WEATHER_DATE = new Date(today);
+MAX_WEATHER_DATE.setDate(MAX_WEATHER_DATE.getDate() + 16); // 16 days from today
 const MAX_TRIP_DAYS = 14; // Maximum trip length for weather forecasts
 
 const formSchema = z.object({

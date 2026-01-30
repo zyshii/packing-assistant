@@ -20,21 +20,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { location, startDate, endDate, useCache } = weatherRequestSchema.parse(req.query);
       
-      // Validate date range
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      
+      // Validate date range (parse as date strings for consistent comparison)
+      const start = new Date(startDate + 'T00:00:00');
+      const end = new Date(endDate + 'T00:00:00');
+
       if (start > end) {
-        return res.status(400).json({ 
-          error: "Start date must be before or equal to end date" 
+        return res.status(400).json({
+          error: "Start date must be before or equal to end date"
         });
       }
-      
+
       // Check if end date is within Open-Meteo's allowed range
-      const maxAllowedDate = new Date('2025-08-16'); // Based on API error message
+      // Open-Meteo forecast API supports up to ~16 days into the future
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const maxAllowedDate = new Date(today);
+      maxAllowedDate.setDate(maxAllowedDate.getDate() + 16);
+
+      console.log(`Date validation: end=${end.toISOString()}, maxAllowed=${maxAllowedDate.toISOString()}, endDate=${endDate}`);
+
       if (end > maxAllowedDate) {
-        return res.status(400).json({ 
-          error: `Weather forecasts are only available until ${maxAllowedDate.toISOString().split('T')[0]}. Please select an earlier end date.` 
+        return res.status(400).json({
+          error: `Weather forecasts are only available until ${maxAllowedDate.toISOString().split('T')[0]}. Please select an earlier end date.`
         });
       }
       
