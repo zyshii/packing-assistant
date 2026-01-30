@@ -87,14 +87,6 @@ A smart travel companion that helps users pack efficiently and confidently for a
 - `npm run check` - Type check with TypeScript
 - `npm run db:push` - Push database schema changes
 
-## 🌐 Live Demo
-
-Visit the live application: [https://packing-assistant.replit.app](https://packing-assistant.replit.app)
-
-## 📖 Documentation
-
-For detailed product specifications and roadmap, visit the [Project Wiki](https://leahshi.notion.site/Packing-Assistant-241f135990e980d2a71cf37b03699013?source=copy_link).
-
 ## 🎯 User Experience
 
 ### Creating a Packing List
@@ -116,19 +108,7 @@ For detailed product specifications and roadmap, visit the [Project Wiki](https:
 - [ ] Enhanced clothing calculation algorithms
 - [ ] Save & export functionality for packing lists
 - [ ] Packing reminders and notifications
-- [ ] Multi-trip and group travel management
-- [ ] Mobile app version
-- [ ] Offline mode support
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+- [ ] Multi-member management
 
 ## 📄 License
 
