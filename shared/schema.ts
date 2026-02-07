@@ -57,14 +57,25 @@ export const weatherForecastSchema = z.object({
 
 export type WeatherForecast = z.infer<typeof weatherForecastSchema>;
 
+// Trip leg schema for multi-destination trips
+export const tripLegSchema = z.object({
+  destination: z.string(),
+  startDate: z.string(), // YYYY-MM-DD
+  endDate: z.string(),   // YYYY-MM-DD
+});
+
+export type TripLeg = z.infer<typeof tripLegSchema>;
+
 // Agent Recommendation schemas
 export const tripContextSchema = z.object({
   destination: z.string(),
+  destinations: z.array(tripLegSchema).optional(),
   duration: z.number(),
   tripTypes: z.array(z.string()),
   luggageSize: z.string(),
   dailyData: z.array(z.object({
     date: z.string(),
+    destination: z.string().optional(),
     condition: z.string(),
     temp: z.object({
       high: z.number(),

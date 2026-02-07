@@ -77,11 +77,57 @@ export const formatDateForApi = (date: Date): string => {
 export const generateDateRange = (startDate: Date, endDate: Date): string[] => {
   const dates: string[] = [];
   const current = new Date(startDate);
-  
+
   while (current <= endDate) {
     dates.push(formatDateForApi(current));
     current.setDate(current.getDate() + 1);
   }
-  
+
   return dates;
+};
+
+// Fetch weather for multiple destinations in parallel
+export interface TripLegWeather {
+  destination: string;
+  startDate: string;
+  endDate: string;
+  forecast: WeatherForecast | null;
+  error?: string;
+}
+
+export const fetchMultiDestinationWeather = async (
+  legs: Array<{ destination: string; startDate: string; endDate: string }>
+): Promise<TripLegWeather[]> => {
+  const results = await Promise.allSettled(
+    legs.map(async (leg) => {
+      try {
+        const forecast = await fetchWeatherForecast(leg.destination, leg.startDate, leg.endDate);
+        return {
+          destination: leg.destination,
+          startDate: leg.startDate,
+          endDate: leg.endDate,
+          forecast,
+        };
+      } catch (error) {
+        return {
+          destination: leg.destination,
+          startDate: leg.startDate,
+          endDate: leg.endDate,
+          forecast: null,
+          error: error instanceof WeatherApiError ? error.message : 'Failed to fetch weather',
+        };
+      }
+    })
+  );
+
+  return results.map((result) => {
+    if (result.status === 'fulfilled') return result.value;
+    return {
+      destination: '',
+      startDate: '',
+      endDate: '',
+      forecast: null,
+      error: 'Network error',
+    };
+  });
 };

@@ -15,6 +15,7 @@ interface ActivityContext {
 
 interface TripContext {
   destination: string;
+  destinations?: Array<{ destination: string; startDate: string; endDate: string }>;
   duration: number;
   tripTypes: string[];
   luggageSize: string;
@@ -402,6 +403,7 @@ function deduplicateRecommendations(recommendations: string[]): string[] {
 export function generateDetailedDailyRecommendations(
   dailyData: Array<{
     date: string;
+    destination?: string;
     condition: string;
     temp: { high: number; low: number };
     uvIndex?: number;
@@ -497,12 +499,30 @@ export function generateDetailedDailyRecommendations(
       )
     };
     
+    // Detect if this is a transition day (destination change from previous day)
+    const isTransitionDay = dayIndex > 0 && day.destination && dailyData[dayIndex - 1].destination &&
+      day.destination !== dailyData[dayIndex - 1].destination;
+
+    // Add travel day priorities if transitioning between destinations
+    const travelPriorities = [...priorities];
+    if (isTransitionDay) {
+      const prevDay = dailyData[dayIndex - 1];
+      const tempDiff = Math.abs(day.temp.high - (prevDay?.temp.high || day.temp.high));
+      travelPriorities.unshift("Travel day — wear comfortable, layered clothing");
+      if (tempDiff > 15) {
+        const direction = day.temp.high > (prevDay?.temp.high || 0) ? "warmer" : "cooler";
+        travelPriorities.push(`Climate change ahead — ${direction} destination, pack layers accessible`);
+      }
+    }
+
     return {
       date: day.date,
+      destination: day.destination,
       weather,
       activities: day.activities,
       recommendations: finalRecommendations,
-      priorities,
+      priorities: travelPriorities,
+      isTransitionDay: !!isTransitionDay,
       weatherDetails: {
         condition: day.condition,
         temperatureRange: `${day.temp.low}°-${day.temp.high}°F`,
@@ -1181,6 +1201,7 @@ function generateWeatherTips(weather: WeatherCondition): string[] {
 export function generateOptimizedPackingList(
   dailyData: Array<{
     date: string;
+    destination?: string;
     condition: string;
     temp: { high: number; low: number };
     uvIndex?: number;
@@ -1346,6 +1367,11 @@ function calculateLuggageOptimization(packingList: any, tripContext: TripContext
     packingTips.push("Keep liquids under 100ml in clear bag");
     packingTips.push("Wear heaviest shoes and jacket while traveling");
   }
+  if (tripContext.destinations && tripContext.destinations.length > 1) {
+    packingTips.push("Use packing cubes to organize by destination for quick access");
+    packingTips.push("Keep versatile items like jeans and walking shoes that work across all destinations");
+    packingTips.push("Pack a day bag with travel-day essentials for easy access between destinations");
+  }
   
   const alternatives = [];
   if (spaceUtilization > 90) {
@@ -1362,11 +1388,20 @@ function calculateLuggageOptimization(packingList: any, tripContext: TripContext
 
 function generatePackingSummary(packingList: any, tripContext: TripContext, activities: string[]): string {
   const totalItems = Object.values(packingList).flat().length;
-  const hasSpecialActivities = activities.some(a => 
-    a.toLowerCase().includes("swim") || 
-    a.toLowerCase().includes("business") || 
+  const hasSpecialActivities = activities.some(a =>
+    a.toLowerCase().includes("swim") ||
+    a.toLowerCase().includes("business") ||
     a.toLowerCase().includes("hik")
   );
-  
-  return `Optimized ${totalItems}-item packing list for your ${tripContext.duration}-day ${tripContext.tripTypes.join("/")} trip to ${tripContext.destination}. ${hasSpecialActivities ? "Includes specialized gear for your planned activities." : "Focused on versatile, weather-appropriate essentials."} Tailored for ${tripContext.luggageSize} luggage constraints.`;
+
+  const isMultiDestination = tripContext.destinations && tripContext.destinations.length > 1;
+  const destinationNames = isMultiDestination
+    ? tripContext.destinations!.map(d => d.destination.split(',')[0]).join(', ')
+    : tripContext.destination;
+
+  const multiDestNote = isMultiDestination
+    ? ` Clothing is optimized for reuse across ${tripContext.destinations!.length} destinations — versatile items that work in multiple climates are prioritized to minimize packing.`
+    : "";
+
+  return `Optimized ${totalItems}-item packing list for your ${tripContext.duration}-day ${tripContext.tripTypes.join("/")} trip to ${destinationNames}. ${hasSpecialActivities ? "Includes specialized gear for your planned activities." : "Focused on versatile, weather-appropriate essentials."} Tailored for ${tripContext.luggageSize} luggage constraints.${multiDestNote}`;
 }
