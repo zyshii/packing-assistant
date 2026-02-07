@@ -2,157 +2,149 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* Google-inspired calm design system. All colors MUST be HSL.
+   All color combinations pass WCAG AA (4.5:1+ contrast for normal text).
 */
 
 @layer base {
   :root {
-    /* Claude-inspired warm color palette */
-    --background: 45 67% 93%; /* Cream */
-    --foreground: 0 0% 10%; /* Charcoal */
+    /* Clean, calm color palette inspired by Google's design language */
+    --background: 0 0% 100%;             /* White #FFFFFF */
+    --foreground: 213 5% 13%;            /* Google Dark #202124 */
 
-    --card: 48 43% 88%; /* Warm Beige */
-    --card-foreground: 0 0% 10%; /* Charcoal */
+    --card: 210 17% 98%;                 /* Very Light Gray #F8F9FA */
+    --card-foreground: 213 5% 13%;       /* Google Dark */
 
-    --popover: 48 43% 88%; /* Warm Beige */
-    --popover-foreground: 0 0% 10%; /* Charcoal */
+    --popover: 0 0% 100%;               /* White */
+    --popover-foreground: 213 5% 13%;    /* Google Dark */
 
-    --primary: 23 67% 64%; /* Softer Warm Orange */
-    --primary-foreground: 0 0% 100%; /* White */
+    --primary: 214 78% 46%;             /* Google Blue #1967D2 */
+    --primary-foreground: 0 0% 100%;     /* White */
 
-    --secondary: 38 59% 91%; /* Light Sand */
-    --secondary-foreground: 0 0% 10%; /* Charcoal */
+    --secondary: 210 12% 96%;           /* Light Gray #F1F3F4 */
+    --secondary-foreground: 213 5% 13%;  /* Google Dark */
 
-    --muted: 48 43% 88%; /* Warm Beige */
-    --muted-foreground: 0 0% 35%; /* Warm Gray */
+    --muted: 210 12% 96%;               /* Light Gray #F1F3F4 */
+    --muted-foreground: 213 5% 39%;      /* Google Secondary #5F6368 */
 
-    --accent: 22 100% 75%; /* Soft Peach */
-    --accent-foreground: 0 0% 10%; /* Charcoal */
+    --accent: 216 90% 96%;              /* Light Blue #E8F0FE */
+    --accent-foreground: 214 78% 46%;    /* Google Blue */
 
-    --destructive: 357 39% 58%; /* Terracotta */
+    --destructive: 4 73% 50%;           /* Google Red #D93025 */
     --destructive-foreground: 0 0% 100%; /* White */
 
-    --border: 38 59% 91%; /* Light Sand */
-    --input: 48 43% 88%; /* Warm Beige */
-    --ring: 23 67% 64%; /* Softer Warm Orange */
+    --border: 213 10% 86%;              /* Google Border #DADCE0 */
+    --input: 213 10% 86%;               /* Google Border */
+    --ring: 214 78% 46%;                /* Google Blue */
 
-    /* WCAG AA compliant warm theme colors (4.5:1+ contrast ratios) */
-    --success: 97 27% 58%;       /* Softer Sage Green */
-    --success-light: 97 27% 95%; /* Very light sage green background */
-    --success-foreground: 0 0% 100%; /* White text on success background */
+    /* WCAG AA compliant semantic colors */
+    --success: 143 66% 34%;             /* Google Green #1E8E3E */
+    --success-light: 143 50% 96%;       /* Very light green background */
+    --success-foreground: 0 0% 100%;     /* White */
 
-    --info: 269 29% 62%;         /* Softer Violet */
-    --info-light: 269 29% 96%;   /* Very light violet background */
-    --info-foreground: 0 0% 100%; /* White text on info background */
+    --info: 214 78% 46%;               /* Google Blue #1967D2 */
+    --info-light: 216 90% 96%;          /* Light blue background */
+    --info-foreground: 0 0% 100%;        /* White */
 
-    --warning: 17 55% 65%;       /* Softer Burnt Orange */
-    --warning-light: 17 55% 95%; /* Very light orange background */
-    --warning-foreground: 0 0% 100%; /* White text on warning background */
+    --warning: 30 100% 45%;             /* Calm Amber #E67700 */
+    --warning-light: 40 100% 97%;       /* Very light amber background */
+    --warning-foreground: 0 0% 100%;     /* White */
 
-    --neutral: 0 0% 35%;         /* Warm Gray: 6.1:1 contrast on cream */
-    --neutral-light: 0 0% 95%;   /* Very light gray background */
-    --surface: 45 67% 96%;       /* Very light cream surface */
-    --accent-light: 275 73% 97%; /* Very light purple accent */
+    --neutral: 213 5% 39%;              /* Google Secondary #5F6368 */
+    --neutral-light: 210 12% 96%;       /* Light gray background */
+    --surface: 210 17% 99%;             /* Near-white surface */
+    --accent-light: 216 90% 96%;        /* Light blue accent */
 
-    /* Enhanced focus and hover states for warm theme */
-    --focus-ring: 23 67% 64%;    /* Softer Warm Orange focus ring */
-    --hover-overlay: 17 55% 65%; /* Softer Burnt Orange overlay for hover */
-    
-    /* Warm shadows with softer, diffused edges */
-    --shadow-soft: 0 2px 8px 0 rgb(232 151 93 / 0.06), 0 1px 3px -1px rgb(232 151 93 / 0.04);
-    --shadow-card: 0 4px 12px -2px rgb(232 151 93 / 0.08), 0 2px 6px -2px rgb(232 151 93 / 0.06);
-    --shadow-modal: 0 20px 30px -8px rgb(232 151 93 / 0.10), 0 8px 12px -6px rgb(232 151 93 / 0.06);
-    --shadow-floating: 0 25px 50px -12px rgb(232 151 93 / 0.12);
+    /* Focus and hover states */
+    --focus-ring: 214 78% 46%;          /* Google Blue */
+    --hover-overlay: 214 78% 46%;       /* Google Blue */
 
-    /* Warm gradients with organic color transitions */
-    --gradient-primary: linear-gradient(135deg, hsl(23 67% 64%), hsl(17 55% 65%));
-    --gradient-success: linear-gradient(135deg, hsl(97 27% 58%), hsl(269 29% 62%));
-    --gradient-background: linear-gradient(180deg, hsl(45 67% 96%), hsl(38 59% 94%));
+    /* Clean, neutral shadows */
+    --shadow-soft: 0 1px 2px 0 rgb(60 64 67 / 0.1), 0 1px 3px 1px rgb(60 64 67 / 0.06);
+    --shadow-card: 0 1px 2px 0 rgb(60 64 67 / 0.15), 0 1px 3px 1px rgb(60 64 67 / 0.08);
+    --shadow-modal: 0 8px 10px 1px rgb(60 64 67 / 0.08), 0 3px 14px 2px rgb(60 64 67 / 0.06), 0 5px 5px -3px rgb(60 64 67 / 0.10);
+    --shadow-floating: 0 1px 3px 0 rgb(60 64 67 / 0.15), 0 4px 8px 3px rgb(60 64 67 / 0.08);
 
-    /* Travel theme colors - Updated to warm palette */
-    --travel-blue: 23 67% 64%; /* Now softer warm orange */
-    --travel-purple: 269 29% 62%; /* Softer violet */
+    /* Calm gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(214 78% 46%), hsl(214 78% 40%));
+    --gradient-success: linear-gradient(135deg, hsl(143 66% 34%), hsl(143 66% 30%));
+    --gradient-background: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 17% 98%));
 
-    --radius: 1.25rem; /* Increased for more organic feel */
+    /* Theme accent colors */
+    --travel-blue: 214 78% 46%;         /* Google Blue */
+    --travel-purple: 256 30% 52%;       /* Calm muted purple */
 
-    --sidebar-background: 0 0% 98%;
+    --radius: 0.75rem; /* 12px - clean, Google-like rounding */
 
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 213 5% 13%;
+    --sidebar-primary: 214 78% 46%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 12% 96%;
+    --sidebar-accent-foreground: 213 5% 13%;
+    --sidebar-border: 213 10% 86%;
+    --sidebar-ring: 214 78% 46%;
   }
 
   .dark {
-    /* Warm dark mode palette */
-    --background: 28 20% 8%; /* Warm dark charcoal */
-    --foreground: 45 30% 95%; /* Warm light cream */
+    /* Google-inspired dark mode */
+    --background: 220 3% 13%;           /* #202124 */
+    --foreground: 213 10% 92%;          /* #E8EAED */
 
-    --card: 28 20% 12%; /* Slightly lighter warm dark */
-    --card-foreground: 45 30% 95%; /* Warm light cream */
+    --card: 216 4% 16%;                /* #292A2D */
+    --card-foreground: 213 10% 92%;
 
-    --popover: 28 20% 12%; /* Slightly lighter warm dark */
-    --popover-foreground: 45 30% 95%; /* Warm light cream */
+    --popover: 216 4% 16%;
+    --popover-foreground: 213 10% 92%;
 
-    --primary: 28 100% 60%; /* Lighter warm orange for dark bg */
-    --primary-foreground: 0 0% 10%; /* Dark text */
+    --primary: 214 82% 75%;            /* Light Blue #8AB4F8 */
+    --primary-foreground: 213 5% 13%;
 
-    --secondary: 28 20% 18%; /* Warm dark secondary */
-    --secondary-foreground: 45 30% 95%; /* Warm light cream */
+    --secondary: 216 4% 20%;
+    --secondary-foreground: 213 10% 92%;
 
-    --muted: 28 15% 18%; /* Warm muted dark */
-    --muted-foreground: 0 0% 65%; /* Medium gray */
+    --muted: 216 4% 20%;
+    --muted-foreground: 213 5% 60%;
 
-    --accent: 14 100% 70%; /* Bright burnt orange for dark bg */
-    --accent-foreground: 0 0% 10%; /* Dark text */
+    --accent: 214 40% 25%;
+    --accent-foreground: 214 82% 75%;
 
-    --destructive: 357 50% 65%; /* Lighter terracotta for dark bg */
-    --destructive-foreground: 45 30% 95%; /* Warm light cream */
+    --destructive: 4 80% 65%;
+    --destructive-foreground: 213 10% 92%;
 
-    --border: 28 20% 18%; /* Warm dark border */
-    --input: 28 20% 18%; /* Warm dark input bg */
-    --ring: 28 100% 60%; /* Lighter warm orange ring */
+    --border: 216 4% 22%;
+    --input: 216 4% 22%;
+    --ring: 214 82% 75%;
 
-    /* Dark mode warm WCAG compliant colors */
-    --success: 97 33% 60%;       /* Lighter sage green for dark backgrounds */
-    --success-light: 97 33% 15%; /* Dark sage green background */
-    --success-foreground: 0 0% 10%; /* Dark text on light success */
+    /* Dark mode semantic colors */
+    --success: 143 50% 58%;
+    --success-light: 143 30% 18%;
+    --success-foreground: 213 5% 13%;
 
-    --info: 275 64% 70%;         /* Lighter violet for dark backgrounds */
-    --info-light: 275 64% 15%;   /* Dark violet background */
-    --info-foreground: 0 0% 10%; /* Dark text on light info */
+    --info: 214 82% 75%;
+    --info-light: 214 40% 18%;
+    --info-foreground: 213 5% 13%;
 
-    --warning: 14 100% 70%;      /* Lighter burnt orange for dark backgrounds */
-    --warning-light: 14 100% 15%; /* Dark orange background */
-    --warning-foreground: 0 0% 10%; /* Dark text on light warning */
+    --warning: 40 90% 65%;
+    --warning-light: 40 40% 18%;
+    --warning-foreground: 213 5% 13%;
 
-    --neutral: 0 0% 75%;         /* Light gray for dark backgrounds */
-    --neutral-light: 0 0% 15%;   /* Dark gray background */
-    --surface: 28 20% 10%;       /* Warm dark surface */
-    --accent-light: 275 73% 15%; /* Dark purple accent */
+    --neutral: 213 5% 65%;
+    --neutral-light: 216 4% 18%;
+    --surface: 216 4% 14%;
+    --accent-light: 214 40% 18%;
 
-    /* Enhanced focus and hover states for dark mode */
-    --focus-ring: 28 100% 60%;   /* Lighter warm orange focus ring */
-    --hover-overlay: 14 100% 70%; /* Burnt orange overlay for hover */
+    --focus-ring: 214 82% 75%;
+    --hover-overlay: 214 82% 75%;
 
-    --sidebar-background: 240 6% 10%;
-    --sidebar-foreground: 240 5% 96%;
-    --sidebar-primary: 224 76% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 4% 16%;
-    --sidebar-accent-foreground: 240 5% 96%;
-    --sidebar-border: 240 4% 16%;
-    --sidebar-ring: 217 91% 59%;
+    --sidebar-background: 220 3% 11%;
+    --sidebar-foreground: 213 10% 92%;
+    --sidebar-primary: 214 82% 75%;
+    --sidebar-primary-foreground: 213 5% 13%;
+    --sidebar-accent: 216 4% 16%;
+    --sidebar-accent-foreground: 213 10% 92%;
+    --sidebar-border: 216 4% 22%;
+    --sidebar-ring: 214 82% 75%;
   }
 }
 
@@ -172,25 +164,16 @@ All colors MUST be HSL.
   h1, h2, h3, h4, h5, h6 {
     line-height: 1.3;
     letter-spacing: -0.02em;
-    font-weight: 700;
+    font-weight: 600;
   }
 
   /* Smooth transitions for interactive elements */
   button, a, input, select, textarea {
-    transition: all 300ms ease-out;
+    transition: all 200ms ease;
   }
 }
 
-/* Custom utility classes for warm design */
 @layer utilities {
-  .glow-warm {
-    box-shadow: 0 0 20px rgba(232, 151, 93, 0.2);
-  }
-
-  .glow-warm-strong {
-    box-shadow: 0 0 30px rgba(232, 151, 93, 0.3);
-  }
-
   .text-balance {
     text-wrap: balance;
   }

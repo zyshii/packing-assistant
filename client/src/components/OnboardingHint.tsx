@@ -10,11 +10,11 @@ interface OnboardingHintProps {
   className?: string;
 }
 
-export default function OnboardingHint({ 
-  title, 
-  description, 
-  storageKey, 
-  className 
+export default function OnboardingHint({
+  title,
+  description,
+  storageKey,
+  className
 }: OnboardingHintProps) {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -33,26 +33,26 @@ export default function OnboardingHint({
   if (!isVisible) return null;
 
   return (
-    <Card className={`p-4 bg-gradient-to-r from-travel-blue/10 to-travel-purple/10 border-travel-blue/30 animate-fade-in ${className}`}>
+    <Card className={`p-4 bg-accent border border-primary/20 animate-fade-in ${className}`}>
       <div className="flex items-start gap-3">
-        <div className="flex-shrink-0 p-1 bg-travel-blue/20 rounded-full">
-          <Lightbulb className="w-4 h-4 text-travel-blue" />
+        <div className="flex-shrink-0 p-1.5 bg-primary/10 rounded-lg">
+          <Lightbulb className="w-4 h-4 text-primary" />
         </div>
-        
+
         <div className="flex-1 min-w-0">
-          <h4 className="text-sm font-medium text-foreground mb-1">
+          <h4 className="text-sm font-medium text-foreground mb-0.5">
             {title}
           </h4>
           <p className="text-sm text-muted-foreground">
             {description}
           </p>
         </div>
-        
+
         <Button
           variant="ghost"
           size="sm"
           onClick={handleDismiss}
-          className="flex-shrink-0 h-auto p-1 hover:bg-travel-blue/20"
+          className="flex-shrink-0 h-auto p-1 hover:bg-primary/10"
         >
           <X className="w-4 h-4" />
         </Button>

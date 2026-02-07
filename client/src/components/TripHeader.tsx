@@ -10,61 +10,58 @@ interface TripHeaderProps {
 
 export default function TripHeader({ destination, dates, tripTypes, activities }: TripHeaderProps) {
   return (
-    <Card className="p-8 shadow-floating border-2 border-warm-orange/20 bg-gradient-to-br from-white to-warm-beige/30">
-      <div className="space-y-6">
+    <Card className="p-6 shadow-card border border-border bg-white">
+      <div className="space-y-5">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-charcoal tracking-tight">Trip Overview</h1>
+          <h1 className="text-2xl font-semibold text-charcoal tracking-tight">Trip Overview</h1>
           {/* Trip Types Display */}
           {tripTypes && tripTypes.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {tripTypes.map((type, index) => (
-                <div key={index} className="flex items-center gap-2 px-4 py-2 bg-deep-violet/10 rounded-full border-2 border-deep-violet/30 hover:bg-deep-violet/20 transition-colors duration-300">
-                  <Target className="h-4 w-4 text-deep-violet" />
-                  <span className="text-sm font-bold capitalize text-deep-violet">{type}</span>
+                <div key={index} className="flex items-center gap-1.5 px-3 py-1.5 bg-accent rounded-full border border-primary/20">
+                  <Target className="h-3.5 w-3.5 text-primary" />
+                  <span className="text-sm font-medium capitalize text-primary">{type}</span>
                 </div>
               ))}
             </div>
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-warm-orange/15 rounded-2xl border-2 border-warm-orange/30 shadow-soft">
-              <MapPin className="h-5 w-5 text-warm-orange" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-accent rounded-lg">
+              <MapPin className="h-4 w-4 text-primary" />
             </div>
             <div>
               <p className="text-sm text-warm-gray font-medium">Destination</p>
-              <p className="font-bold text-charcoal text-lg">{destination}</p>
+              <p className="font-semibold text-charcoal text-lg">{destination}</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-sage-green/15 rounded-2xl border-2 border-sage-green/30 shadow-soft">
-              <Calendar className="h-5 w-5 text-sage-green" />
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-success-light rounded-lg">
+              <Calendar className="h-4 w-4 text-sage-green" />
             </div>
             <div>
               <p className="text-sm text-warm-gray font-medium">Travel Dates</p>
-              <p className="font-bold text-charcoal text-lg">{dates}</p>
+              <p className="font-semibold text-charcoal text-lg">{dates}</p>
             </div>
           </div>
         </div>
 
         <div>
-          <p className="text-sm text-warm-gray font-semibold mb-3">Trip Types & Activities</p>
+          <p className="text-sm text-warm-gray font-medium mb-2">Activities</p>
           <div className="flex flex-wrap gap-2">
-            {/* Trip Type Labels */}
             {Array.isArray(activities) && activities.length > 0 ? (
-              // If activities is an array of actual activities, show them
               activities.map((activity, index) => (
                 <span
                   key={index}
-                  className="px-4 py-2 bg-burnt-orange/10 text-burnt-orange rounded-full text-sm font-bold border-2 border-burnt-orange/30 hover:bg-burnt-orange/20 transition-all duration-300 hover:scale-105"
+                  className="px-3 py-1.5 bg-secondary text-foreground rounded-full text-sm font-medium border border-border"
                 >
                   {activity}
                 </span>
               ))
             ) : (
-              // Fallback for no activities
               <span className="text-sm text-warm-gray italic">No activities planned yet</span>
             )}
           </div>

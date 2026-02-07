@@ -29,7 +29,7 @@ export default function StepIndicator({ steps, currentStep, className }: StepInd
                   className={cn(
                     "flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all duration-300",
                     isCompleted && "bg-travel-green border-travel-green text-white",
-                    isCurrent && "bg-primary border-primary text-white animate-pulse-glow",
+                    isCurrent && "bg-primary border-primary text-white",
                     !isCompleted && !isCurrent && "bg-background border-muted-foreground text-muted-foreground"
                   )}
                 >

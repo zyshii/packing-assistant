@@ -144,17 +144,17 @@ const Index = () => {
   }, [dailyActivities, finalTripData.activities]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cream to-light-sand">
-      <div className="max-w-5xl mx-auto p-6 space-y-8 lg:space-y-12">
+    <div className="min-h-screen bg-background">
+      <div className="max-w-5xl mx-auto p-6 space-y-8 lg:space-y-10">
         {/* Header with Back Button */}
         <div className="flex items-center justify-between animate-fade-in">
           <Button
             variant="ghost"
             onClick={() => setLocation("/")}
-            className="flex items-center gap-2 text-warm-gray hover:text-warm-orange hover:bg-soft-peach/30 transition-all duration-300"
+            className="flex items-center gap-2 text-warm-gray hover:text-primary hover:bg-accent transition-all duration-200"
           >
             <ArrowLeft className="h-5 w-5" />
-            <span className="font-semibold">Back to Trip Details</span>
+            <span className="font-medium">Back to Trip Details</span>
           </Button>
         </div>
 
@@ -170,10 +170,10 @@ const Index = () => {
 
         {/* Weather Error Alert */}
         {weatherError && (
-          <div className="animate-bounce-in">
-            <Alert variant="destructive" className="border-2 border-terracotta/30 bg-terracotta/10">
-              <AlertCircle className="h-5 w-5 text-terracotta" />
-              <AlertDescription className="flex items-center justify-between text-charcoal">
+          <div className="animate-fade-in">
+            <Alert variant="destructive" className="border border-destructive/30 bg-destructive/5">
+              <AlertCircle className="h-5 w-5" />
+              <AlertDescription className="flex items-center justify-between text-foreground">
                 <span>
                   Unable to fetch current weather data: {
                     weatherError instanceof WeatherApiError
@@ -185,7 +185,7 @@ const Index = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => refetchWeather()}
-                  className="ml-4 border-terracotta text-terracotta hover:bg-terracotta/20"
+                  className="ml-4"
                 >
                   Retry
                 </Button>
@@ -197,8 +197,8 @@ const Index = () => {
         {/* Daily Clothing Suggestions */}
         <div className="animate-scale-in">
           {isLoadingWeather && tripData?.startDate && tripData?.endDate ? (
-            <div className="bg-gradient-to-br from-white to-warm-beige/30 rounded-2xl p-12 text-center shadow-floating border-2 border-warm-orange/20">
-              <div className="animate-spin rounded-full h-10 w-10 border-4 border-warm-orange/20 border-t-warm-orange mx-auto mb-6"></div>
+            <div className="bg-card rounded-xl p-12 text-center shadow-card border border-border">
+              <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary/20 border-t-primary mx-auto mb-6"></div>
               <p className="text-warm-gray text-lg font-medium">
                 Fetching real-time weather data for {finalTripData.destination}...
               </p>
@@ -216,7 +216,7 @@ const Index = () => {
               isWeatherDataReal={!!weatherData && !weatherError}
             />
           ) : (
-            <div className="bg-gradient-to-br from-white to-warm-beige/30 rounded-2xl p-12 text-center shadow-floating border-2 border-warm-orange/20">
+            <div className="bg-card rounded-xl p-12 text-center shadow-card border border-border">
               <p className="text-warm-gray text-lg font-medium">Loading clothing suggestions...</p>
             </div>
           )}

@@ -40,21 +40,21 @@ const getWeatherIcon = (condition: string) => {
   switch (condition.toLowerCase()) {
     case 'sunny':
     case 'clear':
-      return <Sun className="h-6 w-6 text-yellow-500" />;
+      return <Sun className="h-5 w-5 text-amber-500" />;
     case 'rainy':
     case 'rain':
-      return <Umbrella className="h-6 w-6 text-blue-500" />;
+      return <Umbrella className="h-5 w-5 text-primary" />;
     case 'cloudy':
     case 'overcast':
-      return <Cloud className="h-6 w-6 text-gray-500" />;
+      return <Cloud className="h-5 w-5 text-muted-foreground" />;
     case 'mixed':
     case 'partly cloudy':
-      return <CloudSun className="h-6 w-6 text-blue-400" />;
+      return <CloudSun className="h-5 w-5 text-primary/70" />;
     case 'snowy':
     case 'snow':
-      return <Snowflake className="h-6 w-6 text-blue-200" />;
+      return <Snowflake className="h-5 w-5 text-primary/50" />;
     default:
-      return <Thermometer className="h-6 w-6 text-gray-500" />;
+      return <Thermometer className="h-5 w-5 text-muted-foreground" />;
   }
 };
 
@@ -137,28 +137,28 @@ export default function SmartDailyClothingSuggestions({
     ];
 
     return (
-      <div className="space-y-8">
+      <div className="space-y-6">
         {/* Trip Summary */}
-        <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-          <p className="text-sm text-gray-600 leading-relaxed">{optimization.summary}</p>
+        <div className="bg-card rounded-lg p-5 border border-border">
+          <p className="text-sm text-muted-foreground leading-relaxed">{optimization.summary}</p>
         </div>
 
         {/* Optimized Packing List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {categories.map(category => (
-            <div key={category.key} className="bg-white rounded-lg border border-gray-200 p-4">
+            <div key={category.key} className="bg-white rounded-lg border border-border p-4">
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-lg">{category.emoji}</span>
-                <h4 className="font-semibold text-gray-900 text-sm">{category.title}</h4>
-                <span className="ml-auto bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">
+                <h4 className="font-semibold text-foreground text-sm">{category.title}</h4>
+                <span className="ml-auto bg-secondary text-muted-foreground px-2 py-1 rounded text-xs">
                   {category.items.reduce((sum: number, item: any) => sum + item.quantity, 0)} items
                 </span>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {category.items.map((item: any, index: number) => (
-                  <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded hover:bg-gray-100 transition-colors">
-                    <span className="text-gray-900 text-sm">{item.item}</span>
-                    <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs font-medium">
+                  <div key={index} className="flex items-center justify-between p-2 bg-card rounded hover:bg-secondary transition-colors">
+                    <span className="text-foreground text-sm">{item.item}</span>
+                    <span className="bg-accent text-primary px-2 py-0.5 rounded text-xs font-medium">
                       {item.quantity}
                     </span>
                   </div>
@@ -170,24 +170,21 @@ export default function SmartDailyClothingSuggestions({
 
         {/* Packing Tips */}
         {optimization.luggageOptimization.packingTips.length > 0 && (
-          <div className="bg-amber-50 rounded-xl p-6 border border-amber-200">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="flex items-center justify-center w-8 h-8 bg-amber-100 rounded-lg">
-                <span className="text-lg">💡</span>
-              </div>
-              <h5 className="font-semibold text-amber-900">Packing Tips</h5>
+          <div className="bg-warning-light rounded-lg p-5 border border-warning/20">
+            <div className="flex items-center gap-2 mb-3">
+              <Lightbulb className="h-4 w-4 text-warning" />
+              <h5 className="font-semibold text-foreground text-sm">Packing Tips</h5>
             </div>
             <ul className="space-y-2">
               {optimization.luggageOptimization.packingTips.map((tip, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-amber-800">
-                  <span className="text-amber-600 mt-0.5 flex-shrink-0">•</span>
+                <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <span className="text-warning mt-0.5 flex-shrink-0">•</span>
                   <span className="leading-relaxed">{tip}</span>
                 </li>
               ))}
             </ul>
           </div>
         )}
-
 
       </div>
     );
@@ -223,16 +220,16 @@ export default function SmartDailyClothingSuggestions({
         </Alert>
       )}
       {/* Smart Packing List */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-5 border-b border-gray-200">
+      <div className="bg-white rounded-xl border border-border shadow-card overflow-hidden">
+        <div className="bg-accent px-6 py-5 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-12 h-12 bg-white rounded-xl shadow-sm">
-              <span className="text-2xl">🎒</span>
+            <div className="flex items-center justify-center w-10 h-10 bg-white rounded-lg shadow-soft">
+              <span className="text-xl">🎒</span>
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-bold text-gray-900">Packing List</h3>
+              <h3 className="text-lg font-semibold text-foreground">Packing List</h3>
               {tripDetails?.luggageSize && (
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-muted-foreground mt-0.5">
                   Optimized for {tripDetails.luggageSize} luggage
                 </p>
               )}
@@ -243,47 +240,44 @@ export default function SmartDailyClothingSuggestions({
         <div className="p-6">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="animate-spin rounded-full h-10 w-10 border-3 border-blue-200 border-t-blue-600 mb-4"></div>
-              <h4 className="font-semibold text-gray-900 mb-2">Analyzing Your Trip</h4>
-              <p className="text-gray-600 text-sm">Creating personalized recommendations...</p>
+              <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary/20 border-t-primary mb-4"></div>
+              <h4 className="font-semibold text-foreground mb-1">Analyzing Your Trip</h4>
+              <p className="text-muted-foreground text-sm">Creating personalized recommendations...</p>
             </div>
           ) : smartPackingOptimization && !hasError ? (
             renderSmartPackingList(smartPackingOptimization)
           ) : (
             <div className="text-center py-12">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">📋</span>
+              <div className="w-14 h-14 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-xl">📋</span>
               </div>
-              <h4 className="font-semibold text-gray-900 mb-2">Unable to Generate Recommendations</h4>
-              <p className="text-gray-600 text-sm">Please ensure all trip details are provided.</p>
+              <h4 className="font-semibold text-foreground mb-1">Unable to Generate Recommendations</h4>
+              <p className="text-muted-foreground text-sm">Please ensure all trip details are provided.</p>
             </div>
           )}
         </div>
 
-        <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
-          <p className="text-sm text-gray-700 leading-relaxed">
+        <div className="bg-card px-6 py-4 border-t border-border">
+          <p className="text-sm text-muted-foreground leading-relaxed">
             This list considers your{" "}
-            <span className="font-semibold text-gray-900">{tripDetails?.destination || "destination"}</span> weather conditions
+            <span className="font-medium text-foreground">{tripDetails?.destination || "destination"}</span> weather conditions
             {tripDetails?.tripTypes && tripDetails.tripTypes.length > 0 && (
-              <span>, <span className="font-semibold text-gray-900">{tripDetails.tripTypes.join(' & ')}</span> activities</span>
+              <span>, <span className="font-medium text-foreground">{tripDetails.tripTypes.join(' & ')}</span> activities</span>
             )}, and luggage constraints to provide recommendations optimized for your trip.
           </p>
         </div>
       </div>
-      {/* Enhanced Daily Clothing Suggestions */}
-      <div className="bg-card rounded-2xl border border-border shadow-card overflow-hidden">
-        <div className="bg-gradient-to-r from-success-light to-info-light px-6 py-5 border-b border-border">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-12 h-12 bg-card rounded-xl shadow-soft">
-                <span className="text-2xl">👕</span>
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-foreground">Daily Clothing Suggestions</h3>
-                <p className="text-sm text-muted-foreground mt-1">Start with your complete morning outfit, then add or remove layers as temperatures change throughout the day</p>
-              </div>
+      {/* Daily Clothing Suggestions */}
+      <div className="bg-white rounded-xl border border-border shadow-card overflow-hidden">
+        <div className="bg-card px-6 py-5 border-b border-border">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 bg-white rounded-lg shadow-soft">
+              <span className="text-xl">👕</span>
             </div>
-
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Daily Clothing Suggestions</h3>
+              <p className="text-sm text-muted-foreground mt-0.5">Start with your morning outfit, then adjust layers as temperatures change</p>
+            </div>
           </div>
         </div>
 
@@ -297,14 +291,14 @@ export default function SmartDailyClothingSuggestions({
               const smartDay = smartDailyRecommendations?.find((smart: any) => smart.date === day.date);
               
               return (
-                <AccordionItem 
-                  key={dayIndex} 
+                <AccordionItem
+                  key={dayIndex}
                   value={day.date}
-                  className="bg-surface rounded-xl border border-border overflow-hidden"
+                  className="bg-white rounded-lg border border-border overflow-hidden"
                 >
-                  <AccordionTrigger className="px-6 py-4 bg-card border-b border-border hover:no-underline data-[state=open]:border-b-0">
-                    <div className="flex items-center gap-4 w-full text-left">
-                      <div className="flex items-center justify-center w-10 h-10 bg-info-light rounded-lg">
+                  <AccordionTrigger className="px-5 py-4 bg-card hover:no-underline data-[state=open]:border-b data-[state=open]:border-border">
+                    <div className="flex items-center gap-3 w-full text-left">
+                      <div className="flex items-center justify-center w-9 h-9 bg-secondary rounded-lg">
                         {getWeatherIcon(day.condition)}
                       </div>
                       <div className="flex-1">
@@ -338,7 +332,7 @@ export default function SmartDailyClothingSuggestions({
                       </div>
                     </div>
                   </AccordionTrigger>
-                  <AccordionContent className="p-6">
+                  <AccordionContent className="p-5">
                     <div className="space-y-6">
                       {/* Activities */}
                       {day.activities.length > 0 && (
