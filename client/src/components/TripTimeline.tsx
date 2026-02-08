@@ -331,7 +331,7 @@ export default function TripTimeline({ dailyData, tripDetails, isWeatherDataReal
                     )}
 
                     {/* Timeline row */}
-                    <div className="flex gap-4 mb-6 last:mb-0">
+                    <div className="flex gap-4 mb-8 last:mb-0">
                       {/* Timeline track */}
                       <div className="flex flex-col items-center w-12 flex-shrink-0">
                         <div className={cn(
@@ -350,13 +350,13 @@ export default function TripTimeline({ dailyData, tripDetails, isWeatherDataReal
 
                       {/* Day content card */}
                       <div className={cn(
-                        "flex-1 rounded-lg border p-4 transition-all hover:shadow-soft",
+                        "flex-1 rounded-lg border p-5 transition-all hover:shadow-soft",
                         hasMultipleDestinations
                           ? `border-l-4 ${legBorderColors[legIdx % legBorderColors.length]}`
                           : "border-border"
                       )}>
                         {/* Day header */}
-                        <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center justify-between mb-4">
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-bold text-muted-foreground">Day {dayIndex + 1}</span>
                             <span className="font-semibold text-foreground">{day.date}</span>
@@ -377,7 +377,7 @@ export default function TripTimeline({ dailyData, tripDetails, isWeatherDataReal
                         </div>
 
                         {/* Weather details */}
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground mb-4">
                           {day.uvIndex !== undefined && day.uvIndex > 0 && (
                             <span className="flex items-center gap-1">☀️ UV {day.uvIndex}</span>
                           )}
@@ -391,7 +391,7 @@ export default function TripTimeline({ dailyData, tripDetails, isWeatherDataReal
 
                         {/* Activities */}
                         {day.activities.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 mb-3">
+                          <div className="flex flex-wrap gap-1.5 mb-4">
                             {day.activities.map((activity, i) => (
                               <span key={i} className="bg-info-light text-info px-2 py-0.5 rounded-full text-xs font-medium">
                                 {activity}
@@ -402,7 +402,7 @@ export default function TripTimeline({ dailyData, tripDetails, isWeatherDataReal
 
                         {/* Travel day notice */}
                         {isNewDestination && (
-                          <div className="bg-amber-50 rounded-lg p-3 border border-amber-200 mb-3">
+                          <div className="bg-amber-50 rounded-lg p-3 border border-amber-200 mb-4">
                             <p className="text-xs text-amber-700 font-medium">
                               🧳 Travel day — Wear comfortable, layered clothing. Pack weather-appropriate clothes for {day.destination?.split(',')[0]} accessible in your bag.
                             </p>
@@ -411,7 +411,7 @@ export default function TripTimeline({ dailyData, tripDetails, isWeatherDataReal
 
                         {/* Clothing recommendations */}
                         {smartDay && !hasError ? (
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             {/* Morning */}
                             <div className="bg-info-light rounded-lg p-3 border border-info/20">
                               <div className="flex items-center gap-1.5 mb-2">
@@ -498,7 +498,7 @@ export default function TripTimeline({ dailyData, tripDetails, isWeatherDataReal
                         {/* Essential items & activity gear */}
                         {(((smartDay?.recommendations?.activitySpecific?.length ?? 0) > 0) ||
                           ((smartDay?.priorities?.length ?? 0) > 0)) && (
-                          <div className="bg-success-light rounded-lg p-3 border border-success/20 mt-3">
+                          <div className="bg-success-light rounded-lg p-3 border border-success/20 mt-4">
                             <h6 className="font-semibold text-success mb-2 flex items-center gap-1.5 text-xs">
                               <span>⭐</span> Essential Items & Activity Gear
                             </h6>
