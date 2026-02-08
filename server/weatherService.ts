@@ -82,22 +82,17 @@ const normalizeLocationName = (location: string): string => {
 };
 
 // Special location mappings for common destinations that need specific search terms
+// Special location mappings for names that don't geocode correctly on their own.
+// IMPORTANT: Open-Meteo geocoding API only accepts plain city/place names.
+// Do NOT append state or country names (e.g., "Sedona Arizona" fails, "Sedona" works).
 const locationMappings: Record<string, string> = {
   'New York': 'New York City',
-  'San Francisco': 'San Francisco',
-  'Los Angeles': 'Los Angeles',
   'Washington DC': 'Washington',
-  'Key West': 'Key West Florida',
-  'Napa Valley': 'Napa California',
-  'Grand Canyon': 'Grand Canyon Village Arizona',
-  'Yellowstone': 'Yellowstone National Park Wyoming',
-  'Maldives': 'Male Maldives',
-  'Fiji': 'Suva Fiji',
-  'Bali': 'Denpasar Bali',
-  'Phuket': 'Phuket Thailand',
-  'Santorini': 'Thira Greece',
-  'Dubrovnik': 'Dubrovnik Croatia',
-  'Reykjavik': 'Reykjavik Iceland'
+  'Yellowstone': 'Yellowstone National Park',
+  'Hawaii': 'Honolulu',
+  'Maldives': 'Male',
+  'Fiji': 'Suva',
+  'Bali': 'Denpasar',
 };
 
 // Geocoding service to get coordinates from location name
