@@ -72,3 +72,19 @@ shared/               # Code shared between client & server
 ## Testing
 
 No test framework is currently configured. Type safety is enforced via `tsc` strict mode and Zod runtime validation.
+
+## Deployment
+
+**Production build and start:**
+```bash
+npm run build && npm start
+# or
+node start-prod.js   # builds then starts in one step
+```
+
+**Environment variables required for production:**
+- `DATABASE_URL` — PostgreSQL connection string (Neon)
+- `NODE_ENV=production`
+- `OPENAI_API_KEY` — optional
+
+**Replit deployment note:** `.replit` deployment section must use `npm run build && npm start`, not `npm run dev`.
