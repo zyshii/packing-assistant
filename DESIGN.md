@@ -329,10 +329,65 @@ Container: `bg-[#f3f0d6] min-h-screen py-10` / `max-w-[960px] mx-auto flex flex-
 
 **Daily Activities section**: embedded below divider, no separate card background
 
-### Packing List Page
-- Same background gradient
-- Section headers in Lora
-- Weather icons: sun `text-amber-500`, rain `text-info`, snow `text-sky-400`
+### Packing List Page (v2 — Figma redesign 2026-03-02)
+
+Container: `bg-[#f3f0d6] min-h-screen py-8` / `max-w-[1140px] mx-auto flex flex-col gap-7 px-6`
+
+**Back button** (top-left, pill style):
+- `bg-[#f9f6e8] flex items-center gap-1.5 px-[14px] py-2 rounded-[8px]`
+- ArrowLeft icon + `font-body font-semibold text-[13px] text-[#7a6e5a]`
+
+**Trip Header card** (full width, `bg-[#f9f6e8] rounded-[16px] p-6 flex flex-col gap-4`):
+- Top row: 📍 emoji + "Trip Overview" (Lora Bold 22px) + dates + total days + trip type pills
+- Trip type badges: `bg-[#3e7050] flex items-center gap-1 px-3 py-[5px] rounded-full text-white text-[12px]` with emoji prefix
+- Legs row: numbered colored pills (`bg-[rgba(62,112,80,0.13)]` leg 1, `bg-[rgba(206,128,32,0.13)]` leg 2, `bg-[rgba(123,110,140,0.13)]` leg 3) with matching dot badge and ArrowRight between legs
+- Leg dot badge: `size-5 rounded-[10px]` in leg accent color, white bold text
+- Activities row: `"Activities:"` label in `text-[#a09282]` + `bg-[#eae4d1] px-[10px] py-1 rounded-full` pills
+
+**Main columns** (`flex gap-6 items-start`):
+
+*Left column* — Packing List (`w-[400px] shrink-0 flex flex-col gap-4`):
+- Column header: "Packing List" (Lora Bold 18px) + luggage name right-aligned (`text-[#a09282] text-[12px]`)
+- Category cards: `bg-[#f9f6e8] rounded-[12px] overflow-hidden`
+  - Header button: `flex items-center gap-[10px] px-4 py-[14px] w-full`
+    - Icon square: `size-8 rounded-[8px]` with emoji, bg colors per category (see below)
+    - Category name: Raleway Bold 14px
+    - Item count: `text-[#a09282] text-[12px]`
+    - ChevronDown icon, rotates `-rotate-90` when collapsed
+  - Item rows (when expanded): `flex items-center gap-[10px] px-4 py-[10px]`
+    - Checkbox: `size-[18px] rounded-[4px]`, `bg-[#3e7050]` + white Check icon when packed, `bg-[#eae4d1]` when unpacked
+    - Item text: Raleway Regular 13px, `text-[#3a2a1a]` unpacked / `text-[#a09282] line-through` packed
+    - Quantity shown inline: `{item} × {qty}` format
+- Packing tips card: `bg-[#fffbeb] rounded-[12px] p-4 border border-[#f0e2bb]`, amber bullet list
+
+**Category icon bg colors:**
+| Category | Icon bg | Example |
+|----------|---------|---------|
+| Tops | `bg-[#dbeafe]` | 👕 |
+| Bottoms | `bg-[#dcf5e7]` | 👖 |
+| Outerwear | `bg-[#ede9fe]` | 🧥 |
+| Footwear | `bg-[#fef3c7]` | 👞 |
+| Accessories | `bg-[#fce7f3]` | ✨ |
+| Essentials | `bg-[#ccfbf1]` | 🎒 |
+
+*Right column* — Daily Clothing Timeline (`flex-1 bg-[#f9f6e8] rounded-[16px] overflow-hidden`):
+- Header: `flex items-center gap-[10px] px-6 py-[18px]` — 📅 emoji + "Daily Clothing Timeline" (Lora Bold 18px) + destination subtitle
+- Divider: `bg-[#c9c1a8] h-px`
+- Body: `px-6 py-4 flex flex-col`
+- Shows 2 days by default; "X more days" expand button: `bg-[#eae4d1] rounded-[10px] px-3 py-[10px]` with ChevronDown
+
+**Timeline day row** (`flex gap-4`):
+- Track column (`w-6 shrink-0 flex flex-col items-center`):
+  - Dot: `size-[14px] rounded-full mt-[15px]` — leg-colored (`bg-[#3e7050]` leg 1, `bg-[#ce8020]` leg 2, `bg-[#7B6E8C]` leg 3)
+  - Stem: `w-[2px] flex-1 opacity-30` in matching leg color
+- Content (`flex-1 pb-6`):
+  - Day header: "Day N  ·  {date}" (Raleway Bold 14px) + weather pill
+  - Weather pill: `bg-[#eae4d1] flex items-center gap-1 px-[10px] py-1 rounded-full` — emoji + `{temp}°F · {condition}` in `text-[#7a6e5a] text-[12px]`
+  - Three sub-cards (`grid grid-cols-3 gap-2`, each `rounded-[10px] p-[10px] flex flex-col gap-1.5`):
+    - Morning: `bg-[#eaf3fb]`, label `text-[#356d80] font-bold text-[10px]`
+    - Daytime: `bg-[#fffbeb]`, label `text-[#ce8020] font-bold text-[10px]`
+    - Evening: `bg-[#dbeafe]`, label `text-[#1d4ed8] font-bold text-[10px]`
+    - Body text: Raleway Regular 11px `text-[#7a6e5a] leading-[1.6]`
 
 ### Loading State
 - Spinner: herb green border animation
@@ -396,5 +451,5 @@ All color pairs meet 4.5:1 contrast ratio:
 
 ---
 
-*Last updated: 2026-03-02 (v2.1 — Figma landing page redesign)*
-*Design system version: 2.1 — Earthy Natural (realfood.gov inspired)*
+*Last updated: 2026-03-02 (v2.2 — Figma result page redesign)*
+*Design system version: 2.2 — Earthy Natural (realfood.gov inspired)*

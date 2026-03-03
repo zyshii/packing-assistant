@@ -1,7 +1,5 @@
 import { useMemo } from "react";
 import { ArrowLeft, AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import TripHeader from "@/components/TripHeader";
 import TripTimeline from "@/components/TripTimeline";
 import { useLocation } from "wouter";
@@ -14,29 +12,43 @@ const Index = () => {
 
   // Parse trip data from localStorage (supports both single and multi-destination)
   const [tripData, dailyActivities, tripLegs] = useMemo(() => {
-    const rawTripData = JSON.parse(localStorage.getItem('tripData') || 'null');
+    const rawTripData = JSON.parse(localStorage.getItem("tripData") || "null");
     // Parse YYYY-MM-DD as local dates (avoid UTC offset issues)
     const parseLocalDate = (dateStr: string) => {
-      const [y, m, d] = dateStr.split('-').map(Number);
+      const [y, m, d] = dateStr.split("-").map(Number);
       return new Date(y, m - 1, d);
     };
-    const parsedTripData = rawTripData ? {
-      ...rawTripData,
-      startDate: rawTripData.startDate ? parseLocalDate(rawTripData.startDate) : null,
-      endDate: rawTripData.endDate ? parseLocalDate(rawTripData.endDate) : null,
-    } : null;
-    const parsedDailyActivities = JSON.parse(localStorage.getItem('dailyActivities') || 'null');
+    const parsedTripData = rawTripData
+      ? {
+          ...rawTripData,
+          startDate: rawTripData.startDate
+            ? parseLocalDate(rawTripData.startDate)
+            : null,
+          endDate: rawTripData.endDate
+            ? parseLocalDate(rawTripData.endDate)
+            : null,
+        }
+      : null;
+    const parsedDailyActivities = JSON.parse(
+      localStorage.getItem("dailyActivities") || "null"
+    );
 
     // Extract legs: either from explicit legs array or build a single leg from legacy data
     let legs: Array<{ destination: string; startDate: string; endDate: string }> = [];
     if (rawTripData?.legs && Array.isArray(rawTripData.legs)) {
       legs = rawTripData.legs;
-    } else if (parsedTripData?.destination && parsedTripData?.startDate && parsedTripData?.endDate) {
-      legs = [{
-        destination: parsedTripData.destination,
-        startDate: formatDateForApi(parsedTripData.startDate),
-        endDate: formatDateForApi(parsedTripData.endDate),
-      }];
+    } else if (
+      parsedTripData?.destination &&
+      parsedTripData?.startDate &&
+      parsedTripData?.endDate
+    ) {
+      legs = [
+        {
+          destination: parsedTripData.destination,
+          startDate: formatDateForApi(parsedTripData.startDate),
+          endDate: formatDateForApi(parsedTripData.endDate),
+        },
+      ];
     }
 
     return [parsedTripData, parsedDailyActivities, legs];
@@ -53,10 +65,12 @@ const Index = () => {
       };
     }
 
-    const destination = tripData.destination || tripLegs.map(l => l.destination).join(" → ");
-    const dates = tripData.startDate && tripData.endDate
-      ? `${format(tripData.startDate, 'MMM d')} - ${format(tripData.endDate, 'MMM d')}`
-      : "May 30 - Jun 1";
+    const destination =
+      tripData.destination || tripLegs.map((l: any) => l.destination).join(" → ");
+    const dates =
+      tripData.startDate && tripData.endDate
+        ? `${format(tripData.startDate, "MMM d")} – ${format(tripData.endDate, "MMM d")}`
+        : "May 30 - Jun 1";
 
     return {
       destination,
@@ -68,28 +82,34 @@ const Index = () => {
 
   // Build legs info for TripHeader display
   const headerLegs = useMemo(() => {
-    return tripLegs.map(leg => {
-      const [sy, sm, sd] = leg.startDate.split('-').map(Number);
-      const [ey, em, ed] = leg.endDate.split('-').map(Number);
+    return tripLegs.map((leg: any) => {
+      const [sy, sm, sd] = leg.startDate.split("-").map(Number);
+      const [ey, em, ed] = leg.endDate.split("-").map(Number);
       const start = new Date(sy, sm - 1, sd);
       const end = new Date(ey, em - 1, ed);
       return {
         destination: leg.destination,
-        dates: `${format(start, 'MMM d')} - ${format(end, 'MMM d')}`,
+        dates: `${format(start, "MMM d")}–${format(end, "MMM d")}`,
       };
     });
   }, [tripLegs]);
 
   // Fetch weather for each leg separately
-  const weatherQueries = tripLegs.map((leg, index) =>
+  const weatherQueries = tripLegs.map((leg: any, index: number) =>
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useQuery({
-      queryKey: ['/api/weather', leg.destination, leg.startDate, leg.endDate],
-      queryFn: () => fetchWeatherForecast(leg.destination, leg.startDate, leg.endDate),
+      queryKey: ["/api/weather", leg.destination, leg.startDate, leg.endDate],
+      queryFn: () =>
+        fetchWeatherForecast(leg.destination, leg.startDate, leg.endDate),
       enabled: !!leg.destination && !!leg.startDate && !!leg.endDate,
       staleTime: 5 * 60 * 1000,
       retry: (failureCount, error) => {
-        if (error instanceof WeatherApiError && error.statusCode && error.statusCode >= 400 && error.statusCode < 500) {
+        if (
+          error instanceof WeatherApiError &&
+          error.statusCode &&
+          error.statusCode >= 400 &&
+          error.statusCode < 500
+        ) {
           return false;
         }
         return failureCount < 2;
@@ -97,11 +117,11 @@ const Index = () => {
     })
   );
 
-  const isLoadingWeather = weatherQueries.some(q => q.isLoading);
+  const isLoadingWeather = weatherQueries.some((q: any) => q.isLoading);
   const weatherErrors = weatherQueries
-    .map((q, i) => q.error ? { leg: tripLegs[i], error: q.error } : null)
+    .map((q: any, i: number) => (q.error ? { leg: tripLegs[i], error: q.error } : null))
     .filter(Boolean);
-  const allWeatherLoaded = weatherQueries.every(q => !q.isLoading);
+  const allWeatherLoaded = weatherQueries.every((q: any) => !q.isLoading);
 
   // Merge all weather data into a single chronological daily array
   const dailyClothingData = useMemo(() => {
@@ -111,24 +131,24 @@ const Index = () => {
       date: string;
       destination: string;
       legIndex: number;
-      condition: 'sunny' | 'cloudy' | 'mixed' | 'rainy' | 'snowy';
+      condition: "sunny" | "cloudy" | "mixed" | "rainy" | "snowy";
       temp: { high: number; low: number };
       uvIndex: number;
       precipitation: number;
       activities: string[];
     }> = [];
 
-    weatherQueries.forEach((query, legIndex) => {
+    weatherQueries.forEach((query: any, legIndex: number) => {
       const leg = tripLegs[legIndex];
       if (query.data?.daily) {
-        query.data.daily.forEach(day => {
-          const [year, month, dayOfMonth] = day.date.split('-').map(Number);
+        query.data.daily.forEach((day: any) => {
+          const [year, month, dayOfMonth] = day.date.split("-").map(Number);
           const localDate = new Date(year, month - 1, dayOfMonth);
           allDays.push({
-            date: format(localDate, 'MMM d'),
+            date: format(localDate, "MMM d"),
             destination: leg.destination,
             legIndex,
-            condition: day.condition as 'sunny' | 'cloudy' | 'mixed' | 'rainy' | 'snowy',
+            condition: day.condition as "sunny" | "cloudy" | "mixed" | "rainy" | "snowy",
             temp: {
               high: day.temperatureHigh,
               low: day.temperatureLow,
@@ -141,17 +161,19 @@ const Index = () => {
       }
     });
 
-    // Sort chronologically (dates are already in order per leg, but merge across legs)
+    // Sort chronologically
     allDays.sort((a, b) => {
-      const dateA = new Date(a.date + ', 2025');
-      const dateB = new Date(b.date + ', 2025');
+      const dateA = new Date(a.date + ", 2025");
+      const dateB = new Date(b.date + ", 2025");
       return dateA.getTime() - dateB.getTime();
     });
 
     // Merge with daily activities
     if (dailyActivities && Array.isArray(dailyActivities)) {
-      return allDays.map(day => {
-        const dayActivities = dailyActivities.find((a: any) => a.date === day.date);
+      return allDays.map((day) => {
+        const dayActivities = dailyActivities.find(
+          (a: any) => a.date === day.date
+        );
         return {
           ...day,
           activities: dayActivities ? dayActivities.activities : [],
@@ -160,7 +182,7 @@ const Index = () => {
     }
 
     return allDays;
-  }, [weatherQueries.map(q => q.data), allWeatherLoaded, tripLegs, dailyActivities]);
+  }, [weatherQueries.map((q: any) => q.data), allWeatherLoaded, tripLegs, dailyActivities]);
 
   // Extract all unique activities for the header
   const allUserActivities = useMemo(() => {
@@ -172,97 +194,107 @@ const Index = () => {
   }, [dailyActivities]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-5xl mx-auto p-6 space-y-8 lg:space-y-10">
-        {/* Header with Back Button */}
-        <div className="flex items-center justify-between animate-fade-in">
-          <Button
-            variant="ghost"
+    <div className="bg-[#f3f0d6] min-h-screen py-8">
+      <div className="max-w-[1140px] mx-auto flex flex-col gap-7 px-6">
+
+        {/* Back button */}
+        <div>
+          <button
             onClick={() => setLocation("/")}
-            className="flex items-center gap-2 text-warm-gray hover:text-primary hover:bg-accent transition-all duration-200"
+            className="bg-[#f9f6e8] flex items-center gap-1.5 px-[14px] py-2 rounded-[8px] text-[#7a6e5a] hover:bg-[#f0ead5] transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
-            <span className="font-medium">Back to Trip Details</span>
-          </Button>
+            <span className="font-body font-semibold text-[13px]">
+              Back to Trip Details
+            </span>
+          </button>
         </div>
 
         {/* Trip Header */}
-        <div className="animate-fade-in">
-          <TripHeader
-            destination={tripMeta.destination}
-            dates={tripMeta.dates}
-            tripTypes={tripMeta.tripTypes}
-            activities={allUserActivities}
-            legs={headerLegs.length > 1 ? headerLegs : undefined}
-          />
-        </div>
+        <TripHeader
+          destination={tripMeta.destination}
+          dates={tripMeta.dates}
+          tripTypes={tripMeta.tripTypes}
+          activities={allUserActivities}
+          legs={headerLegs.length > 1 ? headerLegs : undefined}
+          totalDays={dailyClothingData.length || undefined}
+        />
 
         {/* Weather Error Alerts */}
         {weatherErrors.length > 0 && (
-          <div className="animate-fade-in space-y-2">
-            {weatherErrors.map((err, i) => (
-              <Alert key={i} variant="destructive" className="border border-destructive/30 bg-destructive/5">
-                <AlertCircle className="h-5 w-5" />
-                <AlertDescription className="flex items-center justify-between text-foreground">
-                  <span>
-                    Unable to fetch weather for {err!.leg.destination}:{" "}
-                    {err!.error instanceof WeatherApiError ? err!.error.message : 'Network error'}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => weatherQueries[i]?.refetch()}
-                    className="ml-4"
-                  >
-                    Retry
-                  </Button>
-                </AlertDescription>
-              </Alert>
+          <div className="flex flex-col gap-2">
+            {weatherErrors.map((err: any, i: number) => (
+              <div
+                key={i}
+                className="bg-destructive/5 border border-destructive/20 rounded-xl px-4 py-3 flex items-center gap-3"
+              >
+                <AlertCircle className="h-5 w-5 text-destructive shrink-0" />
+                <span className="font-body text-[13px] text-foreground flex-1">
+                  Unable to fetch weather for {err.leg.destination}:{" "}
+                  {err.error instanceof WeatherApiError
+                    ? err.error.message
+                    : "Network error"}
+                </span>
+                <button
+                  onClick={() => weatherQueries[i]?.refetch()}
+                  className="font-body font-semibold text-[13px] text-[#3e7050] hover:underline shrink-0"
+                >
+                  Retry
+                </button>
+              </div>
             ))}
           </div>
         )}
 
-        {/* Timeline Content */}
-        <div className="animate-scale-in">
-          {isLoadingWeather && tripLegs.length > 0 ? (
-            <div className="bg-card rounded-xl p-12 text-center shadow-card border border-border">
-              <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary/20 border-t-primary mx-auto mb-6"></div>
-              <p className="text-warm-gray text-lg font-medium">
-                Fetching weather data for {tripLegs.length === 1
-                  ? tripLegs[0].destination
-                  : `${tripLegs.length} destinations`
-                }...
-              </p>
-              {tripLegs.length > 1 && (
-                <div className="mt-4 space-y-1">
-                  {tripLegs.map((leg, i) => (
-                    <p key={i} className="text-sm text-muted-foreground">
-                      {weatherQueries[i]?.isLoading ? "⏳" : weatherQueries[i]?.error ? "❌" : "✅"}{" "}
-                      {leg.destination}
-                    </p>
-                  ))}
-                </div>
-              )}
-            </div>
-          ) : dailyClothingData.length > 0 ? (
-            <TripTimeline
-              key={`timeline-${dailyClothingData.length}-${dailyClothingData[0]?.date}`}
-              dailyData={dailyClothingData}
-              tripDetails={{
-                destination: tripMeta.destination,
-                luggageSize: tripMeta.luggageSize,
-                tripTypes: tripMeta.tripTypes,
-                duration: dailyClothingData.length,
-                destinations: tripLegs.length > 1 ? tripLegs : undefined,
-              }}
-              isWeatherDataReal={weatherQueries.some(q => !!q.data) && weatherErrors.length === 0}
-            />
-          ) : (
-            <div className="bg-card rounded-xl p-12 text-center shadow-card border border-border">
-              <p className="text-warm-gray text-lg font-medium">Loading trip timeline...</p>
-            </div>
-          )}
-        </div>
+        {/* Main content */}
+        {isLoadingWeather && tripLegs.length > 0 ? (
+          <div className="bg-[#f9f6e8] rounded-xl p-12 text-center">
+            <div className="animate-spin rounded-full h-10 w-10 border-2 border-[#3e7050]/20 border-t-[#3e7050] mx-auto mb-6" />
+            <p className="font-body text-[#7a6e5a] text-lg">
+              Fetching weather for{" "}
+              {tripLegs.length === 1
+                ? tripLegs[0].destination
+                : `${tripLegs.length} destinations`}
+              ...
+            </p>
+            {tripLegs.length > 1 && (
+              <div className="mt-4 flex flex-col gap-1 items-center">
+                {tripLegs.map((leg: any, i: number) => (
+                  <p key={i} className="font-body text-[13px] text-[#a09282]">
+                    {weatherQueries[i]?.isLoading
+                      ? "⏳"
+                      : weatherQueries[i]?.error
+                      ? "❌"
+                      : "✅"}{" "}
+                    {leg.destination}
+                  </p>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : dailyClothingData.length > 0 ? (
+          <TripTimeline
+            key={`timeline-${dailyClothingData.length}-${dailyClothingData[0]?.date}`}
+            dailyData={dailyClothingData}
+            tripDetails={{
+              destination: tripMeta.destination,
+              luggageSize: tripMeta.luggageSize,
+              tripTypes: tripMeta.tripTypes,
+              duration: dailyClothingData.length,
+              destinations: tripLegs.length > 1 ? tripLegs : undefined,
+            }}
+            isWeatherDataReal={
+              weatherQueries.some((q: any) => !!q.data) &&
+              weatherErrors.length === 0
+            }
+          />
+        ) : (
+          <div className="bg-[#f9f6e8] rounded-xl p-12 text-center">
+            <p className="font-body text-[#7a6e5a] text-lg">
+              Loading trip timeline...
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

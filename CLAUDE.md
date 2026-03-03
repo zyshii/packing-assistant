@@ -62,6 +62,24 @@ shared/               # Code shared between client & server
 - AI recommendations via OpenAI are optional and additive; the app works fully without `OPENAI_API_KEY`
 - Multi-destination trips use a timeline-based approach with per-destination weather and suggestions
 
+### Result Page (`/packing-list`) Component Architecture
+
+- **`pages/Index.tsx`** — page shell: parses localStorage trip data, fetches per-leg weather, assembles `dailyClothingData`, renders `TripHeader` + `TripTimeline`
+- **`components/TripHeader.tsx`** — full-width trip summary card: destination, dates, leg pills, trip type badges, activities
+  - Accepts `totalDays?: number` prop (passed from `dailyClothingData.length`)
+- **`components/TripTimeline.tsx`** — two-column layout owning its own React Query calls:
+  - Left column (400px): collapsible packing category accordions with per-item checkboxes (local state only, not persisted)
+  - Right column (flex-1): daily clothing timeline with show/hide for days beyond the initial 2
+  - Queries: `smart-daily-recommendations` (clothing per day) + `smart-packing-optimization` (category lists)
+- **`components/PackingCategory.tsx`** — **unused legacy component**, not imported anywhere; can be deleted if desired
+
+### Key Conventions for Result Page
+
+- Packing checkbox state is local to `TripTimeline` — not persisted to localStorage or DB
+- Timeline shows 2 days by default; `showAllDays` state expands to full list
+- Category accordions: first category (`tops`) expanded by default; others collapsed
+- Leg colors (dot/stem/pill) follow index order: green (#3e7050) → amber (#ce8020) → lavender (#7B6E8C) → blue → rose
+
 ## Environment Variables
 
 - `NODE_ENV` — `development` or `production`
