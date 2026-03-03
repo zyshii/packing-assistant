@@ -31,11 +31,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Check if end date is within Open-Meteo's allowed range
-      // Open-Meteo forecast API supports up to ~16 days into the future
+      // Open-Meteo forecast API supports up to 15 days into the future (today + 15)
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const maxAllowedDate = new Date(today);
-      maxAllowedDate.setDate(maxAllowedDate.getDate() + 16);
+      maxAllowedDate.setDate(maxAllowedDate.getDate() + 15);
 
       console.log(`Date validation: end=${end.toISOString()}, maxAllowed=${maxAllowedDate.toISOString()}, endDate=${endDate}`);
 

@@ -13,21 +13,40 @@ export default {
         "2xl": "1.25rem",
         "3xl": "1.5rem",
       },
+      fontFamily: {
+        display: ['Lora', 'Georgia', 'serif'],
+        body: ['Raleway', 'system-ui', 'sans-serif'],
+        sans: ['Raleway', 'system-ui', 'sans-serif'],
+        serif: ['Lora', 'Georgia', 'serif'],
+      },
       colors: {
-        // Google-inspired calm named colors
-        "warm-orange": "#1967D2",
-        "burnt-orange": "#1557B0",
-        "soft-peach": "#E8F0FE",
-        "cream": "#FFFFFF",
-        "warm-beige": "#F8F9FA",
-        "light-sand": "#F1F3F4",
-        "deep-violet": "#1967D2",
-        "soft-purple": "#E8F0FE",
-        "sage-green": "#1E8E3E",
-        "terracotta": "#D93025",
-        "charcoal": "#202124",
-        "warm-gray": "#5F6368",
-        "light-gray": "#80868B",
+        // Earthy, natural named colors inspired by realfood.gov
+        "herb-green": "#3E7050",         // Primary herb green
+        "forest-green": "#2E5A3C",       // Darker herb green
+        "warm-amber": "#CE8020",         // Warm amber accent
+        "light-amber": "#F0E2BB",        // Light amber/golden
+        "cream": "#F3F0D6",              // Warm cream (realfood.gov primary)
+        "light-cream": "#F9F6E8",        // Lighter cream (card bg)
+        "warm-sand": "#E5DABD",          // Sandy cream (secondary)
+        "muted-sand": "#EAE4D1",         // Muted cream (muted bg)
+        "terracotta": "#AB4432",         // Earthy red (destructive)
+        "warm-charcoal": "#3A2A1A",      // Dark warm brown (foreground)
+        "warm-gray": "#7A6E5A",          // Warm gray (muted text)
+        "warm-border": "#C9C1A8",        // Subtle warm border
+        "ocean-teal": "#356D80",         // Ocean teal (info/travel)
+        "soft-lavender": "#7B6E8C",      // Soft lavender-plum (travel)
+
+        // Legacy aliases (kept for backward compat with any inline usage)
+        "warm-orange": "#CE8020",        // Remapped to warm amber
+        "burnt-orange": "#B56B10",       // Darker amber
+        "soft-peach": "#F0E2BB",         // Remapped to light amber
+        "warm-beige": "#F9F6E8",         // Remapped to light cream
+        "light-sand": "#E5DABD",         // Remapped to warm sand
+        "deep-violet": "#7B6E8C",        // Remapped to soft lavender
+        "soft-purple": "#EDE8F5",        // Light lavender bg
+        "sage-green": "#357A48",         // Forest/success green
+        "charcoal": "#3A2A1A",           // Remapped to warm charcoal
+        "light-gray": "#A09282",         // Warm light gray
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -137,6 +156,7 @@ export default {
         "soft": "var(--shadow-soft)",
         "card": "var(--shadow-card)",
         "floating": "var(--shadow-floating)",
+        "modal": "var(--shadow-modal)",
       },
     },
   },

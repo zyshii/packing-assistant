@@ -20,7 +20,7 @@ import DailyActivityInput from "@/components/DailyActivityInput";
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 const MAX_WEATHER_DATE = new Date(today);
-MAX_WEATHER_DATE.setDate(MAX_WEATHER_DATE.getDate() + 16);
+MAX_WEATHER_DATE.setDate(MAX_WEATHER_DATE.getDate() + 15);
 const MAX_TRIP_DAYS = 14;
 
 interface TripLeg {
