@@ -1,12 +1,9 @@
 import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { X, Calendar, Activity, MapPin } from "lucide-react";
+import { X, ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface DailyActivity {
@@ -58,27 +55,12 @@ const getActivitiesByTripTypes = (tripTypes?: string[]) => {
   return Array.from(new Set(combinedActivities));
 };
 
-const destinationColors = [
-  "border-l-blue-400",
-  "border-l-emerald-400",
-  "border-l-amber-400",
-  "border-l-purple-400",
-  "border-l-rose-400",
-];
-
-const destinationBadgeColors = [
-  "bg-blue-100 text-blue-700",
-  "bg-emerald-100 text-emerald-700",
-  "bg-amber-100 text-amber-700",
-  "bg-purple-100 text-purple-700",
-  "bg-rose-100 text-rose-700",
-];
-
 export default function DailyActivityInput({ dates, tripTypes, onActivitiesChange, datesWithDestinations }: DailyActivityInputProps) {
   const [dailyActivities, setDailyActivities] = useState<DailyActivity[]>([]);
   const [activityInputs, setActivityInputs] = useState<{ [key: number]: string }>({});
   const [openPopovers, setOpenPopovers] = useState<{ [key: number]: boolean }>({});
   const [inputFocused, setInputFocused] = useState<{ [key: number]: boolean }>({});
+  const [openDays, setOpenDays] = useState<string[]>([]);
 
   useEffect(() => {
     const newDailyActivities = dates.map(date => {
@@ -185,89 +167,107 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
 
   const hasMultipleDestinations = groupedByDestination.length > 1;
 
+  const legColors = [
+    "bg-blue-500", "bg-emerald-500", "bg-amber-500", "bg-purple-500", "bg-rose-500"
+  ];
+
   return (
-    <Card className="p-6 shadow-card border-0 bg-card">
-      <div className="space-y-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Activity className="h-5 w-5 text-primary" />
-          <h3 className="text-lg font-semibold text-foreground">Plan Your Daily Activities</h3>
-        </div>
-        <p className="text-muted-foreground text-sm">
-          {tripTypes && tripTypes.length > 0
-            ? `Based on your ${tripTypes.join(', ')} trip${tripTypes.length > 1 ? 's' : ''}, here are some relevant activities. Specify what you plan to do each day for personalized packing recommendations.`
-            : "Specify your planned activities for each day to get more personalized packing recommendations."
-          }
-        </p>
+    <div className="flex flex-col w-full rounded-[14px] overflow-hidden">
+      {/* Section header */}
+      <div className="flex items-center gap-2.5 text-[20px] leading-normal px-0 pb-3">
+        <span className="text-[#3e7050] text-[20px]">🎡</span>
+        <h3 className="font-display font-bold text-[#3a2a1a] whitespace-nowrap">Plan Your Daily Activities</h3>
+      </div>
 
-        <div className="space-y-6">
-          {groupedByDestination.map((group) => (
-            <div key={`group-${group.legIndex}`}>
-              {/* Destination header */}
-              {hasMultipleDestinations && (
-                <div className="flex items-center gap-2 mb-3">
-                  <div className={cn(
-                    "flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold text-white",
-                    group.legIndex === 0 ? "bg-blue-500" :
-                    group.legIndex === 1 ? "bg-emerald-500" :
-                    group.legIndex === 2 ? "bg-amber-500" :
-                    group.legIndex === 3 ? "bg-purple-500" : "bg-rose-500"
-                  )}>
-                    {group.legIndex + 1}
-                  </div>
-                  <span className="text-sm font-semibold text-foreground flex items-center gap-1">
-                    <MapPin className="h-3.5 w-3.5" />
-                    {group.destination}
-                  </span>
+      {/* Description */}
+      <p className="font-body text-[#7a6e5a] text-[13px] leading-[1.5] pb-4">
+        {`Select activities for each day — we'll tailor outfit suggestions to match.`}
+      </p>
+
+      {/* Divider */}
+      <div className="bg-[#c9c1a8] h-px mb-0" />
+
+      {/* Day list */}
+      <div className="flex flex-col w-full">
+        {groupedByDestination.map((group) => (
+          <div key={`group-${group.legIndex}`}>
+            {/* Destination header for multi-destination trips */}
+            {hasMultipleDestinations && (
+              <div className="flex items-center gap-2 px-0 py-3">
+                <div className={cn(
+                  "flex items-center justify-center rounded-full size-5 text-white text-[11px] font-bold",
+                  legColors[group.legIndex % legColors.length]
+                )}>
+                  {group.legIndex + 1}
                 </div>
-              )}
+                <span className="text-[13px] font-semibold text-[#7a6e5a]">{group.destination}</span>
+              </div>
+            )}
 
-              <Accordion type="multiple" className="w-full">
-                {group.dateIndices.map((dateIndex) => (
+            <Accordion type="multiple" value={openDays} onValueChange={setOpenDays} className="w-full">
+              {group.dateIndices.map((dateIndex) => {
+                const isOpen = openDays.includes(`day-${dateIndex}`);
+                const activityCount = dailyActivities[dateIndex]?.activities.length ?? 0;
+
+                return (
                   <AccordionItem
                     key={dates[dateIndex]}
                     value={`day-${dateIndex}`}
-                    className={cn(
-                      hasMultipleDestinations && "border-l-4",
-                      hasMultipleDestinations && destinationColors[group.legIndex % destinationColors.length]
-                    )}
+                    className="border-b-0 border-t border-[#c9c1a8] first:border-t-0"
                   >
-                    <AccordionTrigger className="hover:no-underline">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-travel-blue" />
-                        <span className="font-medium text-foreground">{dates[dateIndex]}</span>
-                        {hasMultipleDestinations && (
-                          <span className={cn(
-                            "text-xs px-2 py-0.5 rounded-full",
-                            destinationBadgeColors[group.legIndex % destinationBadgeColors.length]
-                          )}>
-                            {group.destination.split(',')[0]}
-                          </span>
+                    <AccordionTrigger className="hover:no-underline [&>svg]:hidden px-0 py-3.5">
+                      <div className="flex items-center gap-2.5 flex-1">
+                        <div className={cn(
+                          "flex items-center justify-center rounded-full size-7 shrink-0",
+                          isOpen ? "bg-[#3e7050]" : "bg-[#eae4d1]"
+                        )}>
+                          <span className={cn("text-[14px]", isOpen ? "text-white" : "text-[#a09282]")}>📅</span>
+                        </div>
+                        <span className="font-body font-semibold text-[14px] text-[#3a2a1a]">
+                          {dates[dateIndex]}
+                        </span>
+                        {activityCount > 0 && (
+                          <div className="bg-[#3e7050] flex items-center justify-center px-2.5 py-0.5 rounded-full">
+                            <span className="font-body font-bold text-[11px] text-white">
+                              {activityCount}
+                            </span>
+                          </div>
                         )}
-                        {dailyActivities[dateIndex]?.activities.length > 0 && (
-                          <Badge variant="outline" className="ml-2">
-                            {dailyActivities[dateIndex].activities.length} activit{dailyActivities[dateIndex].activities.length === 1 ? 'y' : 'ies'}
-                          </Badge>
-                        )}
+                        <div className="ml-auto text-[#a09282]">
+                          {isOpen
+                            ? <ChevronDown className="h-5 w-5" />
+                            : <ChevronRight className="h-5 w-5" />
+                          }
+                        </div>
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent className="space-y-4">
-                      <div className="flex flex-wrap gap-2 min-h-[2rem]">
-                        {dailyActivities[dateIndex]?.activities.map((activity, activityIndex) => (
-                          <Badge key={activityIndex} variant="secondary" className="flex items-center gap-1">
-                            {activity}
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-auto p-0 w-4 h-4 hover:bg-destructive hover:text-destructive-foreground"
-                              onClick={() => removeActivity(dateIndex, activityIndex)}
-                            >
-                              <X className="h-3 w-3" />
-                            </Button>
-                          </Badge>
-                        )) || []}
-                      </div>
 
-                      <div className="flex flex-col gap-2">
+                    <AccordionContent className="pb-0">
+                      <div className="bg-[#f3f0d6] flex flex-col gap-2.5 px-5 pb-4 pt-2.5 -mx-0 rounded-lg">
+                        {/* Activity pills */}
+                        {activityCount > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {dailyActivities[dateIndex]?.activities.map((activity, activityIndex) => (
+                              <div
+                                key={activityIndex}
+                                className="bg-[#3e7050] flex items-center gap-1.5 px-3 py-1.5 rounded-full"
+                              >
+                                <span className="font-body font-semibold text-[12px] text-white">
+                                  {activity}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => removeActivity(dateIndex, activityIndex)}
+                                  className="text-white/70 hover:text-white transition-colors"
+                                >
+                                  <X className="h-3 w-3" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Activity search input */}
                         <Popover
                           open={openPopovers[dateIndex] && getFilteredActivities(dateIndex).length > 0}
                           onOpenChange={(newOpen) => {
@@ -276,24 +276,16 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
                           }}
                         >
                           <PopoverTrigger asChild>
-                            <div className="relative">
+                            <div className="bg-[#f9f6e8] flex items-center gap-2 h-[38px] px-3 rounded-lg text-[#a09282] cursor-text">
+                              <span className="text-[14px] shrink-0">🔍</span>
                               <Input
-                                placeholder={
-                                  tripTypes && tripTypes.length > 0
-                                    ? `Type to search ${tripTypes.join('/')} activities...`
-                                    : "Type to search activities..."
-                                }
+                                placeholder="Add activity…"
                                 value={activityInputs[dateIndex] || ''}
                                 onChange={(e) => handleInputChange(dateIndex, e.target.value)}
                                 onFocus={() => handleInputFocus(dateIndex)}
                                 onBlur={() => handleInputBlur(dateIndex)}
-                                className={`w-full transition-all duration-200 ${
-                                  inputFocused[dateIndex] || openPopovers[dateIndex]
-                                    ? 'ring-2 ring-primary ring-offset-2 border-primary'
-                                    : ''
-                                }`}
+                                className="bg-transparent border-0 h-auto p-0 text-[13px] text-[#3a2a1a] placeholder:text-[#a09282] focus-visible:ring-0 font-body"
                               />
-                              <Activity className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             </div>
                           </PopoverTrigger>
                           <PopoverContent
@@ -305,7 +297,7 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
                               <CommandList className="max-h-[200px]">
                                 <CommandEmpty>
                                   {(activityInputs[dateIndex]?.length || 0) < 2
-                                    ? "Type at least 2 characters to search..."
+                                    ? "Type at least 2 characters to search…"
                                     : "No matching activities found."
                                   }
                                 </CommandEmpty>
@@ -317,7 +309,6 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
                                       onSelect={() => addActivity(dateIndex, activity)}
                                       className="cursor-pointer hover:bg-muted"
                                     >
-                                      <Activity className="mr-2 h-4 w-4" />
                                       {activity}
                                     </CommandItem>
                                   ))}
@@ -329,21 +320,12 @@ export default function DailyActivityInput({ dates, tripTypes, onActivitiesChang
                       </div>
                     </AccordionContent>
                   </AccordionItem>
-                ))}
-              </Accordion>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-4 p-3 bg-info-light rounded-lg border border-info/20">
-          <p className="text-sm text-info">
-            {tripTypes && tripTypes.length > 0
-              ? `These ${tripTypes.join(', ')}-focused activities will help us recommend the perfect gear and clothing for your trip.`
-              : "Adding specific activities helps us suggest the right gear, footwear, and clothing for each day."
-            }
-          </p>
-        </div>
+                );
+              })}
+            </Accordion>
+          </div>
+        ))}
       </div>
-    </Card>
+    </div>
   );
 }

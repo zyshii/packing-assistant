@@ -1,7 +1,4 @@
 import { useState, useEffect } from "react";
-import { X, Lightbulb } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 
 interface OnboardingHintProps {
   title: string;
@@ -33,30 +30,25 @@ export default function OnboardingHint({
   if (!isVisible) return null;
 
   return (
-    <Card className={`p-4 bg-accent border border-primary/20 animate-fade-in ${className}`}>
-      <div className="flex items-start gap-3">
-        <div className="flex-shrink-0 p-1.5 bg-primary/10 rounded-lg">
-          <Lightbulb className="w-4 h-4 text-primary" />
-        </div>
-
-        <div className="flex-1 min-w-0">
-          <h4 className="text-sm font-medium text-foreground mb-0.5">
-            {title}
-          </h4>
-          <p className="text-sm text-muted-foreground">
-            {description}
-          </p>
-        </div>
-
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleDismiss}
-          className="flex-shrink-0 h-auto p-1 hover:bg-primary/10"
-        >
-          <X className="w-4 h-4" />
-        </Button>
+    <div className={`bg-[#f0e2bb] flex items-center gap-3 p-3.5 rounded-xl ${className || ''}`}>
+      <div className="bg-[#ce8020] flex items-center justify-center rounded-lg shrink-0 size-9">
+        <span className="text-[18px]">💡</span>
       </div>
-    </Card>
+      <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+        <p className="font-body font-bold text-[#3a2a1a] text-[13px]">
+          {title}
+        </p>
+        <p className="font-body text-[#7a6e5a] text-[12px] leading-[1.5]">
+          {description}
+        </p>
+      </div>
+      <button
+        onClick={handleDismiss}
+        className="text-[#a09282] hover:text-[#7a6e5a] shrink-0 text-[18px] leading-none transition-colors px-1"
+        aria-label="Dismiss"
+      >
+        ×
+      </button>
+    </div>
   );
 }

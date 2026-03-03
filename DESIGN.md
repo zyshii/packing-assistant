@@ -30,12 +30,13 @@ font-family: 'Raleway', system-ui, sans-serif; /* body */
 - `.font-sans` → Raleway sans alias
 
 ### Type Scale
-- **H1**: `text-4xl lg:text-5xl font-bold tracking-tight font-display`
-- **H2**: `text-2xl font-bold font-display`
-- **H3 / CardTitle**: `text-2xl font-semibold font-display`
-- **Body**: `text-base` (Raleway, 16px, line-height 1.7)
-- **Small / Label**: `text-sm font-semibold font-body`
-- **Badge / Caption**: `text-xs font-semibold tracking-wide font-body`
+- **H1 (landing)**: `text-[36px] font-bold font-display text-[#3a2a1a]`
+- **H2 (card title)**: `text-[20px] font-bold font-display text-[#3a2a1a]`
+- **H3 (section)**: `text-lg font-semibold font-display`
+- **Body**: `font-body text-[15px]` (Raleway, line-height 1.6)
+- **Label**: `font-body font-semibold text-[13px] text-[#7a6e5a]`
+- **Small / Badge text**: `font-body font-semibold text-[12px]`
+- **Caption**: `font-body text-[12px] leading-[1.5]`
 
 ---
 
@@ -196,11 +197,23 @@ Tailwind scale: `rounded-sm` (8px) · `rounded-md` (10px) · `rounded-lg` (12px)
 
 ### Input / Select
 
-- Background: `bg-card` (slightly warmer than page bg)
-- Border: `border-border`
-- Height: `h-10`
-- Focus: `ring-2 ring-ring` (herb green)
+**Form inputs** (destination, activity search):
+- Background: `bg-[#f9f6e8]` (card cream — slightly lighter than page)
+- Border: none (`border-0`)
+- Height: `h-[42px]`
+- Focus: `focus-visible:ring-2 focus-visible:ring-[#3e7050] focus-visible:ring-offset-0`
 - Radius: `rounded-lg`
+- Emoji prefix (🔍 for destination/search) at `left-[14px]`, `pl-[38px]`
+
+**Date picker button** (custom trigger):
+- Background: `bg-[#f9f6e8]`, height `h-[42px]`, `px-[14px]`
+- Prefix: 📅 emoji in `text-[#a09282]`
+- Value text: `text-[#3a2a1a]` / placeholder: `text-[#a09282]`
+
+**Select dropdown** (luggage):
+- Background: `bg-[#f3f0d6]` (page cream)
+- Border: none, height `h-[42px]`
+- Selected: 🧳 emoji prefix in `text-[#3e7050]`
 
 ### Badge
 
@@ -250,14 +263,71 @@ Variants: `default` (herb green) · `secondary` (sandy cream) · `destructive` (
 
 Transition defaults: `duration-200 ease-out` (interactive) · `duration-300 ease-out` (page-level)
 
+### Onboarding Hint
+
+Dismissible hint banner (stored via `localStorage`):
+- Background: `bg-[#f0e2bb]` (light amber)
+- Icon box: `bg-[#ce8020] size-9 rounded-lg` with 💡 emoji
+- Title: `font-body font-bold text-[13px] text-[#3a2a1a]`
+- Description: `font-body text-[12px] leading-[1.5] text-[#7a6e5a]`
+- Dismiss: `×` text button, `text-[#a09282]`
+
+### Pill Toggle Buttons (Trip Type)
+
+Used for multi-select options instead of checkbox cards:
+- **Selected**: `bg-[#3e7050] text-white` — emoji prefix shown
+- **Unselected**: `bg-[#f3f0d6] text-[#7a6e5a] hover:bg-[#e8e0c5]`
+- Sizing: `px-3.5 py-2 rounded-lg font-body font-semibold text-[13px]`
+
+### Days Pill
+
+Shows duration for each trip leg:
+- `bg-[#f0e2bb] px-2.5 py-1 rounded-full`
+- ⌛️ emoji + `font-body font-semibold text-[12px] text-[#7a6e5a]`
+
+### Dividers
+
+Section dividers within cards:
+- `bg-[#c9c1a8] h-px` (warm-border, 1px)
+
+### Info Alert
+
+API limit / info notice:
+- `bg-[#eaf3fb] rounded-xl px-3.5 py-2.5`
+- ℹ️ emoji prefix, `text-[12px] text-[#356d80]`
+
+### Daily Activity Accordion
+
+Each trip day is a collapsible accordion row:
+- **Expanded header**: green circle badge `bg-[#3e7050] size-7`, white 📅 emoji, count badge `bg-[#3e7050] rounded-full`
+- **Collapsed header**: muted amber circle `bg-[#eae4d1] size-7`, muted 📅 emoji `text-[#a09282]`, chevron right
+- **Expanded body**: `bg-[#f3f0d6] px-5 pb-4 pt-2.5 rounded-lg`
+- **Activity pills**: `bg-[#3e7050] text-white px-3 py-1.5 rounded-full` with `×` remove button
+- **Search input**: `bg-[#f9f6e8] h-[38px] px-3 rounded-lg` with 🔍 emoji prefix
+
 ---
 
 ## Page Layouts
 
-### Trip Details Page
-- Background: `bg-background` (warm cream `#F3F0D6`)
-- Header: Lora serif h1, centered, badge with herb green
-- Form card: `shadow-floating border-2 border-primary/20` on top of `bg-card`
+### Trip Details Page (Landing, v2 — Figma redesign 2026-03-02)
+
+Container: `bg-[#f3f0d6] min-h-screen py-10` / `max-w-[960px] mx-auto flex flex-col gap-6 px-4`
+
+**Header section** (`flex flex-col items-center gap-2.5`):
+- "✨ Smart Packing" badge: `bg-[#3e7050] text-white px-3.5 py-[5px] rounded-full`
+- H1: `font-display font-bold text-[36px] text-[#3a2a1a]`
+- Subtitle: `font-body text-[15px] leading-[1.6] text-[#7a6e5a] max-w-[600px] text-center`
+
+**Main form card**: `bg-[#f9f6e8] flex flex-col gap-5 p-7 rounded-2xl`
+- Card section header: 🗺️ emoji + `font-display font-bold text-[20px] text-[#3a2a1a]`
+- Dividers between sections: `bg-[#c9c1a8] h-px`
+
+**Leg cards**: `bg-[#f3f0d6] flex flex-col gap-3 px-5 py-4 rounded-xl`
+- Numbered badge: `bg-[#3e7050] size-7 rounded-full text-white font-bold text-[13px]`
+
+**Bottom row** (2-column flex): Luggage select + Trip type pills
+
+**Daily Activities section**: embedded below divider, no separate card background
 
 ### Packing List Page
 - Same background gradient
@@ -272,18 +342,15 @@ Transition defaults: `duration-200 ease-out` (interactive) · `duration-300 ease
 
 ## Multi-Destination Colors
 
-Trip legs use naturalistic, travel-inspired colors:
+Trip legs in the activity input use small colored circles (no background tinting on leg cards):
 
 ```javascript
-const legColors = ["bg-herb-green", "bg-ocean-teal", "bg-warm-amber", "bg-soft-lavender", "bg-terracotta"]
-const legBadgeColors = [
-  "bg-green-50 text-green-700 border-green-200",
-  "bg-teal-50 text-teal-700 border-teal-200",
-  "bg-amber-50 text-amber-700 border-amber-200",
-  "bg-purple-50 text-purple-700 border-purple-200",
-  "bg-red-50 text-red-700 border-red-200",
+const legColors = [
+  "bg-blue-500", "bg-emerald-500", "bg-amber-500", "bg-purple-500", "bg-rose-500"
 ]
 ```
+
+> Note: In v2 (Figma redesign), all trip leg cards share the same `bg-[#f3f0d6]` cream background. The numbered green badge (`bg-[#3e7050]`) in each leg header is the primary visual differentiator.
 
 ---
 
@@ -329,5 +396,5 @@ All color pairs meet 4.5:1 contrast ratio:
 
 ---
 
-*Last updated: 2026-03-02*
-*Design system version: 2.0 — Earthy Natural (realfood.gov inspired)*
+*Last updated: 2026-03-02 (v2.1 — Figma landing page redesign)*
+*Design system version: 2.1 — Earthy Natural (realfood.gov inspired)*

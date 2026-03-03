@@ -1,17 +1,13 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
-import { CalendarIcon, MapPin, Activity, Sparkles, ArrowRight, Plane, Luggage, Plus, Trash2, AlertTriangle, Info } from "lucide-react";
 import { format, addDays, differenceInDays } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Trash2, AlertTriangle } from "lucide-react";
 
 import OnboardingHint from "@/components/OnboardingHint";
 import DailyActivityInput from "@/components/DailyActivityInput";
@@ -123,7 +119,7 @@ const popularDestinations = [
   "Maldives", "Fiji", "Toronto, Canada", "Vancouver, Canada", "Montreal, Canada"
 ];
 
-// Destination autocomplete component for each leg
+// Destination autocomplete component
 function DestinationInput({
   value,
   onChange,
@@ -153,12 +149,16 @@ function DestinationInput({
     >
       <PopoverTrigger asChild>
         <div className="relative">
+          <span className="absolute left-[14px] top-1/2 -translate-y-1/2 text-[15px] pointer-events-none select-none">
+            🔍
+          </span>
           <Input
-            placeholder="Type to search destinations..."
+            placeholder="e.g. Paris, Tokyo, New York…"
             value={value}
             className={cn(
-              "pl-10 h-11 text-sm transition-all duration-200",
-              (focused || open) && "ring-2 ring-primary ring-offset-1 border-primary"
+              "h-[42px] pl-[38px] pr-3 text-[14px] bg-[#f9f6e8] border-0 rounded-lg",
+              "text-[#3a2a1a] placeholder:text-[#a09282] font-body",
+              "focus-visible:ring-2 focus-visible:ring-[#3e7050] focus-visible:ring-offset-0"
             )}
             onFocus={() => {
               setFocused(true);
@@ -173,7 +173,6 @@ function DestinationInput({
               if (e.target.value.length >= 2) setOpen(true);
             }}
           />
-          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         </div>
       </PopoverTrigger>
       <PopoverContent
@@ -196,7 +195,7 @@ function DestinationInput({
                   }}
                   className="cursor-pointer hover:bg-muted"
                 >
-                  <MapPin className="mr-2 h-4 w-4" />
+                  <span className="mr-2">📍</span>
                   {dest}
                 </CommandItem>
               ))}
@@ -223,16 +222,18 @@ function DatePicker({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          className={cn(
-            "w-full pl-3 text-left font-normal h-11 text-sm",
-            !value && "text-muted-foreground"
-          )}
+        <button
+          type="button"
+          className="w-full bg-[#f9f6e8] flex items-center gap-2 h-[42px] px-[14px] rounded-lg text-left focus:outline-none focus:ring-2 focus:ring-[#3e7050] focus:ring-offset-0 transition-all"
         >
-          {value ? format(value, "MMM d, yyyy") : <span>{placeholder}</span>}
-          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-        </Button>
+          <span className="text-[15px] shrink-0 text-[#a09282]">📅</span>
+          <span className={cn(
+            "text-[14px] font-body flex-1 leading-none",
+            value ? "text-[#3a2a1a]" : "text-[#a09282]"
+          )}>
+            {value ? format(value, "MMM d, yyyy") : placeholder}
+          </span>
+        </button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
@@ -241,28 +242,25 @@ function DatePicker({
           onSelect={onChange}
           disabled={disabled}
           initialFocus
-          className={cn("p-3 pointer-events-auto")}
+          className="p-3 pointer-events-auto"
         />
       </PopoverContent>
     </Popover>
   );
 }
 
-const destinationColors = [
-  "bg-blue-50 border-blue-200",
-  "bg-emerald-50 border-emerald-200",
-  "bg-amber-50 border-amber-200",
-  "bg-purple-50 border-purple-200",
-  "bg-rose-50 border-rose-200",
-];
+const LUGGAGE_LABELS: Record<string, string> = {
+  "carry-on": "Carry-on",
+  "backpack": "Backpack",
+  "medium-suitcase": "Medium Suitcase",
+  "large-suitcase": "Large Suitcase",
+};
 
-const destinationAccents = [
-  "text-blue-700",
-  "text-emerald-700",
-  "text-amber-700",
-  "text-purple-700",
-  "text-rose-700",
-];
+const TRIP_TYPES = [
+  { value: "leisure", label: "Leisure", emoji: "☀️" },
+  { value: "business", label: "Business", emoji: "💼" },
+  { value: "adventure", label: "Adventure", emoji: "⛰️" },
+] as const;
 
 function TripDetails() {
   const [, setLocation] = useLocation();
@@ -400,376 +398,298 @@ function TripDetails() {
     }
   }
 
+  const showDailyActivities = tripTypes.length > 0 && dates.length > 0;
+
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="container mx-auto py-8 lg:py-12">
-        <div className="max-w-4xl mx-auto space-y-8 lg:space-y-10">
-          {/* Header */}
-          <div className="text-center space-y-4 animate-fade-in">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-full shadow-soft">
-              <Sparkles className="w-4 h-4" />
-              Packing Assistant
-            </div>
-            <h1 className="text-4xl lg:text-5xl font-semibold text-charcoal tracking-tight">
-              Plan Your Perfect Trip
-            </h1>
-            <p className="text-warm-gray text-lg max-w-2xl mx-auto leading-relaxed">
-              Add multiple destinations and we'll create a single optimized packing list with a day-by-day clothing timeline
-            </p>
+    <div className="bg-[#f3f0d6] min-h-screen py-10">
+      <div className="max-w-[960px] mx-auto flex flex-col gap-6 px-4">
+
+        {/* Header */}
+        <div className="flex flex-col gap-2.5 items-center pb-2">
+          <div className="bg-[#3e7050] flex items-center gap-1.5 px-3.5 py-[5px] rounded-full text-white">
+            <span className="text-[13px]">✨</span>
+            <span className="font-body font-semibold text-[12px]">Smart Packing</span>
+          </div>
+          <h1 className="font-display font-bold text-[36px] text-[#3a2a1a] leading-tight text-center">
+            Plan Your Perfect Trip
+          </h1>
+          <p className="text-center text-[#7a6e5a] text-[15px] leading-[1.6] max-w-[600px] font-body">
+            Get personalized packing lists and daily outfit suggestions based on your itinerary and weather forecast.
+          </p>
+        </div>
+
+        {/* Onboarding Hint */}
+        <OnboardingHint
+          title="Multi-destination trips supported"
+          description="Add up to 5 destinations with independent dates. Each leg gets its own weather forecast."
+          storageKey="multi-dest-hint-seen"
+        />
+
+        {/* API Alert */}
+        <div className="bg-[#eaf3fb] flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-[#356d80]">
+          <span className="text-[14px] shrink-0">ℹ️</span>
+          <p className="text-[12px] font-body leading-[1.5] flex-1">
+            Weather forecasts are available up to 14 days ahead. Trips beyond this range will use climate averages.
+          </p>
+        </div>
+
+        {/* Main Card */}
+        <div className="bg-[#f9f6e8] flex flex-col gap-5 p-7 rounded-2xl">
+
+          {/* Card header */}
+          <div className="flex items-center gap-2.5 leading-normal">
+            <span className="text-[#3e7050] text-[20px]">🗺️</span>
+            <h2 className="font-display font-bold text-[20px] text-[#3a2a1a]">Trip Itinerary</h2>
           </div>
 
-          <OnboardingHint
-            title="Multi-destination trips"
-            description="Add one or more destinations to your trip. We'll fetch weather for each city and build a unified, day-by-day packing timeline that maximizes clothing reuse across all your stops."
-            storageKey="multi-dest-hint-seen"
-            className="animate-scale-in"
-          />
+          {/* Divider */}
+          <div className="bg-[#c9c1a8] h-px" />
 
-          {/* API Limit Notice */}
-          <Alert className="border border-blue-200 bg-blue-50">
-            <Info className="h-4 w-4 text-blue-600" />
-            <AlertDescription className="text-blue-800 text-sm">
-              Weather forecasts are available for up to <strong>14 days total</strong> across all destinations due to API limitations. Plan your trip within this window for accurate weather-based recommendations.
-            </AlertDescription>
-          </Alert>
-
-          {/* Main Form Card */}
-          <Card className="shadow-card border border-border animate-scale-in bg-white">
-            <CardHeader className="text-center pb-6">
-              <CardTitle className="flex items-center justify-center gap-2 text-2xl text-charcoal">
-                <Plane className="h-6 w-6 text-primary" />
-                Trip Itinerary
-              </CardTitle>
-              <CardDescription className="text-base text-warm-gray mt-1">
-                Add your destinations in order. Each stop gets its own weather forecast.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-8">
-              {/* Trip Legs */}
-              <div className="space-y-4">
-                <label className="flex items-center gap-2 text-base font-semibold text-charcoal">
-                  <MapPin className="h-5 w-5 text-primary" />
-                  Destinations
-                </label>
-
-                <div className="space-y-4">
-                  {legs.map((leg, index) => (
-                    <div
-                      key={index}
-                      className={cn(
-                        "rounded-xl border-2 p-5 transition-all duration-200 animate-fade-in",
-                        destinationColors[index % destinationColors.length]
-                      )}
-                    >
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-2">
-                          <div className={cn(
-                            "flex items-center justify-center w-7 h-7 rounded-full text-sm font-bold text-white",
-                            index === 0 ? "bg-blue-500" :
-                            index === 1 ? "bg-emerald-500" :
-                            index === 2 ? "bg-amber-500" :
-                            index === 3 ? "bg-purple-500" : "bg-rose-500"
-                          )}>
-                            {index + 1}
-                          </div>
-                          <span className={cn("text-sm font-semibold", destinationAccents[index % destinationAccents.length])}>
-                            {leg.destination || `Destination ${index + 1}`}
-                          </span>
-                        </div>
-                        {legs.length > 1 && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeLeg(index)}
-                            className="text-muted-foreground hover:text-destructive h-8 w-8 p-0"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-
-                      <div className="space-y-3">
-                        <DestinationInput
-                          value={leg.destination}
-                          onChange={(val) => updateLeg(index, { destination: val })}
-                          index={index}
-                        />
-
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className="text-xs font-medium text-muted-foreground mb-1 block">Start Date</label>
-                            <DatePicker
-                              value={leg.startDate}
-                              onChange={(date) => updateLeg(index, { startDate: date })}
-                              disabled={(date) => {
-                                const t = new Date(new Date().setHours(0, 0, 0, 0));
-                                if (date < t || date > MAX_WEATHER_DATE) return true;
-                                // Must be after previous leg's end date
-                                if (index > 0 && legs[index - 1].endDate) {
-                                  if (date < legs[index - 1].endDate!) return true;
-                                }
-                                return false;
-                              }}
-                              placeholder="Start"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-xs font-medium text-muted-foreground mb-1 block">End Date</label>
-                            <DatePicker
-                              value={leg.endDate}
-                              onChange={(date) => updateLeg(index, { endDate: date })}
-                              disabled={(date) => {
-                                const t = new Date(new Date().setHours(0, 0, 0, 0));
-                                if (date < t || date > MAX_WEATHER_DATE) return true;
-                                if (leg.startDate && date < leg.startDate) return true;
-                                // Check total days wouldn't exceed limit
-                                if (leg.startDate) {
-                                  const otherDays = legs.reduce((sum, l, i) => {
-                                    if (i === index || !l.startDate || !l.endDate) return sum;
-                                    return sum + differenceInDays(l.endDate, l.startDate) + 1;
-                                  }, 0);
-                                  const thisDays = differenceInDays(date, leg.startDate) + 1;
-                                  if (otherDays + thisDays > MAX_TRIP_DAYS) return true;
-                                }
-                                return false;
-                              }}
-                              placeholder="End"
-                            />
-                          </div>
-                        </div>
-
-                        {leg.startDate && leg.endDate && (
-                          <p className="text-xs text-muted-foreground">
-                            {differenceInDays(leg.endDate, leg.startDate) + 1} day{differenceInDays(leg.endDate, leg.startDate) + 1 !== 1 ? 's' : ''} in {leg.destination || `Destination ${index + 1}`}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Connector to next leg */}
-                      {index < legs.length - 1 && (
-                        <div className="flex justify-center mt-3 -mb-7 relative z-10">
-                          <div className="flex items-center gap-1 text-muted-foreground">
-                            <div className="w-px h-4 bg-border" />
-                            <ArrowRight className="h-3 w-3" />
-                            <div className="w-px h-4 bg-border" />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Add Destination Button */}
-                {legs.length < 5 && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={addLeg}
-                    className="w-full border-dashed border-2 h-12 text-muted-foreground hover:text-primary hover:border-primary transition-all duration-200"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Another Destination
-                  </Button>
-                )}
-
-                {/* Date Warnings */}
-                {dateWarnings.length > 0 && (
-                  <Alert variant="destructive" className="animate-fade-in">
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertDescription>
-                      {dateWarnings.map((w, i) => <p key={i}>{w}</p>)}
-                    </AlertDescription>
-                  </Alert>
-                )}
-
-                {/* Total Duration Indicator */}
-                {totalDays > 0 && (
-                  <div className={cn(
-                    "rounded-lg p-4 animate-fade-in",
-                    totalDays > MAX_TRIP_DAYS
-                      ? "bg-destructive/10 border border-destructive/20"
-                      : "bg-muted/50"
-                  )}>
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-muted-foreground">
-                        Total Trip Duration: <span className="font-semibold text-foreground">{totalDays} day{totalDays !== 1 ? 's' : ''}</span>
-                        {legs.length > 1 && <span className="ml-1">across {legs.length} destinations</span>}
-                      </p>
-                      <span className={cn(
-                        "text-xs font-medium px-2 py-1 rounded-full",
-                        totalDays > MAX_TRIP_DAYS
-                          ? "bg-destructive/20 text-destructive"
-                          : totalDays > 10
-                          ? "bg-warning/20 text-warning"
-                          : "bg-success/20 text-success"
-                      )}>
-                        {totalDays}/{MAX_TRIP_DAYS} days
-                      </span>
-                    </div>
-                    {totalDays > MAX_TRIP_DAYS && (
-                      <p className="text-sm text-destructive mt-2">
-                        Please reduce your trip to {MAX_TRIP_DAYS} days or fewer for weather forecasts.
-                      </p>
-                    )}
+          {/* Trip Legs */}
+          <div className="flex flex-col gap-4">
+            {legs.map((leg, index) => (
+              <div key={index} className="bg-[#f3f0d6] flex flex-col gap-3 px-5 py-4 rounded-xl">
+                {/* Leg header */}
+                <div className="flex items-center gap-2.5">
+                  <div className="bg-[#3e7050] flex items-center justify-center rounded-full size-7 shrink-0">
+                    <span className="font-body font-bold text-[13px] text-white">{index + 1}</span>
                   </div>
-                )}
-              </div>
-
-              {/* Luggage Size */}
-              <div className="space-y-3">
-                <label className="flex items-center gap-2 text-base font-semibold text-charcoal">
-                  <Luggage className="h-5 w-5 text-primary" />
-                  Luggage Size
-                </label>
-                <Select onValueChange={setLuggageSize} value={luggageSize}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose your luggage size" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="carry-on">
-                      <div className="flex items-center gap-3 py-1">
-                        <div className="text-lg">🎒</div>
-                        <div>
-                          <div className="font-medium text-sm">Carry-on - 22 inch</div>
-                          <div className="text-xs text-warm-gray">Compact, fits overhead</div>
-                        </div>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="backpack">
-                      <div className="flex items-center gap-3 py-1">
-                        <div className="text-lg">🎒</div>
-                        <div>
-                          <div className="font-medium text-sm">Backpack - 50L</div>
-                          <div className="text-xs text-warm-gray">Travel backpack, ideal for adventure</div>
-                        </div>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="medium-suitcase">
-                      <div className="flex items-center gap-3 py-1">
-                        <div className="text-lg">🧳</div>
-                        <div>
-                          <div className="font-medium text-sm">Medium Suitcase - 24 inch</div>
-                          <div className="text-xs text-warm-gray">Standard check-in, week-long trips</div>
-                        </div>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="large-suitcase">
-                      <div className="flex items-center gap-3 py-1">
-                        <div className="text-lg">🧳</div>
-                        <div>
-                          <div className="font-medium text-sm">Large Suitcase - 28 inch</div>
-                          <div className="text-xs text-warm-gray">Spacious, extended travel</div>
-                        </div>
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-                {luggageSize && (
-                  <p className="text-sm text-primary font-medium animate-fade-in">
-                    We'll adjust clothing quantities to fit your {luggageSize.replace('-', ' ')}
-                  </p>
-                )}
-              </div>
-
-              {/* Trip Types */}
-              <div className="space-y-4">
-                <label className="flex items-center gap-2 text-base font-semibold text-charcoal">
-                  <Activity className="h-5 w-5 text-primary" />
-                  Trip Types
-                </label>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {(["business", "leisure", "adventure"] as const).map((tripType) => (
-                    <div
-                      key={tripType}
-                      className={cn(
-                        "flex items-center space-x-3 p-5 border rounded-xl transition-all duration-200 cursor-pointer",
-                        tripTypes.includes(tripType) ? "border-primary bg-accent shadow-soft" : "border-border"
-                      )}
-                      onClick={() => {
-                        setTripTypes(prev =>
-                          prev.includes(tripType)
-                            ? prev.filter(t => t !== tripType)
-                            : [...prev, tripType]
-                        );
-                      }}
+                  <span className="font-body font-semibold text-[14px] text-[#3a2a1a] flex-1">
+                    {leg.destination || `Destination ${index + 1}`}
+                  </span>
+                  {legs.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeLeg(index)}
+                      className="text-[#a09282] hover:text-destructive transition-colors p-1 shrink-0"
+                      aria-label="Remove destination"
                     >
-                      <Checkbox
-                        checked={tripTypes.includes(tripType)}
-                        onCheckedChange={(checked) => {
-                          setTripTypes(prev =>
-                            checked
-                              ? [...prev, tripType]
-                              : prev.filter(t => t !== tripType)
-                          );
-                        }}
-                      />
-                      <div className="flex-1">
-                        <label className="text-base font-medium cursor-pointer block capitalize">
-                          {tripType}
-                        </label>
-                        <p className="text-sm text-muted-foreground">
-                          {tripType === "business" && "Meetings & conferences"}
-                          {tripType === "leisure" && "Vacation & relaxation"}
-                          {tripType === "adventure" && "Outdoor activities"}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  )}
                 </div>
-                {tripTypes.length > 0 && (
-                  <p className="text-sm text-primary font-medium animate-fade-in">
-                    {tripTypes.length} trip type{tripTypes.length > 1 ? 's' : ''} selected.
-                    We'll customize your activity options accordingly.
-                  </p>
-                )}
 
-                {/* Daily Activities Section */}
-                {tripTypes.length > 0 && dates.length > 0 && (
-                  <div className="mt-6 pt-6 border-t border-border animate-fade-in">
-                    <DailyActivityInput
-                      dates={dates}
-                      tripTypes={tripTypes}
-                      onActivitiesChange={handleActivitiesChange}
-                      datesWithDestinations={datesWithDestinations}
+                {/* Destination input */}
+                <DestinationInput
+                  value={leg.destination}
+                  onChange={(val) => updateLeg(index, { destination: val })}
+                  index={index}
+                />
+
+                {/* Date pickers */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-body font-semibold text-[#7a6e5a] text-[12px]">
+                      Start Date
+                    </label>
+                    <DatePicker
+                      value={leg.startDate}
+                      onChange={(date) => updateLeg(index, { startDate: date })}
+                      disabled={(date) => {
+                        const t = new Date(new Date().setHours(0, 0, 0, 0));
+                        if (date < t || date > MAX_WEATHER_DATE) return true;
+                        if (index > 0 && legs[index - 1].endDate) {
+                          if (date < legs[index - 1].endDate!) return true;
+                        }
+                        return false;
+                      }}
+                      placeholder="Select date"
                     />
                   </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-body font-semibold text-[#7a6e5a] text-[12px]">
+                      End Date
+                    </label>
+                    <DatePicker
+                      value={leg.endDate}
+                      onChange={(date) => updateLeg(index, { endDate: date })}
+                      disabled={(date) => {
+                        const t = new Date(new Date().setHours(0, 0, 0, 0));
+                        if (date < t || date > MAX_WEATHER_DATE) return true;
+                        if (leg.startDate && date < leg.startDate) return true;
+                        if (leg.startDate) {
+                          const otherDays = legs.reduce((sum, l, i) => {
+                            if (i === index || !l.startDate || !l.endDate) return sum;
+                            return sum + differenceInDays(l.endDate, l.startDate) + 1;
+                          }, 0);
+                          const thisDays = differenceInDays(date, leg.startDate) + 1;
+                          if (otherDays + thisDays > MAX_TRIP_DAYS) return true;
+                        }
+                        return false;
+                      }}
+                      placeholder="Select date"
+                    />
+                  </div>
+                </div>
+
+                {/* Days pill */}
+                {leg.startDate && leg.endDate && (
+                  <div className="flex items-center gap-1.5 bg-[#f0e2bb] px-2.5 py-1 rounded-full w-fit text-[#7a6e5a]">
+                    <span className="text-[13px]">⌛️</span>
+                    <span className="font-body font-semibold text-[12px]">
+                      {differenceInDays(leg.endDate, leg.startDate) + 1} day{differenceInDays(leg.endDate, leg.startDate) + 1 !== 1 ? 's' : ''}
+                    </span>
+                  </div>
                 )}
               </div>
+            ))}
+          </div>
 
-              {/* Submit Button */}
-              <div className="pt-6">
-                <Button
-                  type="button"
-                  size="lg"
-                  className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-6 h-auto text-lg shadow-soft transition-all duration-200"
-                  disabled={isSubmitting || !isValid}
-                  onClick={onSubmit}
-                >
-                  {isSubmitting ? (
-                    <div className="flex items-center gap-3">
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Creating your personalized packing list...</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <span>Generate Packing List</span>
-                      <ArrowRight className="w-5 h-5" />
-                    </div>
-                  )}
-                </Button>
+          {/* Add Destination Button */}
+          {legs.length < 5 && (
+            <button
+              type="button"
+              onClick={addLeg}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-[#3e7050] hover:bg-[#3e7050]/5 transition-colors w-fit"
+            >
+              <span className="text-[16px]">➕</span>
+              <span className="font-body font-semibold text-[13px]">Add Another Destination</span>
+            </button>
+          )}
 
-                {!isValid && totalDays > 0 && (
-                  <p className="text-center text-sm text-muted-foreground mt-3">
-                    Please complete all fields above to generate your packing list
-                  </p>
-                )}
+          {/* Date warnings */}
+          {dateWarnings.length > 0 && (
+            <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-3 flex items-start gap-2">
+              <AlertTriangle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
+              <div className="text-sm text-destructive font-body">
+                {dateWarnings.map((w, i) => <p key={i}>{w}</p>)}
+              </div>
+            </div>
+          )}
 
-                <p className="text-center text-sm text-muted-foreground mt-3">
-                  We'll analyze weather across all your destinations and create a unified packing timeline
+          {/* Total duration */}
+          {totalDays > 0 && (
+            <div className={cn(
+              "flex items-center justify-between rounded-lg px-3.5 py-2.5",
+              totalDays > MAX_TRIP_DAYS
+                ? "bg-destructive/10 border border-destructive/20"
+                : "bg-[#f0e2bb]/60"
+            )}>
+              <span className="text-[13px] text-[#7a6e5a] font-body">
+                Total: <span className="font-semibold text-[#3a2a1a]">{totalDays} day{totalDays !== 1 ? 's' : ''}</span>
+                {legs.length > 1 && ` across ${legs.length} destinations`}
+              </span>
+              <span className={cn(
+                "text-[11px] font-body font-semibold px-2 py-0.5 rounded-full",
+                totalDays > MAX_TRIP_DAYS
+                  ? "bg-destructive/20 text-destructive"
+                  : "bg-[#3e7050]/10 text-[#3e7050]"
+              )}>
+                {totalDays}/{MAX_TRIP_DAYS}
+              </span>
+              {totalDays > MAX_TRIP_DAYS && (
+                <p className="text-sm text-destructive ml-2 font-body">
+                  Reduce to {MAX_TRIP_DAYS} days max
                 </p>
+              )}
+            </div>
+          )}
+
+          {/* Divider */}
+          <div className="bg-[#c9c1a8] h-px" />
+
+          {/* Bottom row: Luggage + Trip Type */}
+          <div className="flex gap-5 items-start">
+
+            {/* Luggage Size */}
+            <div className="flex flex-1 flex-col gap-2">
+              <label className="font-body font-semibold text-[#7a6e5a] text-[13px]">
+                Luggage Size
+              </label>
+              <Select onValueChange={setLuggageSize} value={luggageSize}>
+                <SelectTrigger className="h-[42px] bg-[#f3f0d6] border-0 rounded-lg text-[14px] text-[#3a2a1a] font-body focus:ring-[#3e7050]">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    {luggageSize && (
+                      <span className="text-[15px] text-[#3e7050] shrink-0">🧳</span>
+                    )}
+                    <SelectValue placeholder="Select luggage size" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="carry-on">Carry-on</SelectItem>
+                  <SelectItem value="backpack">Backpack</SelectItem>
+                  <SelectItem value="medium-suitcase">Medium Suitcase</SelectItem>
+                  <SelectItem value="large-suitcase">Large Suitcase</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Trip Type */}
+            <div className="flex flex-1 flex-col gap-2.5">
+              <label className="font-body font-semibold text-[#7a6e5a] text-[13px]">
+                Trip Type
+              </label>
+              <div className="flex gap-2.5 items-center flex-wrap">
+                {TRIP_TYPES.map(({ value, label, emoji }) => {
+                  const selected = tripTypes.includes(value);
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setTripTypes(prev =>
+                        prev.includes(value)
+                          ? prev.filter(t => t !== value)
+                          : [...prev, value]
+                      )}
+                      className={cn(
+                        "flex items-center gap-1.5 px-3.5 py-2 rounded-lg font-body font-semibold text-[13px] transition-colors",
+                        selected
+                          ? "bg-[#3e7050] text-white"
+                          : "bg-[#f3f0d6] text-[#7a6e5a] hover:bg-[#e8e0c5]"
+                      )}
+                    >
+                      {selected && <span className="text-[12px]">{emoji}</span>}
+                      {label}
+                    </button>
+                  );
+                })}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
+
+          {/* Daily Activities Section */}
+          {showDailyActivities && (
+            <>
+              <div className="bg-[#c9c1a8] h-px" />
+              <DailyActivityInput
+                dates={dates}
+                tripTypes={tripTypes}
+                onActivitiesChange={handleActivitiesChange}
+                datesWithDestinations={datesWithDestinations}
+              />
+            </>
+          )}
+
+          {/* Submit Button */}
+          <button
+            type="button"
+            onClick={onSubmit}
+            disabled={isSubmitting || !isValid}
+            className={cn(
+              "flex items-center justify-center gap-2.5 h-[52px] rounded-xl text-white w-full font-body font-bold text-[16px] transition-all duration-200",
+              isValid && !isSubmitting
+                ? "bg-[#3e7050] hover:bg-[#356141] cursor-pointer"
+                : "bg-[#3e7050]/50 cursor-not-allowed"
+            )}
+          >
+            {isSubmitting ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span>Creating your personalized packing list…</span>
+              </>
+            ) : (
+              <>
+                <span className="text-[18px]">🧳</span>
+                <span>Generate Packing List</span>
+              </>
+            )}
+          </button>
+
+          {!isValid && totalDays > 0 && (
+            <p className="text-center text-[13px] text-[#a09282] font-body -mt-2">
+              Please complete all fields above to generate your packing list
+            </p>
+          )}
         </div>
       </div>
     </div>
